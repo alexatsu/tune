@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+yt-dlp = "*"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+requests = "*"
+pydantic = "*"
+
+[scripts]
+dev = "python downloadAudio.py"
+server = "uvicorn main:app --reload"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"

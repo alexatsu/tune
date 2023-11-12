@@ -1,0 +1,38 @@
+services:
+  client: # service name
+    container_name: client
+    build: # build image
+      context: ./client # path
+      dockerfile: ./Dockerfile # dockerfile path
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+      # remove old container+image if new packages are added
+    ports:
+      # hostport:containerport
+      - 3000:3000
+    env_file:
+      - ./client/.env.dev
+
+  # containers can communicate with each other via container name and inner port
+  # if normaly you should do 3000:3000, for containers you need only second port
+  # because docker create network automatically
+  # like db:5432
+
+  db:
+    container_name: db
+    ports:
+      # hostport:containerport
+      - 5430:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+    image: postgres:16-alpine
+    restart: always
+
+volumes: # without it database will not be created
+  db:
+    driver: local
