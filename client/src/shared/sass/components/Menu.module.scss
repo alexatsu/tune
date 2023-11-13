@@ -2,12 +2,14 @@
 
 .menu {
   cursor: pointer;
-
-  & path {
-    transition: fill 0.15s ease;
+  width: 50px;
+  height: 30px;
+  
+  & line {
+    transition: stroke 0.15s ease;
   }
 
-  &:hover path {
-    fill: $accent;
+  &:hover line {
+    stroke: $accent;
   }
 }

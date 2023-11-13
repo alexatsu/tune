@@ -13,6 +13,9 @@ services:
       - 3000:3000
     env_file:
       - ./client/.env.dev
+    environment:
+      - WATCHPACK_POLLING=true # for nextjs hot reload
+
 
   # containers can communicate with each other via container name and inner port
   # if normaly you should do 3000:3000, for containers you need only second port

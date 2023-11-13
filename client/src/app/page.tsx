@@ -1,10 +1,12 @@
-"use client";
 import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
-import "@/shared/sass/main.scss";
+import Link from "next/link";
+
+import btn from "../shared/sass/components/Button.module.scss";
+import page from "./_root/sass/Page.module.scss";
+
 
 export default function Page() {
-  
   //player example
   // const [theme, setTheme] = useState("dark");
   // useEffect(() => {
@@ -13,7 +15,6 @@ export default function Page() {
   //   hls.loadSource("http://localhost:8000/audio/NF - The Search/index.m3u8");
   //   hls.attachMedia(video);
   // }, []);
-  console.log(process.env.DATABASE_URL)
   //themes example
   // const variableRef = useRef<string>();
   // useEffect(() => {
@@ -23,7 +24,35 @@ export default function Page() {
   // }, []);
 
   return (
-    <main>
+    <main className={page.main}>
+      <article className={page.article}>
+        <p>
+          Welcome to <span>Tune</span>, a place dedicated to bringing you the best in music. Bring
+          your music, own{" "}
+          <u style={{ textDecorationColor: "var(--accent)", textUnderlineOffset: "3px" }}>
+            forever
+          </u>
+          .
+        </p>
+
+        <p>
+          Here to help you discover new sounds and connect with your favorite artists. Join today
+          and start your music journey!
+        </p>
+      </article>
+
+      <section className={page.find}>
+        <div>
+          <h3>Find your music</h3>
+          <h2>&</h2>
+          <h1>Tune</h1>
+        </div>
+
+        <Link href={"/sign-in"}>
+          <button className={btn.connect}>Connect</button>
+        </Link>
+      </section>
+
       {/* themes part */}
       {/* <section style={{ backgroundColor: "white", height: "100px" }}>
         <input

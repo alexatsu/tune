@@ -6,9 +6,9 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { email, username, password } = body;
-
+    
     const existingUserByEmail = await db.user.findUnique({
-      where: { email:email },
+      where: { email: email },
     });
 
     if (existingUserByEmail) {
@@ -36,15 +36,14 @@ export async function POST(req: Request) {
     }
 
     const hashedPassword = await hash(password, 10);
-    console.log('reached')
+
     const newUser = await db.user.create({
       data: { username, email, password: hashedPassword },
     });
 
-    return Response.json(
-      { user: newUser, message: "User created successfully" },
-      { status: 201 }
-    );
+    const { password: newUserPassword, ...user } = newUser;
+
+    return Response.json({ user, message: "User created successfully" }, { status: 201 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(
