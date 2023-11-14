@@ -1,21 +1,35 @@
 @use "../abstracts/colors.scss" as *;
+@use "../abstracts/fonts.scss" as *;
 
 %button {
+  font-family: $quicksand;
   cursor: pointer;
   padding: 0.5rem 3rem;
   border: none;
   border-radius: 0.5rem;
+
+  font-weight: 700;
+  font-size: 1.2rem;
+  transition: 0.15s background-color ease;
 }
 
 .connect {
   @extend %button;
   background-color: $accent;
   color: $dark-text;
-  font-weight: 700;
-  font-size: 1.2rem;
-  transition: 0.15s background-color ease;
 
   &:hover {
     background-color: $accent-darker;
+  }
+}
+
+.signIn {
+  @extend %button;
+  padding: 0.7rem 1.5rem;
+  background-color: $bg-alt;
+  color: $text;
+
+  &:hover {
+    background-color: $bg-alt-hover;
   }
 }

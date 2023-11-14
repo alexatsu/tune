@@ -3,6 +3,8 @@
 
 :root {
   --bg: #121313;
+  --bg-alt: #1C1C1C;
+  --bg-alt-hover: #2C2C2C;
 
   --text: #ececec;
   --dark-text: #111111;
@@ -16,6 +18,7 @@
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
+  height: 100%;
 }
 
 body {

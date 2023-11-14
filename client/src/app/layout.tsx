@@ -4,13 +4,12 @@ import { Quicksand, Qwitcher_Grypen } from "next/font/google";
 import { Header } from "@/shared/layouts";
 import "@/shared/sass/main.scss";
 
-const quicksand = Quicksand({ subsets: ["latin"] });
+const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });
 const qwitcher = Qwitcher_Grypen({
   subsets: ["latin"],
   weight: "700",
   variable: "--font-qwitcher",
 });
-
 
 export const metadata: Metadata = {
   title: "Tune",
