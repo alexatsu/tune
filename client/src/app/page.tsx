@@ -4,8 +4,15 @@ import Link from "next/link";
 
 import btn from "../shared/sass/components/Button.module.scss";
 import page from "./_root/sass/Page.module.scss";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-export default function Page() {
+export default async function Page() {
+  // const session = await getServerSession();
+
+  // if (session) {
+  //   redirect("/music");
+  // }
   //player example
   // const [theme, setTheme] = useState("dark");
   // useEffect(() => {
@@ -24,9 +31,6 @@ export default function Page() {
 
   return (
     <main className={page.main}>
-      <Link href={"/music"}>
-        <button>Test redirect to music</button>
-      </Link>
       <article className={page.article}>
         <p>
           Welcome to <span>Tune</span>, a place dedicated to bringing you the best in music. Bring
@@ -50,7 +54,7 @@ export default function Page() {
           <h1>Tune</h1>
         </div>
 
-        <Link href={"/sign-in"}>
+        <Link href={"/signin"}>
           <button className={btn.connect}>Connect</button>
         </Link>
       </section>

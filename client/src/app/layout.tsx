@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Quicksand, Qwitcher_Grypen } from "next/font/google";
-import { getServerSession } from "next-auth";
+import { Session, getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 import { Header } from "@/shared/layouts";
-import { SessionProvider, NavMenu } from "@/shared/services/auth";
+import { SessionProvider } from "@/shared/providers";
 import "@/shared/sass/main.scss";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });
@@ -19,14 +20,14 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession();
+  const session = (await getServerSession(authOptions)) as Session;
+
   return (
     <html lang="en">
       <body className={`${quicksand.className} ${qwitcher.variable}`}>
         <SessionProvider session={session}>
-          {/* <Header />
-          {children} */}
-          <NavMenu />
+          <Header />
+          {children}
         </SessionProvider>
       </body>
     </html>
