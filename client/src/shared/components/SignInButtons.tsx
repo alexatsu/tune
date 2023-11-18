@@ -1,10 +1,10 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { icons } from "@/shared/components/icons";
+import { sharedIcons } from "@/shared/components/icons";
 import btn from "@/shared/sass/components/Button.module.scss";
 
-const { Github, Google } = icons;
+const { Github, Google } = sharedIcons;
 
 type SignInProps = { provider: string; callbackUrl: string; icon: JSX.Element };
 

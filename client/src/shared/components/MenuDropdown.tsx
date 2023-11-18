@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
-import { icons } from "./icons";
+import { sharedIcons } from "./icons";
 import sass from "../sass/components/MenuDropdown.module.scss";
 
-const { Menu } = icons;
+const { Menu } = sharedIcons;
 
 export function MenuDropdown() {
   const [isOpen, setIsOpen] = useState(false);

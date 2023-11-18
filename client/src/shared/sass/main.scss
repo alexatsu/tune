@@ -3,13 +3,13 @@
 
 :root {
   --bg: #121313;
-  --bg-alt: #1C1C1C;
-  --bg-alt-hover: #2C2C2C;
+  --bg-alt: #1c1c1c;
+  --bg-alt-hover: #2c2c2c;
 
   --text: #ececec;
   --dark-text: #111111;
 
-  --accent: #76EFFF;
+  --accent: #76efff;
   --accent-darker: #63d8e8;
 }
 
@@ -22,6 +22,26 @@
 }
 
 body {
+  background: url("../../../public/images/bg.avif") lightgray 50% / cover no-repeat;
+
   background-color: $bg;
   font-size: $default;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.33) 0%, rgba(0, 0, 0, 0.71) 100%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5.5px);
+  z-index: -1;
+}
+
+body[data-property="background"] {
+  background-color: transparent;
+  /* Remove blur effect */
+  filter: none;
 }
