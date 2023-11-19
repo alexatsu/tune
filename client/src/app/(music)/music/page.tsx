@@ -16,6 +16,7 @@ export default async function Page() {
     <div style={{ color: "white", height: "calc(100% - 100px)" }}>
       Here is the music
       <Link href={"/"}>Back home</Link>
+      <Link href={"/albums"}>Albums</Link>
     </div>
   );
 }
