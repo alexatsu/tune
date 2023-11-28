@@ -3,7 +3,7 @@ import Hls from "hls.js";
 import Link from "next/link";
 
 import btn from "../shared/sass/components/Button.module.scss";
-import page from "./_root/sass/Page.module.scss";
+import page from "./_/sass/Page.module.scss";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
