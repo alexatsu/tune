@@ -28,6 +28,7 @@ export default async function Page() {
   //     .getComputedStyle(document.documentElement)
   //     .getPropertyValue("--bg");
   // }, []);
+  console.log(process.env.DATABASE_URL);
 
   return (
     <main className={page.main}>
