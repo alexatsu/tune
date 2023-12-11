@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import Link from "next/link";
 
-import btn from "../shared/sass/components/Button.module.scss";
-import page from "./_/sass/Page.module.scss";
+import styles from "./page.module.scss";
+
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -31,8 +31,8 @@ export default async function Page() {
   console.log(process.env.DATABASE_URL);
 
   return (
-    <main className={page.main}>
-      <article className={page.article}>
+    <main className={styles.main}>
+      <article className={styles.article}>
         <p>
           Welcome to <span>Tune</span>, a place dedicated to bringing you the best in music. Bring
           your music, own{" "}
@@ -48,7 +48,7 @@ export default async function Page() {
         </p>
       </article>
 
-      <section className={page.find}>
+      <section className={styles.find}>
         <div>
           <h3>Find your music</h3>
           <h2>&</h2>
@@ -56,7 +56,7 @@ export default async function Page() {
         </div>
 
         <Link href={"/signin"}>
-          <button className={btn.connect}>Connect</button>
+          <button className={styles.connect}>Connect</button>
         </Link>
       </section>
 

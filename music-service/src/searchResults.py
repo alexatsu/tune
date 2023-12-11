@@ -6,14 +6,14 @@ query = "Barren Gates Obey"
 data = {}
 
 
-def formatDuration(duration: int) -> str:
+def format_duration(duration: int) -> str:
     hours = (duration / 60) / 60
     minutes = (duration / 60) % 60
     seconds = duration % 60
     return f"{int(hours)}:{int(minutes)}:{int(seconds)}"
 
 
-def searchSongs(query: Search):
+def search_songs(query: Search):
     with yt_dlp.YoutubeDL(data) as ydl:
         videoResults = ydl.extract_info(f"ytsearch5:{query}", download=False)
 
@@ -27,7 +27,7 @@ def searchSongs(query: Search):
                         "title": video["title"],
                         "url": video["original_url"],
                         "cover": video.get("thumbnail", None),
-                        "duration": formatDuration(video.get("duration", None)),
+                        "duration": format_duration(video.get("duration", None)),
                     },
                     videoEntries,
                 )
@@ -36,4 +36,4 @@ def searchSongs(query: Search):
                 json.dump(getSongsData, f)
             return getSongsData
 
-searchSongs(query)
+search_songs(query)

@@ -1,0 +1,48 @@
+@use "../../../../../shared/sass/abstracts/colors.scss" as *;
+
+.main {
+  height: calc(100vh - 100px);
+  width: 100%;
+}
+
+.musicList {
+  list-style: none;
+  color: $text;
+  height: calc(100% - 125px);
+  padding: 1rem 1rem;
+
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #9a3838 #ffffff;
+
+  &::-webkit-scrollbar-track {
+    background-color: $widget-bg;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $accent;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  //for testing
+  & > li {
+    background-color: $widget-bg;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+    padding: 0.8rem 1rem;
+    border-radius: 1rem;
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    & > img {
+      object-fit: cover;
+      border-radius: 5px;
+    }
+  }
+}

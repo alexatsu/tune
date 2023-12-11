@@ -1,0 +1,26 @@
+@use "../../../../../shared/sass/abstracts/colors.scss" as *;
+@use "../../../../../shared/sass/abstracts/fonts.scss" as *;
+@use "../../../../../shared/sass/mixins/button.module.scss" as *;
+
+.signIn {
+  @include button();
+  padding: 0.7rem 1.5rem;
+  background-color: $bg-alt;
+  color: $text;
+
+  &:hover {
+    background-color: $bg-alt-hover;
+  }
+
+  .btnContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    & > span {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

@@ -6,6 +6,8 @@
   --bg-alt: #1c1c1c;
   --bg-alt-hover: #2c2c2c;
 
+  --widget-bg: #1a1e1f;
+
   --text: #ececec;
   --dark-text: #111111;
 
@@ -18,14 +20,13 @@
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
-  height: 100%;
 }
 
 body {
   background: url("../../../public/images/bg.avif") lightgray 50% / cover no-repeat;
-
   background-color: $bg;
   font-size: $default;
+  height: auto;
 }
 
 body::before {

@@ -1,11 +1,11 @@
-import { GithubSignIn, GoogleSignIn } from "@/shared/components";
+import { GithubSignIn, GoogleSignIn } from "./_/components";
 
-import page from "./_root/sass/Page.module.scss";
+import styles from "./page.module.scss";
 
 export default function Page() {
   return (
-    <main className={page.main}>
-      <div className={page.buttonChunk}>
+    <main className={styles.main}>
+      <div className={styles.buttonChunk}>
         <GithubSignIn />
         <GoogleSignIn />
       </div>

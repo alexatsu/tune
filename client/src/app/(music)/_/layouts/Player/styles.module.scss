@@ -1,0 +1,11 @@
+@use "../../../../../shared/sass/abstracts/colors.scss" as *;
+
+.playerContainer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  color: $text;
+  background-color: $bg;
+  height: 125px;
+  display: flex;
+}

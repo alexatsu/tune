@@ -1,0 +1,45 @@
+@use "../../../../../shared/sass/abstracts/colors.scss" as *;
+
+.list {
+  padding: 0.8rem;
+  border-radius: 2rem;
+  color: $text;
+  background-color: $widget-bg;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 80px;
+  margin-top: 1rem;
+
+  &:has(li:nth-child(2)) {
+    height: 120px;
+  }
+
+  &:has(li:nth-child(3)) {
+    height: 160px;
+  }
+
+  &:has(li:nth-child(4)) {
+    height: 180px;
+  }
+
+  li {
+    display: inline-block;
+    cursor: pointer;
+    height: auto;
+
+    svg path {
+      transition: fill 0.15s ease;
+    }
+
+    &:hover svg path {
+      fill: $accent-darker;
+    }
+  }
+
+  .active svg path {
+    fill: $accent;
+  }
+}

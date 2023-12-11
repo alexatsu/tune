@@ -1,0 +1,33 @@
+@use "../../../../shared/sass/abstracts/colors.scss" as *;
+
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  .ul {
+    position: absolute;
+    color: $text;
+    list-style: none;
+    right: 0;
+    user-select: none;
+    width: 200px;
+    display: none;
+    background-color: rgb(50, 50, 50);
+  }
+
+  .ulOpen {
+    @extend .ul;
+    display: block;
+    animation: fadeIn 0.15s ease;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

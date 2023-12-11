@@ -3,8 +3,9 @@ import { Quicksand, Qwitcher_Grypen } from "next/font/google";
 import { Session, getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 
-import { Header } from "@/shared/layouts";
-import { SessionProvider } from "@/shared/providers";
+import { Header } from "@/app/_/layouts";
+import { SessionProvider } from "@/app/_/providers";
+
 import "@/shared/sass/main.scss";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });

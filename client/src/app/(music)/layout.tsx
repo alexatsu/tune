@@ -1,10 +1,14 @@
-import { Player } from "./_root/layouts";
+import { Player, Sidebar } from "./_/layouts";
 
+import styles from "./layout.module.scss";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      {children}
+      <div className={styles.container}>
+        <Sidebar />
+        {children}
+      </div>
       <Player />
     </>
   );

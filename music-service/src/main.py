@@ -2,12 +2,11 @@ from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from pydantic import BaseModel
 import uvicorn
 import json
 
 from models.audio import Search
-from searchResults import searchSongs
+from searchResults import search_songs
 
 app = FastAPI()
 origins = ["*"]
@@ -30,7 +29,7 @@ def read_root():
 
 @app.post("/search")
 def search(name: Search):
-    songs = searchSongs(name)
+    songs = search_songs(name)
     return Response(content=json.dumps(songs), media_type="application/json")
 
 # @app.post("/download")
