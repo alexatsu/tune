@@ -1,6 +1,7 @@
-import yt_dlp
 import subprocess
 import os
+
+import yt_dlp
 
 URLS = ["https://www.youtube.com/watch?v=xyiZWdAPNCk"]
 
@@ -13,7 +14,7 @@ ydl_opts = {
             "preferredcodec": "aac",
         }
     ],
-    "outtmpl": "audio/%(title)s.m4a",
+    "outtmpl": "audio/saved/%(title)s.m4a",
 }
 
 
@@ -25,6 +26,7 @@ with yt_dlp.YoutubeDL(ydl_opts) as ydl:
 
 for filename in filenames:
     fileNoExt = os.path.splitext(filename)[0]
+
     createFolder = os.makedirs(f"{fileNoExt}", exist_ok=True)
 
     subprocess.run(
@@ -45,3 +47,5 @@ for filename in filenames:
             f"{fileNoExt}/index.m3u8",
         ]
     )
+
+    os.remove(filename)

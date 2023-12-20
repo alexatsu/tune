@@ -32,6 +32,7 @@ def search(name: Search):
     songs = search_songs(name)
     return Response(content=json.dumps(songs), media_type="application/json")
 
+
 # @app.post("/download")
 # def download(url: str):
 

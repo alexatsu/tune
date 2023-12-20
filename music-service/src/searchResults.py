@@ -2,15 +2,16 @@ import json
 import yt_dlp
 from models.audio import Search
 
-query = "Barren Gates Obey"
-data = {}
-
 
 def format_duration(duration: int) -> str:
     hours = (duration / 60) / 60
     minutes = (duration / 60) % 60
     seconds = duration % 60
     return f"{int(hours)}:{int(minutes)}:{int(seconds)}"
+
+
+query = "Barren Gates Obey"
+data = {}
 
 
 def search_songs(query: Search):
@@ -35,5 +36,6 @@ def search_songs(query: Search):
             with open("searchResults.json", "w") as f:
                 json.dump(getSongsData, f)
             return getSongsData
+
 
 search_songs(query)

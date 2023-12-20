@@ -19,7 +19,7 @@ const sources = [
 const hls = new Hls();
 
 export function Player() {
-  const playerRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<HTMLVideoElement | null>(null);
   const currentTrack = useRef(sources[0]);
   const [time, setTime] = useState({
     current: 0,
@@ -204,3 +204,4 @@ export function Player() {
     </div>
   );
 }
+

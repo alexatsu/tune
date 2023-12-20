@@ -25,13 +25,16 @@
 // cacheFunc(slow, 1);
 // cacheFunc(slow, 4);
 // cacheFunc(slow, 4);
-function debounce(value: number) {
+function debounce(value: string) {
   let timeout: ReturnType<typeof setTimeout>;
 
   return () => {
     if (timeout) clearTimeout(timeout);
+
     timeout = setTimeout(() => console.log(value), 1000);
   };
 }
 
-debounce(5);
+const debouncedValue = debounce("5");
+
+debouncedValue();
