@@ -10,10 +10,11 @@ import styles from "./styles.module.scss";
 // - connect to api
 // - move some player states to global state
 
+const apiUrl = "http://localhost:8000/audio/saved/";
 const sources = [
-  "/music/NF - The Search/index.m3u8",
-  "/music/ONICKS - ＂Illuminati＂ (Official Lyric Video)/index.m3u8",
-  "/music/Unholy (Sam Smith) 【covered by Anna ft. @chloebreez】｜ dual POV ver/index.m3u8",
+  `${apiUrl}NF - The Search/index.m3u8`,
+  `${apiUrl}ONICKS - ＂Illuminati＂ (Official Lyric Video)/index.m3u8`,
+  `${apiUrl}Unholy (Sam Smith) 【covered by Anna ft. @chloebreez】｜ dual POV ver/index.m3u8`,
 ];
 
 const hls = new Hls();
@@ -204,4 +205,3 @@ export function Player() {
     </div>
   );
 }
-

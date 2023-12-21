@@ -35,6 +35,17 @@ services:
     image: postgres:16-alpine
     restart: always
 
+  music-service:
+    container_name: music-service
+    build:
+      context: ./music-service
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./music-service:/app
+    restart: always
+
 volumes: # without it database will not be created
   db:
     driver: local
