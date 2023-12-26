@@ -8,9 +8,9 @@ import { MusicList } from "../_/components";
 export default async function Page() {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    redirect("/signin");
-  }
+  // if (!session) {
+  //   redirect("/signin");
+  // }
 
   return <MusicList />;
 }

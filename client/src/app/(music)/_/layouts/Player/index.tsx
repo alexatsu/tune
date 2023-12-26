@@ -12,6 +12,7 @@ import styles from "./styles.module.scss";
 
 const apiUrl = "http://localhost:8000/audio/saved/";
 const sources = [
+  `${apiUrl}Traitors/index.m3u8`,
   `${apiUrl}NF - The Search/index.m3u8`,
   `${apiUrl}ONICKS - ＂Illuminati＂ (Official Lyric Video)/index.m3u8`,
   `${apiUrl}Unholy (Sam Smith) 【covered by Anna ft. @chloebreez】｜ dual POV ver/index.m3u8`,

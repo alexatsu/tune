@@ -5,8 +5,8 @@ services:
       context: ./client # path
       dockerfile: ./Dockerfile # dockerfile path
     volumes:
-      - ./client:/app
-      - /app/node_modules
+      - ./client:/app #mount path
+      - /app/node_modules #needed folder to persist/update data
       # remove old container+image if new packages are added
     ports:
       # hostport:containerport
@@ -44,6 +44,7 @@ services:
       - 8000:8000
     volumes:
       - ./music-service:/app
+      - /app/src/audio
     restart: always
 
 volumes: # without it database will not be created

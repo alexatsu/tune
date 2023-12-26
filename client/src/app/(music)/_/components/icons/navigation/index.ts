@@ -1,7 +1,7 @@
 import { Music } from "./Music";
-import { Discover } from "./Discover";
+import { Search } from "./Search";
 
 export const navigationIcons = {
   Music,
-  Discover,
+  Search,
 };

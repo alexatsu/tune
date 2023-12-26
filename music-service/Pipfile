@@ -9,10 +9,11 @@ fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 requests = "*"
 pydantic = "*"
+numpy = "*"
 
 [scripts]
 dev = "python downloadAudio.py"
-server = "uvicorn main:app --reload"
+server = "uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 
 [dev-packages]
 

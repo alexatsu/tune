@@ -3,7 +3,7 @@ import os
 
 import yt_dlp
 
-URLS = ["https://www.youtube.com/watch?v=xyiZWdAPNCk"]
+URLS = ["https://www.youtube.com/watch?v=apKtYC1Vu6s"]
 
 ydl_opts = {
     "format": "m4a/bestaudio/best",
@@ -25,9 +25,9 @@ with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     ]
 
 for filename in filenames:
-    fileNoExt = os.path.splitext(filename)[0]
+    file_no_extension = os.path.splitext(filename)[0]
 
-    createFolder = os.makedirs(f"{fileNoExt}", exist_ok=True)
+    create_folder = os.makedirs(f"{file_no_extension}", exist_ok=True)
 
     subprocess.run(
         [
@@ -44,7 +44,7 @@ for filename in filenames:
             "0",
             "-f",  # format
             "hls",
-            f"{fileNoExt}/index.m3u8",
+            f"{file_no_extension}/index.m3u8",
         ]
     )
 

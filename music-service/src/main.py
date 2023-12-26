@@ -1,11 +1,13 @@
-from fastapi import FastAPI, Response
+from datetime import datetime, timedelta
+
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-import uvicorn
-import json
+from pydantic import BaseModel
 
-from models.audio import Search
+import uvicorn
+
 from searchResults import search_songs
 
 app = FastAPI()
@@ -27,14 +29,42 @@ def read_root():
     return {"message": "Hello World"}
 
 
-@app.post("/search")
-def search(name: Search):
-    songs = search_songs(name)
-    return Response(content=json.dumps(songs), media_type="application/json")
+@app.get("/search")
+async def search(query: str = ""):
+    return search_songs(query)
 
 
-# @app.post("/download")
-# def download(url: str):
+class ListenTemporal(BaseModel):
+    url: str
+    title: str
+    duration: str
+
+
+@app.post("/listen-temporal")
+async def listen_temporal(payload: ListenTemporal) -> dict[str, str | float]:
+    duration_str = payload.duration
+
+    # Parse the duration string
+    duration = datetime.strptime(duration_str, "%H:%M:%S")
+
+    # Get the total duration in seconds
+    total_duration = timedelta(
+        hours=duration.hour, minutes=duration.minute, seconds=duration.second
+    ).total_seconds()
+
+    # download music and store it in temporal
+    return {"url": payload.url, "title": payload.title, "duration": total_duration}
+
+
+# when i click listen on music
+# send from client url+duration to backend
+# download music and store it in temporal
+# delete the music from temporal after duration + 10 minutes
+
+
+# @app.get("/download")
+# async def download(url: str, duration: int):
+#     return {"message": "Song downloaded successfully"}
 
 
 if __name__ == "__main__":

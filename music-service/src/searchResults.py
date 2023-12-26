@@ -10,18 +10,17 @@ def format_duration(duration: int) -> str:
     return f"{int(hours)}:{int(minutes)}:{int(seconds)}"
 
 
-query = "Barren Gates Obey"
 data = {}
 
 
 def search_songs(query: Search):
     with yt_dlp.YoutubeDL(data) as ydl:
-        videoResults = ydl.extract_info(f"ytsearch5:{query}", download=False)
+        video_results = ydl.extract_info(f"ytsearch5:{query}", download=False)
 
-        if videoResults:
-            videoEntries: list = videoResults["entries"]
+        if video_results:
+            video_entries: list = video_results["entries"]
 
-            getSongsData = list(
+            get_songs_data = list(
                 map(
                     lambda video: {
                         "id": video["id"],
@@ -30,12 +29,11 @@ def search_songs(query: Search):
                         "cover": video.get("thumbnail", None),
                         "duration": format_duration(video.get("duration", None)),
                     },
-                    videoEntries,
+                    video_entries,
                 )
             )
-            with open("searchResults.json", "w") as f:
-                json.dump(getSongsData, f)
-            return getSongsData
 
+            # with open("searchResults.json", "w") as f:
+            #     json.dump(get_songs_data, f)
 
-search_songs(query)
+            return {"songs": get_songs_data, "music_type": "search"}

@@ -6,7 +6,7 @@ import { navigationIcons } from "../../components/icons/navigation";
 
 import styles from "./styles.module.scss";
 
-const { Music, Discover } = navigationIcons;
+const { Music, Search } = navigationIcons;
 
 const list = [
   {
@@ -14,8 +14,8 @@ const list = [
     icon: <Music />,
   },
   {
-    path: "/discover",
-    icon: <Discover />,
+    path: "/search",
+    icon: <Search />,
   },
 ];
 
