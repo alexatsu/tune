@@ -20,7 +20,7 @@ const handleFetch = async <T>(url: string, method = "GET", body = {}, headers = 
   }
 
   const data = await response.json();
-  return data;
+  return data as T;
 };
 
 export { handleFetch };

@@ -3,7 +3,7 @@ import yt_dlp
 from models.audio import Search
 
 
-def format_duration(duration: int) -> str:
+def format_duration(duration: float) -> str:
     hours = (duration / 60) / 60
     minutes = (duration / 60) % 60
     seconds = duration % 60

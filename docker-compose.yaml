@@ -44,7 +44,11 @@ services:
       - 8000:8000
     volumes:
       - ./music-service:/app
-      - /app/src/audio
+      - ./music-service/src/audio:/app/src/audio
+      # - type: bind
+      #   source: ./music-service/src/audio
+      #   target: /app/src/audio
+
     restart: always
 
 volumes: # without it database will not be created

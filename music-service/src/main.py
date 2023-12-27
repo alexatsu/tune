@@ -1,4 +1,7 @@
+import asyncio
 from datetime import datetime, timedelta
+
+import shutil
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -8,7 +11,7 @@ from pydantic import BaseModel
 
 import uvicorn
 
-from searchResults import search_songs
+from utils.functions import download_audio, search_songs
 
 app = FastAPI()
 origins = ["*"]
@@ -42,18 +45,29 @@ class ListenTemporal(BaseModel):
 
 @app.post("/listen-temporal")
 async def listen_temporal(payload: ListenTemporal) -> dict[str, str | float]:
-    duration_str = payload.duration
+    duration = datetime.strptime(payload.duration, "%H:%M:%S")
 
-    # Parse the duration string
-    duration = datetime.strptime(duration_str, "%H:%M:%S")
-
-    # Get the total duration in seconds
     total_duration = timedelta(
         hours=duration.hour, minutes=duration.minute, seconds=duration.second
     ).total_seconds()
 
-    # download music and store it in temporal
-    return {"url": payload.url, "title": payload.title, "duration": total_duration}
+    download_audio(payload.url, "temporal")
+
+    folder_path = "audio/temporal"
+
+    asyncio.create_task(
+        delete_temp_audio_after_delay(
+            f"{folder_path}/{payload.title}", total_duration + (10 * 60)
+        )
+    )
+
+    return {"message": "Song downloaded successfully"}
+
+
+async def delete_temp_audio_after_delay(folder_name: str, total_duration: int) -> None:
+    await asyncio.sleep(total_duration)
+
+    shutil.rmtree(folder_name)
 
 
 # when i click listen on music

@@ -1,5 +1,7 @@
 FROM python:3.12.0-bullseye
 
+RUN apt-get update && apt-get install -y ffmpeg
+
 WORKDIR /app
 
 COPY . .

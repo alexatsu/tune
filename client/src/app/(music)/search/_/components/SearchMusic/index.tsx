@@ -22,14 +22,19 @@ function SearchMusic() {
 
   if (error) return <div>{error.message}</div>;
 
-  const listenToTemporalSong = (url: string, title: string, duration: string) => {
+  const listenToTemporalSong = async (url: string, title: string, duration: string) => {
     console.log("listen to song", url, title, duration);
     const apiUrl = "http://localhost:8000/listen-temporal";
-    const response = handleFetch<{ message: string }>(`${apiUrl}`, "POST", {
+    const response = await handleFetch<{ message: string }>(`${apiUrl}`, "POST", {
       url,
       title,
       duration,
     });
+
+    if (response?.message === "Song downloaded successfully") {
+      console.log(response, " listen to song");
+      return response;
+    }
 
     console.log(response, " listen to song");
     return response;
