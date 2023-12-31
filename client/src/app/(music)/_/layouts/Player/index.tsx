@@ -1,6 +1,10 @@
 "use client";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import Hls from "hls.js";
+
+import { usePlayerContext } from "../../providers";
+
 import styles from "./styles.module.scss";
 
 //TODO:
@@ -10,19 +14,22 @@ import styles from "./styles.module.scss";
 // - connect to api
 // - move some player states to global state
 
-const apiUrl = "http://localhost:8000/audio/saved/";
-const sources = [
-  `${apiUrl}Traitors/index.m3u8`,
-  `${apiUrl}NF - The Search/index.m3u8`,
-  `${apiUrl}ONICKS - ＂Illuminati＂ (Official Lyric Video)/index.m3u8`,
-  `${apiUrl}Unholy (Sam Smith) 【covered by Anna ft. @chloebreez】｜ dual POV ver/index.m3u8`,
-];
+// const apiUrl = "http://localhost:8000/audio/saved/";
+// const sources = [
+//   `${apiUrl}Traitors/index.m3u8`,
+//   `${apiUrl}NF - The Search/index.m3u8`,
+//   `${apiUrl}ONICKS - ＂Illuminati＂ (Official Lyric Video)/index.m3u8`,
+//   `${apiUrl}Unholy (Sam Smith) 【covered by Anna ft. @chloebreez】｜ dual POV ver/index.m3u8`,
+// ];
 
 const hls = new Hls();
 
 export function Player() {
-  const playerRef = useRef<HTMLVideoElement | null>(null);
-  const currentTrack = useRef(sources[0]);
+  const { playerRef, handlePlay, currentTrack, loadPlayerSource } = usePlayerContext();
+  // const { test, setTest } = usePlayerStore();
+  // const playerRef = useRef<HTMLVideoElement>(null);
+  const sources = useRef<string[]>([]);
+  // const currentTrack = useRef<string | null>(null);
   const [time, setTime] = useState({
     current: 0,
     buffered: 0,
@@ -33,60 +40,89 @@ export function Player() {
 
   const [seek, setSeek] = useState<number>(0);
 
-  const loadPlayerSource = useCallback(() => {
-    hls.loadSource(currentTrack.current);
-
-    if (playerRef.current) {
-      hls.attachMedia(playerRef.current);
-    }
-  }, []);
-
   useEffect(() => {
-    hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-      console.log("video and hls.js are now bound together !");
-    });
+    (async () => {
+      const response = await fetch("/test.json");
+      const data = await response.json();
 
-    hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-      console.log("manifest loaded, found " + data.levels.length + " quality level");
-    });
+      sources.current = data.songs;
+      currentTrack.current = data.songs[0];
 
-    loadPlayerSource();
+      console.log(sources.current, "sources");
+      console.log(currentTrack.current, "current track");
+
+      hls.attachMedia(playerRef.current as HTMLVideoElement);
+      hls.loadSource(sources.current[0]);
+
+      hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+        console.log("video and hls.js are now bound together !");
+      });
+
+      hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+        console.log("manifest loaded, found " + data.levels.length + " quality level");
+      });
+    })();
 
     return () => hls.destroy();
-  }, [loadPlayerSource]);
+  }, [playerRef, sources, currentTrack]);
 
-  const handlePlay = () => {
-    playerRef.current?.play();
-  };
+  // const loadPlayerSource = useCallback(async () => {
+  //   if (playerRef.current === null) {
+  //     console.log("missing player reference");
+  //     return;
+  //   }
 
-  const handlePause = () => {
-    playerRef.current?.pause();
-  };
+  //   if (currentTrack.current === null) {
+  //     console.log("no current track to load");
+  //     return;
+  //   }
+
+  //   hls.attachMedia(playerRef.current);
+  //   hls.loadSource(currentTrack.current);
+  // }, [playerRef]);
+
+  // const handlePlay = () => playerRef.current?.play();
+
+  const handlePause = () => playerRef.current?.pause();
 
   const handleNextTrack = useCallback(() => {
-    const trackIndex = sources.indexOf(currentTrack.current);
-
-    if (trackIndex === sources.length - 1) {
-      currentTrack.current = sources[0];
+    if (currentTrack.current === null) {
+      console.log("no current next track");
+      return;
     }
 
-    if (trackIndex < sources.length - 1) {
-      currentTrack.current = sources[trackIndex + 1];
+    const source = sources.current;
+
+    const trackIndex = source.indexOf(currentTrack.current);
+
+    if (trackIndex === source.length - 1) {
+      currentTrack.current = source[0];
+    }
+
+    if (trackIndex < source.length - 1) {
+      currentTrack.current = source[trackIndex + 1];
     }
 
     loadPlayerSource();
     handlePlay();
-  }, [loadPlayerSource]);
+  }, [currentTrack, loadPlayerSource, handlePlay]);
 
   const handlePreviousTrack = () => {
-    const trackIndex = sources.indexOf(currentTrack.current);
+    if (currentTrack.current === null) {
+      console.log("no current previous track");
+      return;
+    }
+
+    const source = sources.current;
+
+    const trackIndex = source.indexOf(currentTrack.current);
 
     if (trackIndex === 0) {
-      currentTrack.current = sources[sources.length - 1];
+      currentTrack.current = source[source.length - 1];
     }
 
     if (trackIndex > 0) {
-      currentTrack.current = sources[trackIndex - 1];
+      currentTrack.current = source[trackIndex - 1];
     }
 
     loadPlayerSource();
@@ -100,7 +136,7 @@ export function Player() {
     return () => {
       player?.removeEventListener("ended", handleNextTrack);
     };
-  }, [handleNextTrack]);
+  }, [handleNextTrack, playerRef]);
 
   useEffect(() => {
     const updateCurrentTime = setInterval(() => {
@@ -108,16 +144,13 @@ export function Player() {
         return;
       }
 
-      setTime((prev) => ({
-        ...prev,
-        current: playerRef.current?.currentTime || 0,
-      }));
+      setTime((prev) => ({ ...prev, current: playerRef.current?.currentTime || 0 }));
 
       setSeek(playerRef.current?.currentTime || 0);
     }, 1000);
 
     return () => clearInterval(updateCurrentTime);
-  }, []);
+  }, [playerRef]);
 
   useEffect(() => {
     const handleBuffering = () => {
@@ -137,7 +170,7 @@ export function Player() {
     hls.on(Hls.Events.BUFFER_APPENDED, handleBuffering);
 
     return () => hls.off(Hls.Events.BUFFER_APPENDED, handleBuffering);
-  }, []);
+  }, [playerRef]);
 
   const handleMute = () => {
     if (playerRef.current) {
@@ -151,7 +184,7 @@ export function Player() {
     if (playerRef.current) {
       playerRef.current.volume = 0.3;
     }
-  }, []);
+  }, [playerRef]);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(event.target.value);

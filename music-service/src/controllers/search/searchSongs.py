@@ -1,4 +1,3 @@
-import json
 import yt_dlp
 from models.audio import Search
 
@@ -32,8 +31,5 @@ def search_songs(query: Search):
                     video_entries,
                 )
             )
-
-            # with open("searchResults.json", "w") as f:
-            #     json.dump(get_songs_data, f)
 
             return {"songs": get_songs_data, "music_type": "search"}

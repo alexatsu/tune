@@ -1,29 +1,50 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import useSWR from "swr";
 
-import { useSearch } from "@/shared/hooks";
+import { handleFetch } from "@/shared/utils/functions";
+import { usePlayerContext } from "@/app/(music)/_/providers";
 
 import styles from "./styles.module.scss";
-import { handleFetch } from "@/shared/utils/functions";
+
+type Songs = {
+  id: string;
+  title: string;
+  url: string;
+  cover: string;
+  duration: string;
+};
+
+type SongsData = {
+  songs: Songs[];
+  music_type: string;
+};
 
 function SearchMusic() {
-  const { data, isLoading, setQuery, error, setStartSearch } = useSearch();
+  const { handlePlay, currentTrack, loadPlayerSource } = usePlayerContext();
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [query, setQuery] = useState<string>("");
+  const [startSearch, setStartSearch] = useState<boolean>(false);
+
+  const url = startSearch ? `http://localhost:8000/search?query=${query}` : null;
+  const options = { revalidateOnFocus: false };
+  const { data, error, isLoading } = useSWR<SongsData>(url, handleFetch, options);
 
   const handleSearch = () => {
     setStartSearch(true);
 
-    if (!inputRef.current) return;
-    const inputValue: string = inputRef.current.value;
+    const input = inputRef.current;
+    if (!input) return;
 
-    setQuery(inputValue);
+    setQuery(input.value);
   };
 
   if (error) return <div>{error.message}</div>;
 
   const listenToTemporalSong = async (url: string, title: string, duration: string) => {
     console.log("listen to song", url, title, duration);
+
     const apiUrl = "http://localhost:8000/listen-temporal";
     const response = await handleFetch<{ message: string }>(`${apiUrl}`, "POST", {
       url,
@@ -31,17 +52,19 @@ function SearchMusic() {
       duration,
     });
 
-    if (response?.message === "Song downloaded successfully") {
-      console.log(response, " listen to song");
-      return response;
+    if (
+      response?.message === "Song downloaded successfully" ||
+      response?.message === "Song already exists"
+    ) {
+      currentTrack.current = `http://localhost:8000/audio/temporal/${title}/index.m3u8 `;
+      loadPlayerSource();
+      handlePlay();
     }
-
-    console.log(response, " listen to song");
-    return response;
   };
 
   return (
     <>
+      <button onClick={handlePlay}>Test play</button>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -63,7 +86,9 @@ function SearchMusic() {
             {data?.songs.map(({ id, url, title, duration }) => (
               <li style={{ color: "white" }} key={id}>
                 <button onClick={() => listenToTemporalSong(url, title, duration)}>Listen</button>
-                <span>{title}</span>
+                <span>
+                  {title} {duration}
+                </span>
                 <button onClick={() => console.log("add clicked", url)}>Add</button>
               </li>
             ))}

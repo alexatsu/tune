@@ -1,17 +1,17 @@
-import asyncio
-from datetime import datetime, timedelta
+# import os
+# import shutil
+# import asyncio
+# from datetime import datetime, timedelta
+# from pydantic import BaseModel
 
-import shutil
-
+import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from pydantic import BaseModel
+# from utils.functions import download_audio
+from routes import search
 
-import uvicorn
-
-from utils.functions import download_audio, search_songs
 
 app = FastAPI()
 origins = ["*"]
@@ -25,60 +25,52 @@ app.add_middleware(
 )
 
 app.mount("/audio", StaticFiles(directory="audio"), name="audio")
+app.include_router(search.router)
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
+# @app.get("/search")
+# async def search(query: str = ""):
+#     return search_songs(query)
 
 
-@app.get("/search")
-async def search(query: str = ""):
-    return search_songs(query)
+# class ListenTemporal(BaseModel):
+#     url: str
+#     title: str
+#     duration: str
 
 
-class ListenTemporal(BaseModel):
-    url: str
-    title: str
-    duration: str
+# def audio_exists(folder_name: str) -> bool:
+#     return os.path.exists(folder_name)
 
 
-@app.post("/listen-temporal")
-async def listen_temporal(payload: ListenTemporal) -> dict[str, str | float]:
-    duration = datetime.strptime(payload.duration, "%H:%M:%S")
+# async def delete_temp_audio_after_delay(folder_name: str, total_duration: int) -> None:
+#     await asyncio.sleep(total_duration)
 
-    total_duration = timedelta(
-        hours=duration.hour, minutes=duration.minute, seconds=duration.second
-    ).total_seconds()
-
-    download_audio(payload.url, "temporal")
-
-    folder_path = "audio/temporal"
-
-    asyncio.create_task(
-        delete_temp_audio_after_delay(
-            f"{folder_path}/{payload.title}", total_duration + (10 * 60)
-        )
-    )
-
-    return {"message": "Song downloaded successfully"}
+#     shutil.rmtree(folder_name)
 
 
-async def delete_temp_audio_after_delay(folder_name: str, total_duration: int) -> None:
-    await asyncio.sleep(total_duration)
+# @app.post("/listen-temporal")
+# async def listen_temporal(payload: ListenTemporal) -> dict[str, str | float]:
+#     duration = datetime.strptime(payload.duration, "%H:%M:%S")
 
-    shutil.rmtree(folder_name)
+#     total_duration = timedelta(
+#         hours=duration.hour, minutes=duration.minute, seconds=duration.second
+#     ).total_seconds()
 
+#     if not audio_exists(f"audio/temporal/{payload.title}"):
+#         download_audio(payload.url, "temporal")
 
-# when i click listen on music
-# send from client url+duration to backend
-# download music and store it in temporal
-# delete the music from temporal after duration + 10 minutes
+#         folder_path = "audio/temporal"
 
+#         asyncio.create_task(
+#             delete_temp_audio_after_delay(
+#                 f"{folder_path}/{payload.title}", total_duration + (10 * 60)
+#             )
+#         )
 
-# @app.get("/download")
-# async def download(url: str, duration: int):
-#     return {"message": "Song downloaded successfully"}
+#         return {"message": "Song downloaded successfully"}
+
+#     return {"message": "Song already exists"}
 
 
 if __name__ == "__main__":

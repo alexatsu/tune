@@ -17,7 +17,6 @@ def download_audio(url: str, path: str):
             }
         ],
         "outtmpl":  f"audio/{path}/%(title)s.m4a",
-        # "outtmpl": "audio/saved/%(title)s.m4a",
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
