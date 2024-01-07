@@ -62,6 +62,16 @@ function SearchMusic() {
     }
   };
 
+  const addTrackToMyMusic = () => {
+
+    // When i click on add
+    // i want to add the song to my music
+    // i send req to python server/download track/cut and store it in saved
+    // send response back to client that track added
+    // send query to database to add track to my music
+    // revalidate client with new data
+  };
+
   return (
     <>
       <button onClick={handlePlay}>Test play</button>
