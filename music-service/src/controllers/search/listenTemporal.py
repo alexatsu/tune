@@ -3,12 +3,8 @@ import os
 import shutil
 from datetime import datetime, timedelta
 
-from utils.functions import download_audio
+from utils.functions import download_track
 from models.audio import ListenTemporal
-
-
-def audio_exists(folder_name: str) -> bool:
-    return os.path.exists(folder_name)
 
 
 async def delete_temp_audio_after_delay(folder_name: str, total_duration: int) -> None:
@@ -24,14 +20,14 @@ def listen_temporal(payload: ListenTemporal):
         hours=duration.hour, minutes=duration.minute, seconds=duration.second
     ).total_seconds()
 
-    if not audio_exists(f"audio/temporal/{payload.title}"):
-        download_audio(payload.url, "temporal")
+    if not os.path.exists(f"audio/temporal/{payload.id}"):
+        download_track(payload.url, "temporal")
 
         folder_path = "audio/temporal"
 
         asyncio.create_task(
             delete_temp_audio_after_delay(
-                f"{folder_path}/{payload.title}", total_duration + (10 * 60)
+                f"{folder_path}/{payload.id}", total_duration + (10 * 60)
             )
         )
 

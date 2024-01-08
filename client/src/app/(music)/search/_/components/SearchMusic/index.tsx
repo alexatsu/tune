@@ -42,33 +42,35 @@ function SearchMusic() {
 
   if (error) return <div>{error.message}</div>;
 
-  const listenToTemporalSong = async (url: string, title: string, duration: string) => {
-    console.log("listen to song", url, title, duration);
+  const listenToTemporalSong = async (url: string, id: string, duration: string) => {
+    console.log("listen to song", url, id, duration);
 
     const apiUrl = "http://localhost:8000/listen-temporal";
-    const response = await handleFetch<{ message: string }>(`${apiUrl}`, "POST", {
+    const { message } = await handleFetch<{ message: string }>(`${apiUrl}`, "POST", {
       url,
-      title,
+      id,
       duration,
     });
 
-    if (
-      response?.message === "Song downloaded successfully" ||
-      response?.message === "Song already exists"
-    ) {
-      currentTrack.current = `http://localhost:8000/audio/temporal/${title}/index.m3u8 `;
+    if (message === "Song downloaded successfully" || message === "Song already exists") {
+      currentTrack.current = `http://localhost:8000/audio/temporal/${id}/index.m3u8 `;
       loadPlayerSource();
       handlePlay();
     }
   };
 
-  const addTrackToMyMusic = () => {
+  const addSongToMyMusic = async (url: string, id: string) => {
+    // i send req to python server/download track/cut and store it in saved send response back to client that track added
 
-    // When i click on add
-    // i want to add the song to my music
-    // i send req to python server/download track/cut and store it in saved
-    // send response back to client that track added
+    const { error, message } = await handleFetch<{ message: string; error: string }>(
+      "http://localhost:8000/add-to-my-music",
+      "POST",
+      { url, id }
+    );
+    console.log(error, message);
+
     // send query to database to add track to my music
+
     // revalidate client with new data
   };
 
@@ -95,11 +97,11 @@ function SearchMusic() {
           <ul style={{ listStyle: "none" }}>
             {data?.songs.map(({ id, url, title, duration }) => (
               <li style={{ color: "white" }} key={id}>
-                <button onClick={() => listenToTemporalSong(url, title, duration)}>Listen</button>
+                <button onClick={() => listenToTemporalSong(url, id, duration)}>Listen</button>
                 <span>
                   {title} {duration}
                 </span>
-                <button onClick={() => console.log("add clicked", url)}>Add</button>
+                <button onClick={() => addSongToMyMusic(url, id)}>Add</button>
               </li>
             ))}
           </ul>

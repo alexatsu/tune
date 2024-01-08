@@ -1,10 +1,10 @@
 import subprocess
 import os
-
 import yt_dlp
+import requests
 
 
-def download_audio(url: str, path: str):
+def download_track(url: str, path: str):
     URLS = [url]
 
     ydl_opts = {
@@ -16,19 +16,26 @@ def download_audio(url: str, path: str):
                 "preferredcodec": "aac",
             }
         ],
-        "outtmpl":  f"audio/{path}/%(title)s.m4a",
+        "outtmpl": f"audio/{path}/%(title)s.m4a",
     }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download(URLS)
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl_info:
+        ydl_info.download(URLS)
         filenames = [
-            ydl.prepare_filename(ydl.extract_info(url, download=False)) for url in URLS
+            ydl_info.prepare_filename(ydl_info.extract_info(url, download=False))
+            for url in URLS
         ]
 
     for filename in filenames:
-        file_no_extension = os.path.splitext(filename)[0]
+        ydl_info = ydl_info.extract_info(url, download=False)
+        track_id: str = ydl_info.get("id", None)
+        os.makedirs(f"audio/temporal/{track_id}", exist_ok=True)
 
-        os.makedirs(f"{file_no_extension}", exist_ok=True)
+        thumbnail: str = ydl_info.get("thumbnail", None)
+        response = requests.get(thumbnail)
+        if response.status_code == 200:
+            with open(f"audio/temporal/{track_id}/thumbnail.jpg", "wb") as f:
+                f.write(response.content)
 
         subprocess.run(
             [
@@ -45,7 +52,7 @@ def download_audio(url: str, path: str):
                 "0",
                 "-f",  # format
                 "hls",
-                f"{file_no_extension}/index.m3u8",
+                f"audio/temporal/{track_id}/index.m3u8",
             ]
         )
 

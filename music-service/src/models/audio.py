@@ -7,5 +7,9 @@ class Search(BaseModel):
 
 class ListenTemporal(BaseModel):
     url: str
-    title: str
+    id: str
     duration: str
+
+class AddMusic(BaseModel):
+    url: str
+    id: str
