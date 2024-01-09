@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import useSWR from "swr";
 
 import { handleFetch } from "@/shared/utils/functions";
@@ -21,7 +22,12 @@ type SongsData = {
   music_type: string;
 };
 
-function SearchMusic() {
+//TODO:
+// store api in .env
+// improve error handling in ui
+// fix if input is empty
+
+function SearchSongs() {
   const { handlePlay, currentTrack, loadPlayerSource } = usePlayerContext();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState<string>("");
@@ -31,12 +37,15 @@ function SearchMusic() {
   const options = { revalidateOnFocus: false };
   const { data, error, isLoading } = useSWR<SongsData>(url, handleFetch, options);
 
-  const handleSearch = () => {
-    setStartSearch(true);
+  const { data: session } = useSession();
 
+  const handleSearch = () => {
     const input = inputRef.current;
     if (!input) return;
 
+    if (input.value.trim() === "") return;
+
+    setStartSearch(true);
     setQuery(input.value);
   };
 
@@ -46,6 +55,7 @@ function SearchMusic() {
     console.log("listen to song", url, id, duration);
 
     const apiUrl = "http://localhost:8000/listen-temporal";
+
     const { message } = await handleFetch<{ message: string }>(`${apiUrl}`, "POST", {
       url,
       id,
@@ -59,17 +69,45 @@ function SearchMusic() {
     }
   };
 
-  const addSongToMyMusic = async (url: string, id: string) => {
+  const addSongToMyMusic = async (url: string, id: string, title: string, duration: string) => {
     // i send req to python server/download track/cut and store it in saved send response back to client that track added
+    type SaveAndStoreProps = {
+      message: string;
+      metadata: {
+        url: string;
+        id: string;
+        title: string;
+        duration: string;
+      };
+      error: string;
+    };
 
-    const { error, message } = await handleFetch<{ message: string; error: string }>(
-      "http://localhost:8000/add-to-my-music",
+    const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
+      "http://localhost:8000/save-and-store",
       "POST",
       { url, id }
     );
-    console.log(error, message);
+
+    if (saveAndStoreSong.error) {
+      console.log(saveAndStoreSong.error);
+      return;
+    }
+
+    if (saveAndStoreSong.message === "Song already exists in saved") {
+      console.log("Song already exists in saved");
+      return;
+    }
+
+    const useEmail = session?.user?.email;
 
     // send query to database to add track to my music
+    const addSongDataToDB = await handleFetch<{ message: string }>(
+      "http://localhost:3000/api/songs/add",
+      "POST",
+      { url, id, title, duration, email: useEmail }
+    );
+
+    console.log(addSongDataToDB.message, "added to my music in db");
 
     // revalidate client with new data
   };
@@ -77,13 +115,8 @@ function SearchMusic() {
   return (
     <>
       <button onClick={handlePlay}>Test play</button>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          setStartSearch(true);
-        }}
-      >
-        <input type="text" placeholder="search music" className={styles.input} ref={inputRef} />
+      <form onSubmit={(e) => e.preventDefault()}>
+        <input type="text" placeholder="search songs" className={styles.input} ref={inputRef} />
 
         <button disabled={isLoading} type="submit" onClick={handleSearch}>
           Search
@@ -101,7 +134,7 @@ function SearchMusic() {
                 <span>
                   {title} {duration}
                 </span>
-                <button onClick={() => addSongToMyMusic(url, id)}>Add</button>
+                <button onClick={() => addSongToMyMusic(url, id, title, duration)}>Add</button>
               </li>
             ))}
           </ul>
@@ -111,4 +144,4 @@ function SearchMusic() {
   );
 }
 
-export { SearchMusic };
+export { SearchSongs };

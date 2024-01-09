@@ -6,6 +6,7 @@ import Hls from "hls.js";
 import { usePlayerContext } from "../../providers";
 
 import styles from "./styles.module.scss";
+import { useSession } from "next-auth/react";
 
 //TODO:
 // - error handling
@@ -26,6 +27,7 @@ const hls = new Hls();
 
 export function Player() {
   const { playerRef, handlePlay, currentTrack, loadPlayerSource } = usePlayerContext();
+  const { data: session } = useSession();
   // const { test, setTest } = usePlayerStore();
   // const playerRef = useRef<HTMLVideoElement>(null);
   const sources = useRef<string[]>([]);
@@ -42,7 +44,7 @@ export function Player() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch("/test.json");
+      const response = await fetch(`http://localhost:3000/api/songs/get-all/${session?.user?.email}`);
       const data = await response.json();
 
       sources.current = data.songs;
@@ -64,7 +66,7 @@ export function Player() {
     })();
 
     return () => hls.destroy();
-  }, [playerRef, sources, currentTrack]);
+  }, [playerRef, sources, currentTrack, session]);
 
   // const loadPlayerSource = useCallback(async () => {
   //   if (playerRef.current === null) {

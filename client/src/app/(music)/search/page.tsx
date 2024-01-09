@@ -1,9 +1,9 @@
-import { SearchMusic } from "./_/components/SearchMusic";
+import { SearchSongs } from "./_/components/SearchSongs";
 
 export default function Page() {
   return (
     <main>
-      <SearchMusic />
+      <SearchSongs />
     </main>
   );
 }

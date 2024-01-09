@@ -10,6 +10,6 @@ class ListenTemporal(BaseModel):
     id: str
     duration: str
 
-class AddMusic(BaseModel):
+class SaveAndStore(BaseModel):
     url: str
     id: str

@@ -3,8 +3,10 @@ import os
 import yt_dlp
 import requests
 
+from .formatDuration import format_duration
 
-def download_track(url: str, path: str):
+
+def download_song(url: str, path: str):
     URLS = [url]
 
     ydl_opts = {
@@ -29,14 +31,28 @@ def download_track(url: str, path: str):
     for filename in filenames:
         ydl_info = ydl_info.extract_info(url, download=False)
         track_id: str = ydl_info.get("id", None)
-        os.makedirs(f"audio/temporal/{track_id}", exist_ok=True)
+        file_path = f"audio/{path}/{track_id}"
+        os.makedirs(file_path, exist_ok=True)
 
+        # save thumbnail
         thumbnail: str = ydl_info.get("thumbnail", None)
         response = requests.get(thumbnail)
         if response.status_code == 200:
-            with open(f"audio/temporal/{track_id}/thumbnail.jpg", "wb") as f:
+            with open(f"{file_path}/thumbnail.jpg", "wb") as f:
                 f.write(response.content)
 
+        # save metadata into json
+        metadata = {
+            "id": ydl_info["id"],
+            "title": ydl_info["title"],
+            "url": ydl_info["original_url"],
+            "duration": format_duration(ydl_info.get("duration", None)),
+        }
+
+        with open(f"{file_path}/metadata.json", "w") as f:
+            f.write(str(metadata))
+
+        # convert song to hls and save it
         subprocess.run(
             [
                 "ffmpeg",  # command
@@ -52,7 +68,7 @@ def download_track(url: str, path: str):
                 "0",
                 "-f",  # format
                 "hls",
-                f"audio/temporal/{track_id}/index.m3u8",
+                f"{file_path}/index.m3u8",
             ]
         )
 
