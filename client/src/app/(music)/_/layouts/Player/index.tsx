@@ -1,37 +1,27 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import useSWR from "swr";
+
 import Hls from "hls.js";
 
+import { SongsResponse } from "../../types";
 import { usePlayerContext } from "../../providers";
 
 import styles from "./styles.module.scss";
-import { useSession } from "next-auth/react";
 
 //TODO:
 // - error handling
 // - loading states
 // - make play/pause changing
-// - connect to api
-// - move some player states to global state
-
-// const apiUrl = "http://localhost:8000/audio/saved/";
-// const sources = [
-//   `${apiUrl}Traitors/index.m3u8`,
-//   `${apiUrl}NF - The Search/index.m3u8`,
-//   `${apiUrl}ONICKS - ＂Illuminati＂ (Official Lyric Video)/index.m3u8`,
-//   `${apiUrl}Unholy (Sam Smith) 【covered by Anna ft. @chloebreez】｜ dual POV ver/index.m3u8`,
-// ];
 
 const hls = new Hls();
 
 export function Player() {
-  const { playerRef, handlePlay, currentTrack, loadPlayerSource } = usePlayerContext();
   const { data: session } = useSession();
-  // const { test, setTest } = usePlayerStore();
-  // const playerRef = useRef<HTMLVideoElement>(null);
-  const sources = useRef<string[]>([]);
-  // const currentTrack = useRef<string | null>(null);
+  const { playerRef, handlePlay, currentTrack, loadPlayerSource } = usePlayerContext();
+  const sources = useRef<SongsResponse["songs"] | null>([]);
   const [time, setTime] = useState({
     current: 0,
     buffered: 0,
@@ -42,67 +32,70 @@ export function Player() {
 
   const [seek, setSeek] = useState<number>(0);
 
+  const fetchAllMusic = async () => {
+    const response = await fetch("http://localhost:3000/api/songs/get-all", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: session?.user?.email }),
+    });
+
+    return response.json();
+  };
+
+  const { data, error, isLoading } = useSWR<SongsResponse>(
+    `http://localhost:3000/api/songs/get-all`,
+    fetchAllMusic,
+    { revalidateOnFocus: false }
+  );
+
   useEffect(() => {
-    (async () => {
-      const response = await fetch(`http://localhost:3000/api/songs/get-all/${session?.user?.email}`);
-      const data = await response.json();
+    if (!data || !data.songs) {
+      console.log("response is missing");
+      return;
+    }
 
-      sources.current = data.songs;
-      currentTrack.current = data.songs[0];
+    sources.current = data.songs;
+    currentTrack.current = data.songs[0];
 
-      console.log(sources.current, "sources");
-      console.log(currentTrack.current, "current track");
+    console.log(sources.current, "sources");
+    console.log(currentTrack.current, "current track");
 
-      hls.attachMedia(playerRef.current as HTMLVideoElement);
-      hls.loadSource(sources.current[0]);
+    const { storage, urlId } = currentTrack.current;
+    hls.attachMedia(playerRef.current as HTMLVideoElement);
+    hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
 
-      hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-        console.log("video and hls.js are now bound together !");
-      });
+    hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+      console.log("video and hls.js are now bound together !");
+    });
 
-      hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-        console.log("manifest loaded, found " + data.levels.length + " quality level");
-      });
-    })();
+    hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+      console.log("manifest loaded, found " + data.levels.length + " quality level");
+    });
 
     return () => hls.destroy();
-  }, [playerRef, sources, currentTrack, session]);
-
-  // const loadPlayerSource = useCallback(async () => {
-  //   if (playerRef.current === null) {
-  //     console.log("missing player reference");
-  //     return;
-  //   }
-
-  //   if (currentTrack.current === null) {
-  //     console.log("no current track to load");
-  //     return;
-  //   }
-
-  //   hls.attachMedia(playerRef.current);
-  //   hls.loadSource(currentTrack.current);
-  // }, [playerRef]);
-
-  // const handlePlay = () => playerRef.current?.play();
+  }, [currentTrack, playerRef, data]);
 
   const handlePause = () => playerRef.current?.pause();
 
   const handleNextTrack = useCallback(() => {
-    if (currentTrack.current === null) {
+    if (currentTrack.current === undefined) {
       console.log("no current next track");
       return;
     }
 
-    const source = sources.current;
-
-    const trackIndex = source.indexOf(currentTrack.current);
-
-    if (trackIndex === source.length - 1) {
-      currentTrack.current = source[0];
+    if (!sources.current) {
+      console.log("no source to handle next track");
+      return;
     }
 
-    if (trackIndex < source.length - 1) {
-      currentTrack.current = source[trackIndex + 1];
+    const trackIndex = sources.current.indexOf(currentTrack.current);
+
+    if (trackIndex === sources.current.length - 1) {
+      currentTrack.current = sources.current[0];
+    }
+
+    if (trackIndex < sources.current.length - 1) {
+      currentTrack.current = sources.current[trackIndex + 1];
     }
 
     loadPlayerSource();
@@ -110,21 +103,23 @@ export function Player() {
   }, [currentTrack, loadPlayerSource, handlePlay]);
 
   const handlePreviousTrack = () => {
-    if (currentTrack.current === null) {
+    if (currentTrack.current === undefined) {
       console.log("no current previous track");
       return;
     }
 
-    const source = sources.current;
-
-    const trackIndex = source.indexOf(currentTrack.current);
+    if (!sources.current) {
+      console.log("no source to handle previous track");
+      return;
+    }
+    const trackIndex = sources.current.indexOf(currentTrack.current);
 
     if (trackIndex === 0) {
-      currentTrack.current = source[source.length - 1];
+      currentTrack.current = sources.current[sources.current.length - 1];
     }
 
     if (trackIndex > 0) {
-      currentTrack.current = source[trackIndex - 1];
+      currentTrack.current = sources.current[trackIndex - 1];
     }
 
     loadPlayerSource();
@@ -154,25 +149,30 @@ export function Player() {
     return () => clearInterval(updateCurrentTime);
   }, [playerRef]);
 
+  const handleBuffering = useCallback(() => {
+    if (playerRef.current) {
+      const buffered = playerRef.current.buffered;
+      if (buffered.length > 0) {
+        setTime((prev) => ({
+          ...prev,
+          buffered: buffered.end(buffered.length - 1),
+        }));
+      }
+    }
+  }, [playerRef]);
+
   useEffect(() => {
-    const handleBuffering = () => {
-      if (playerRef.current) {
-        const buffered = playerRef.current.buffered; // current buffer chunks
-        if (buffered.length > 0) {
-          //buffered.end(buffered.length - 1)
-          //is the end time of the last buffer chunk in seconds
-          setTime((prev) => ({
-            ...prev,
-            buffered: buffered.end(buffered.length - 1),
-          }));
-        }
+    const player = playerRef.current;
+    if (player) {
+      player.addEventListener("progress", handleBuffering);
+    }
+
+    return () => {
+      if (player) {
+        player.removeEventListener("progress", handleBuffering);
       }
     };
-
-    hls.on(Hls.Events.BUFFER_APPENDED, handleBuffering);
-
-    return () => hls.off(Hls.Events.BUFFER_APPENDED, handleBuffering);
-  }, [playerRef]);
+  }, [playerRef, handleBuffering]);
 
   const handleMute = () => {
     if (playerRef.current) {

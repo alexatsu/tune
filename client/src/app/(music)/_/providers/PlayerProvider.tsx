@@ -3,10 +3,12 @@
 import { createContext, useContext, useRef } from "react";
 import Hls from "hls.js";
 
+import type { Song } from "../types";
+
 type PlayerContext = {
   playerRef: React.RefObject<HTMLVideoElement>;
   handlePlay: () => void;
-  currentTrack: React.MutableRefObject<string | null>;
+  currentTrack: React.MutableRefObject<Song | undefined>;
   loadPlayerSource: () => void;
 };
 
@@ -27,7 +29,7 @@ const hls = new Hls();
 function PlayerProvider({ children }: { children: React.ReactNode }) {
   const playerRef = useRef<HTMLVideoElement>(null);
 
-  const currentTrack = useRef<string | null>(null);
+  const currentTrack = useRef<Song | undefined>(undefined);
 
   const handlePlay = () => playerRef.current?.play();
 
@@ -41,10 +43,11 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
       console.log("no current track to load");
       return;
     }
-
+    console.log(currentTrack.current, "here is the current track in load source");
+    const { storage, urlId } = currentTrack.current as Song;
     hls.attachMedia(playerRef.current);
-    hls.loadSource(currentTrack.current);
-    console.log("loadPlayerSource is finished ")
+    hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+    console.log("loadPlayerSource is finished ");
   };
 
   const values: PlayerContext = {

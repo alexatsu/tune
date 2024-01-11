@@ -1,13 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/shared/services";
-import { NextApiRequest } from "next";
 
-export async function GET(req: NextApiRequest, { params }: { params: { email: string } }) {
-  const email = req.query.email as string;
-  console.log(email, "triggered");
+export async function POST(req: NextRequest) {
+  const { email } = await req.json();
+
+  if (!email) {
+    return NextResponse.json(
+      {
+        songs: [],
+        message: "Email is required",
+      },
+      { status: 400 }
+    );
+  }
+
+
   const userSongs = await db.user.findUnique({
-    where: { email: email },
-    include: {
+    where: { email },
+    select: {
       allSongs: true,
     },
   });

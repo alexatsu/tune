@@ -1,31 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useSession } from "next-auth/react";
+
 import useSWR from "swr";
+import { useSWRConfig } from "swr";
 
 import { handleFetch } from "@/shared/utils/functions";
 import { usePlayerContext } from "@/app/(music)/_/providers";
+import { SongsResponse } from "@/app/(music)/_/types";
 
 import styles from "./styles.module.scss";
-
-type Songs = {
-  id: string;
-  title: string;
-  url: string;
-  cover: string;
-  duration: string;
-};
-
-type SongsData = {
-  songs: Songs[];
-  music_type: string;
-};
 
 //TODO:
 // store api in .env
 // improve error handling in ui
-// fix if input is empty
 
 function SearchSongs() {
   const { handlePlay, currentTrack, loadPlayerSource } = usePlayerContext();
@@ -35,8 +24,8 @@ function SearchSongs() {
 
   const url = startSearch ? `http://localhost:8000/search?query=${query}` : null;
   const options = { revalidateOnFocus: false };
-  const { data, error, isLoading } = useSWR<SongsData>(url, handleFetch, options);
-
+  const { data, error, isLoading } = useSWR<SongsResponse>(url, handleFetch, options);
+  const { mutate } = useSWRConfig();
   const { data: session } = useSession();
 
   const handleSearch = () => {
@@ -52,25 +41,38 @@ function SearchSongs() {
   if (error) return <div>{error.message}</div>;
 
   const listenToTemporalSong = async (url: string, id: string, duration: string) => {
-    console.log("listen to song", url, id, duration);
+    console.log(id, "here is the id");
+    const { message } = await handleFetch<{ message: string }>(
+      "http://localhost:8000/listen-temporal",
+      "POST",
+      {
+        url,
+        id,
+        duration,
+      }
+    );
 
-    const apiUrl = "http://localhost:8000/listen-temporal";
+    if (
+      message === "Song downloaded successfully" ||
+      message === "Song already exists in temporal, listening to it"
+    ) {
+      currentTrack.current = {
+        id: "",
+        url: "",
+        title: "",
+        duration: "",
+        userId: "",
+        urlId: id,
+        storage: "temporal",
+        addedAt: new Date(),
+      };
 
-    const { message } = await handleFetch<{ message: string }>(`${apiUrl}`, "POST", {
-      url,
-      id,
-      duration,
-    });
-
-    if (message === "Song downloaded successfully" || message === "Song already exists") {
-      currentTrack.current = `http://localhost:8000/audio/temporal/${id}/index.m3u8 `;
       loadPlayerSource();
       handlePlay();
     }
   };
 
   const addSongToMyMusic = async (url: string, id: string, title: string, duration: string) => {
-    // i send req to python server/download track/cut and store it in saved send response back to client that track added
     type SaveAndStoreProps = {
       message: string;
       metadata: {
@@ -88,28 +90,15 @@ function SearchSongs() {
       { url, id }
     );
 
-    if (saveAndStoreSong.error) {
-      console.log(saveAndStoreSong.error);
-      return;
-    }
+    const userEmail = session?.user?.email;
 
-    if (saveAndStoreSong.message === "Song already exists in saved") {
-      console.log("Song already exists in saved");
-      return;
-    }
-
-    const useEmail = session?.user?.email;
-
-    // send query to database to add track to my music
     const addSongDataToDB = await handleFetch<{ message: string }>(
       "http://localhost:3000/api/songs/add",
       "POST",
-      { url, id, title, duration, email: useEmail }
+      { url, id, title, duration, email: userEmail }
     );
 
-    console.log(addSongDataToDB.message, "added to my music in db");
-
-    // revalidate client with new data
+    mutate("http://localhost:3000/api/songs/get-all");
   };
 
   return (
@@ -128,7 +117,7 @@ function SearchSongs() {
           <div style={{ color: "white" }}>Loading...</div>
         ) : (
           <ul style={{ listStyle: "none" }}>
-            {data?.songs.map(({ id, url, title, duration }) => (
+            {data?.songs?.map(({ id, url, title, duration }) => (
               <li style={{ color: "white" }} key={id}>
                 <button onClick={() => listenToTemporalSong(url, id, duration)}>Listen</button>
                 <span>

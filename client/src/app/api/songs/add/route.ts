@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       duration,
       url,
       urlId: id,
+      storage: "saved",
       addedAt: new Date(),
       userId: findUser.id,
     },
