@@ -45,11 +45,7 @@ function SearchSongs() {
     const { message } = await handleFetch<{ message: string }>(
       "http://localhost:8000/listen-temporal",
       "POST",
-      {
-        url,
-        id,
-        duration,
-      }
+      { url, id, duration }
     );
 
     if (
@@ -103,7 +99,6 @@ function SearchSongs() {
 
   return (
     <>
-      <button onClick={handlePlay}>Test play</button>
       <form onSubmit={(e) => e.preventDefault()}>
         <input type="text" placeholder="search songs" className={styles.input} ref={inputRef} />
 

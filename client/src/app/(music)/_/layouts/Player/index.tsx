@@ -12,9 +12,9 @@ import { usePlayerContext } from "../../providers";
 import styles from "./styles.module.scss";
 
 //TODO:
-// - error handling
 // - loading states
 // - make play/pause changing
+// - error handling
 
 const hls = new Hls();
 
@@ -49,11 +49,7 @@ export function Player() {
   );
 
   useEffect(() => {
-    if (!data || !data.songs) {
-      console.log("response is missing");
-      return;
-    }
-
+    if (!data) return;
     sources.current = data.songs;
     currentTrack.current = data.songs[0];
 
@@ -64,11 +60,11 @@ export function Player() {
     hls.attachMedia(playerRef.current as HTMLVideoElement);
     hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
 
-    hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+    hls.on(Hls.Events.MEDIA_ATTACHED, () => {
       console.log("video and hls.js are now bound together !");
     });
 
-    hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+    hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
       console.log("manifest loaded, found " + data.levels.length + " quality level");
     });
 
@@ -209,6 +205,7 @@ export function Player() {
       setTime((prev) => ({ ...prev, current: seekTime }));
     }
   };
+
 
   return (
     <div className={styles.playerContainer}>
