@@ -99,7 +99,7 @@ function SearchSongs() {
 
   return (
     <>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
         <input type="text" placeholder="search songs" className={styles.input} ref={inputRef} />
 
         <button disabled={isLoading} type="submit" onClick={handleSearch}>

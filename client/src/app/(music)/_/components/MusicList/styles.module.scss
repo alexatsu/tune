@@ -9,7 +9,7 @@
   list-style: none;
   color: $text;
   height: calc(100% - 125px);
-  padding: 1rem 1rem;
+  padding: 1rem 0rem;
 
   overflow-y: auto;
   scrollbar-width: thin;
@@ -28,21 +28,74 @@
     width: 4px;
   }
 
-  //for testing
   & > li {
     background-color: $widget-bg;
-    font-size: 0.8rem;
+    font-size: 1;
     margin-bottom: 20px;
-    padding: 0.8rem 1rem;
+    padding: 0.6rem 1.4rem;
     border-radius: 1rem;
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1rem;
 
-    & > img {
-      object-fit: cover;
-      border-radius: 5px;
+    .leftSection {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .imageBlock {
+        position: relative;
+        width: 40px;
+        height: 40px;
+
+        .playing {
+          opacity: 1;
+        }
+
+        .notPlaying {
+          opacity: 0;
+          transition: opacity 0.15s ease-out;
+          &:hover {
+            display: block;
+            opacity: 1;
+          }
+        }
+
+        & svg {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          transition: opacity 0.15s ease-out;
+        }
+
+        & > img {
+          object-fit: cover;
+          border-radius: 5px;
+        }
+      }
+    }
+
+    .rightSection {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      & svg {
+        cursor: pointer;
+
+        path {
+          transition: 0.15s ease-out;
+        }
+
+        &:hover {
+          path {
+            stroke: $accent;
+          }
+        }
+      }
     }
   }
 }

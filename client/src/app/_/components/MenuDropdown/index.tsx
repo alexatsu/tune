@@ -29,7 +29,12 @@ export function MenuDropdown() {
       <Menu onClick={() => setIsOpen(true)} />
 
       <ul className={isOpen ? styles.ulOpen : styles.ul} ref={dropdownRef}>
-        <li onClick={() => signOut({ callbackUrl: "/" })}>Sign out</li>
+        <li>
+          <span>Appearance</span>
+        </li>
+        <li onClick={() => signOut({ callbackUrl: "/" })}>
+          <span>Sign out</span>
+        </li>
       </ul>
     </div>
   );

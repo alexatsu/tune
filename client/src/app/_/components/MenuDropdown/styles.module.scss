@@ -4,7 +4,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  
+
   .ul {
     position: absolute;
     color: $text;
@@ -18,8 +18,27 @@
 
   .ulOpen {
     @extend .ul;
+    background-color: $bg-alt;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
     display: block;
     animation: fadeIn 0.15s ease;
+    top: 40px;
+    right: 0px;
+
+    & li {
+      cursor: pointer;
+      padding: 0.8rem;
+
+      & span {
+        color: $text;
+        transition: color 0.15s ease-out;
+      }
+
+      &:hover span {
+        color: $accent;
+      }
+    }
   }
 }
 
