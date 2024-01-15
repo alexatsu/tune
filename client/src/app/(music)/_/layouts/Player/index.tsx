@@ -14,6 +14,7 @@ import { useSongs } from "../../hooks";
 // - loading states
 // - make play/pause changing
 // - error handling
+// - fix max attributes
 
 const hls = new Hls();
 
@@ -195,7 +196,8 @@ export function Player() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  console.log(playerRef.current, "here is the player");
+
+
   return (
     <div className={styles.playerContainer}>
       <button onClick={handlePlay}>Play</button>
