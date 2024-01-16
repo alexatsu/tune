@@ -52,11 +52,14 @@
 
         .playing {
           opacity: 1;
+          cursor: pointer;
         }
 
         .notPlaying {
           opacity: 0;
           transition: opacity 0.15s ease-out;
+          cursor: pointer;
+
           &:hover {
             display: block;
             opacity: 1;
