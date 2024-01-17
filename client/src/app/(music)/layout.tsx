@@ -5,14 +5,12 @@ import styles from "./layout.module.scss";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <PlayerProvider>
-        <div className={styles.container}>
-          <Sidebar />
-          {children}
-        </div>
-        <Player />
-      </PlayerProvider>
-    </>
+    <PlayerProvider>
+      <main className={styles.container}>
+        <Sidebar />
+        {children}
+      </main>
+      <Player />
+    </PlayerProvider>
   );
 }

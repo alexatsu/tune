@@ -193,10 +193,14 @@ export function Player() {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const convertStringDurationToNumber = (duration: string | undefined) => {
+    if (!duration) return 0;
+  
+    const [hours, minutes, seconds] = duration.split(":");
+    return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
+  };
 
+  const duration = convertStringDurationToNumber(currentTrack.current?.duration);
 
   return (
     <div className={styles.playerContainer}>
@@ -208,16 +212,10 @@ export function Player() {
       <button onClick={handleMute}>Mute</button>
       <input type="range" value={isMuted ? 0 : volume * 100} onChange={handleVolumeChange} />
 
-      <progress value={time.current} max={playerRef.current?.duration}></progress>
-      <progress value={time.buffered} max={playerRef.current?.duration}></progress>
+      <progress value={time.current} max={duration}></progress>
+      <progress value={time.buffered} max={duration}></progress>
 
-      <input
-        type="range"
-        min={0}
-        max={playerRef.current?.duration}
-        value={seek}
-        onChange={handleSeekTrack}
-      />
+      <input type="range" min={0} max={duration} value={seek} onChange={handleSeekTrack} />
       <video
         style={{ display: "none" }}
         ref={playerRef}

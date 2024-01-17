@@ -12,6 +12,7 @@
     border: none;
     border-radius: 10px;
     transition: 0.15s outline ease-out;
+    color: $text;
 
     &:focus {
       outline: 1px solid $accent;

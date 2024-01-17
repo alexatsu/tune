@@ -21,7 +21,7 @@ def listen_temporal(payload: ListenTemporal):
     ).total_seconds()
 
     if not os.path.exists(f"audio/temporal/{payload.id}"):
-        download_song(payload.url, "temporal")
+        metadata = download_song(payload.url, "temporal")
 
         folder_path = "audio/temporal"
 
@@ -31,6 +31,6 @@ def listen_temporal(payload: ListenTemporal):
             )
         )
 
-        return {"message": "Song downloaded successfully"}
+        return {"message": "Song downloaded successfully", "metadata": metadata}
 
     return {"message": "Song already exists in temporal, listening to it"}

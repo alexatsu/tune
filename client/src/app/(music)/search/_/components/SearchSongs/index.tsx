@@ -41,12 +41,23 @@ function SearchSongs() {
   if (error) return <div>{error.message}</div>;
 
   const listenToTemporalSong = async (url: string, id: string, duration: string) => {
-    console.log(id, "here is the id");
-    const { message } = await handleFetch<{ message: string }>(
+    type ListenTemporal = {
+      message: string;
+      metadata: {
+        url: string;
+        id: string;
+        title: string;
+        duration: string;
+      };
+    };
+    const response = await handleFetch<ListenTemporal>(
       "http://localhost:8000/listen-temporal",
       "POST",
       { url, id, duration }
     );
+
+    console.log(response, "hrer is the response");
+    const { message, metadata } = response;
 
     if (
       message === "Song downloaded successfully" ||
@@ -56,7 +67,7 @@ function SearchSongs() {
         id: "",
         url: "",
         title: "",
-        duration: "",
+        duration: metadata.duration,
         userId: "",
         urlId: id,
         storage: "temporal",
@@ -102,7 +113,12 @@ function SearchSongs() {
       <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
         <input type="text" placeholder="search songs" className={styles.input} ref={inputRef} />
 
-        <button disabled={isLoading} className={styles.buttonSearch} type="submit" onClick={handleSearch}>
+        <button
+          disabled={isLoading}
+          className={styles.buttonSearch}
+          type="submit"
+          onClick={handleSearch}
+        >
           Search
         </button>
       </form>

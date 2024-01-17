@@ -8,6 +8,7 @@ import type { Song } from "../types";
 type PlayerContext = {
   playerRef: React.RefObject<HTMLVideoElement>;
   handlePlay: () => void;
+  handlePlayById: (song: Song) => void;
   handlePause: () => void;
   currentTrack: React.MutableRefObject<Song | undefined>;
   loadPlayerSource: () => void;
@@ -41,6 +42,14 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
     setIsPlaying(true);
   };
 
+  const handlePlayById = (song: Song) => {
+    currentTrack.current = song;
+    setCurrentState(song);
+    loadPlayerSource();
+    playerRef.current?.play();
+    setIsPlaying(true);
+  }
+
   const handlePause = () => {
     playerRef.current?.pause();
     setIsPlaying(false);
@@ -56,6 +65,7 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
       console.log("no current track to load");
       return;
     }
+    
     console.log(currentTrack.current, "here is the current track in load source");
     const { storage, urlId } = currentTrack.current as Song;
     hls.attachMedia(playerRef.current);
@@ -66,6 +76,7 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
   const values: PlayerContext = {
     playerRef,
     handlePlay,
+    handlePlayById,
     handlePause,
     currentTrack,
     loadPlayerSource,

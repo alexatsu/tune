@@ -14,65 +14,64 @@ const { Play, Pause, ThreeDots } = playerIcons;
 export function MusicList() {
   const { data: session } = useSession();
   const { isLoading, songs } = useSongs(session);
-  const { isPlaying, handlePlay, handlePause, currentState } = usePlayerContext();
+  const { isPlaying, handlePlayById, handlePause, currentState } = usePlayerContext();
 
-  const renderPlayButton = (urlId: Song["urlId"]) => {
-    const ifIdIsCurrentTrack = urlId === currentState?.urlId;
+  const renderPlayButton = (song: Song) => {
+    const ifIdIsCurrentTrack = song.urlId === currentState?.urlId;
+
+    const playButton = (
+      <div className={styles.notPlaying} onClick={() => handlePlayById(song)}>
+        <Play />
+      </div>
+    );
+    const pauseButton = (
+      <div className={styles.playing} onClick={() => handlePause()}>
+        <Pause />
+      </div>
+    );
 
     if (!isPlaying && !ifIdIsCurrentTrack) {
-      return (
-        <div className={styles.notPlaying}>
-          <Play />
-        </div>
-      );
-    } else if (!isPlaying && ifIdIsCurrentTrack) {
-      return (
-        <div className={styles.notPlaying}>
-          <Play />
-        </div>
-      );
-    } else if (isPlaying && ifIdIsCurrentTrack) {
-      return (
-        <div className={styles.playing}>
-          <Pause />
-        </div>
-      );
+      return playButton;
+    }
+    if (!isPlaying && ifIdIsCurrentTrack) {
+      return playButton;
+    }
+    if (isPlaying && ifIdIsCurrentTrack) {
+      return pauseButton;
     } else {
-      return (
-        <div className={styles.notPlaying}>
-          <Play />
-        </div>
-      );
+      return playButton;
     }
   };
 
+  if (isLoading) return <div>Loading...</div>;
+
   return (
-    <main className={styles.main}>
+    <div className={styles.main}>
       <ul className={styles.musicList}>
-        {songs?.map(({ urlId, title, duration }) => (
-          <li key={urlId} className={styles.musicListItem}>
+        {songs?.map((song) => (
+          <li key={song.urlId} className={styles.musicListItem}>
             <div className={styles.leftSection}>
               <div className={styles.imageBlock}>
-                {renderPlayButton(urlId)}
+                {renderPlayButton(song)}
                 <Image
-                  src={`http://localhost:8000/audio/saved/${urlId}/thumbnail.jpg`}
-                  alt={title}
+                  src={`http://localhost:8000/audio/saved/${song.urlId}/thumbnail.jpg`}
+                  alt={song.title}
                   width={40}
                   height={40}
                   unoptimized
                 />
               </div>
 
-              <span>{title}</span>
+              <span>{song.title}</span>
             </div>
 
             <div className={styles.rightSection}>
-              <span>{duration}</span>
+              <span>{song.duration}</span>
               <ThreeDots />
             </div>
           </li>
         ))}
       </ul>
-    </main>
+    </div>
   );
 }

@@ -73,3 +73,4 @@ def download_song(url: str, path: str):
         )
 
         os.remove(filename)
+        return metadata

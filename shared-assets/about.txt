@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Qwitcher Grypen
+- Font Author: Copyright 2007-2021 The Qwitcher Grypen Project Authors (https://github.com/googlefonts/qwitcher-grypen)
+- Font Source: http://fonts.gstatic.com/s/qwitchergrypen/v6/pxiZypclp9tDilN9RrC5BSI1dZmT9ExkqkSsrvNXiA.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))

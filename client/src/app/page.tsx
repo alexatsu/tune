@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Hls from "hls.js";
 import Link from "next/link";
 
 import styles from "./page.module.scss";
@@ -13,14 +12,7 @@ export default async function Page() {
   // if (session) {
   //   redirect("/music");
   // }
-  //player example
-  // const [theme, setTheme] = useState("dark");
-  // useEffect(() => {
-  //   const video = document.getElementById("video") as HTMLVideoElement;
-  //   const hls = new Hls();
-  //   hls.loadSource("http://localhost:8000/audio/NF - The Search/index.m3u8");
-  //   hls.attachMedia(video);
-  // }, []);
+
   //themes example
   // const variableRef = useRef<string>();
   // useEffect(() => {
