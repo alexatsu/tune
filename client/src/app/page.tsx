@@ -52,7 +52,6 @@ export default async function Page() {
         </Link>
       </section>
 
-      {/* themes part */}
       {/* <section style={{ backgroundColor: "white", height: "100px" }}>
         <input
           onChange={() => {
@@ -77,7 +76,6 @@ export default async function Page() {
           checked={theme === "dark"}
         />
       </section> */}
-      {/* video part */}
       {/* <video controls width={320} height={240} id="video"></video> */}
     </main>
   );
