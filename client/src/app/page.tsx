@@ -3,12 +3,12 @@ import Link from "next/link";
 
 import styles from "./page.module.scss";
 
-import { getServerSession } from "next-auth";
+import { Session, getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 export default async function Page() {
-  // const session = await getServerSession();
-
+  const session = (await getServerSession(authOptions)) as Session;
   // if (session) {
   //   redirect("/music");
   // }
@@ -47,9 +47,15 @@ export default async function Page() {
           <h1>Tune</h1>
         </div>
 
-        <Link href={"/signin"}>
-          <button className={styles.connect}>Connect</button>
-        </Link>
+        {session ? (
+          <Link href="/allmusic">
+            <button className={styles.connected}>Connected, go to your music</button>
+          </Link>
+        ) : (
+          <Link href={"/signin"}>
+            <button className={styles.connect}>Connect</button>
+          </Link>
+        )}
       </section>
 
       {/* <section style={{ backgroundColor: "white", height: "100px" }}>

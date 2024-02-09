@@ -45,10 +45,6 @@ services:
     volumes:
       - ./music-service:/app
       - ./music-service/src/audio:/app/src/audio
-      # - type: bind
-      #   source: ./music-service/src/audio
-      #   target: /app/src/audio
-
     restart: always
 
 volumes: # without it database will not be created

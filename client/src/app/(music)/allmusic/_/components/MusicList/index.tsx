@@ -2,22 +2,22 @@
 
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useSongs } from "../../hooks";
-import { usePlayerContext } from "../../providers";
-import { playerIcons } from "../icons/player";
+import { useSongs } from "@/music/_/hooks";
+import { usePlayerContext } from "@/music/_/providers";
+import { playerIcons } from "@/music/_/components/icons/player";
 
 import styles from "./styles.module.scss";
-import { Song } from "../../types";
+import { Song } from "@/music/_/types";
 
 const { Play, Pause, ThreeDots } = playerIcons;
 
 export function MusicList() {
   const { data: session } = useSession();
   const { isLoading, songs } = useSongs(session);
-  const { isPlaying, handlePlayById, handlePause, currentState } = usePlayerContext();
+  const { isPlaying, handlePlayById, handlePause, currentTrack } = usePlayerContext();
 
   const renderPlayButton = (song: Song) => {
-    const ifIdIsCurrentTrack = song.urlId === currentState?.urlId;
+    const ifIdIsCurrentTrack = song.urlId === currentTrack?.current?.urlId;
 
     const playButton = (
       <div className={styles.notPlaying} onClick={() => handlePlayById(song)}>
@@ -30,12 +30,6 @@ export function MusicList() {
       </div>
     );
 
-    if (!isPlaying && !ifIdIsCurrentTrack) {
-      return playButton;
-    }
-    if (!isPlaying && ifIdIsCurrentTrack) {
-      return playButton;
-    }
     if (isPlaying && ifIdIsCurrentTrack) {
       return pauseButton;
     } else {
@@ -58,6 +52,7 @@ export function MusicList() {
                   alt={song.title}
                   width={40}
                   height={40}
+                  style={{ objectFit: "cover" }}
                   unoptimized
                 />
               </div>

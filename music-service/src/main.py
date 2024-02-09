@@ -5,8 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routes import search
 
-
 app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,

@@ -33,4 +33,13 @@ def listen_temporal(payload: ListenTemporal):
 
         return {"message": "Song downloaded successfully", "metadata": metadata}
 
-    return {"message": "Song already exists in temporal, listening to it"}
+    def retreive_metadata(id: str):
+        with open(f"audio/temporal/{id}/metadata.json") as f:
+            metadata = f.read()
+
+        return metadata
+
+    return {
+        "message": "Song already exists in temporal, listening to it",
+        "metadata": retreive_metadata(payload.id),
+    }

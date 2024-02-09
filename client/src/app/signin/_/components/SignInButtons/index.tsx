@@ -17,8 +17,8 @@ function SignInButton({ provider, callbackUrl, icon }: SignInProps) {
 }
 
 export function GithubSignIn() {
-  return <SignInButton provider="github" callbackUrl="/music" icon={<Github />} />;
+  return <SignInButton provider="github" callbackUrl="/allmusic" icon={<Github />} />;
 }
 export function GoogleSignIn() {
-  return <SignInButton provider="google" callbackUrl="/music" icon={<Google />} />;
+  return <SignInButton provider="google" callbackUrl="/allmusic" icon={<Google />} />;
 }

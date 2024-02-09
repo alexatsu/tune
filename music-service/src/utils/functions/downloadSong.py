@@ -18,6 +18,7 @@ def download_song(url: str, path: str):
                 "preferredcodec": "aac",
             }
         ],
+        "ignoreerrors": True,
         "outtmpl": f"audio/{path}/%(title)s.m4a",
     }
 

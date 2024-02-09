@@ -1,6 +1,6 @@
-@use "../../../../../shared/sass/abstracts/colors.scss" as *;
-@use "../../../../../shared/sass/abstracts/fonts.scss" as *;
-@use "../../../../../shared/sass/mixins/button.module.scss" as *;
+@use "@/shared-styles/abstracts/colors.scss" as *;
+@use "@/shared-styles/abstracts/fonts.scss" as *;
+@use "@/shared-styles/mixins/button.module.scss" as *;
 
 .signIn {
   @include button();

@@ -10,7 +10,7 @@ const { Music, Search } = navigationIcons;
 
 const list = [
   {
-    path: "/music",
+    path: "/allmusic",
     icon: <Music />,
   },
   {

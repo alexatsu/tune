@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 
 import Hls from "hls.js";
@@ -10,7 +10,7 @@ import { usePlayerContext } from "../../providers";
 import styles from "./styles.module.scss";
 import { useSongs } from "../../hooks";
 
-//TODO:
+// TODO:
 // - loading states
 // - make play/pause changing
 // - error handling
@@ -28,6 +28,7 @@ export function Player() {
     buffered: 0,
   });
 
+  const volumeRef = useRef<HTMLInputElement>(null);
   const [volume, setVolume] = useState<number>(0.3);
   const [isMuted, setIsMuted] = useState<boolean>(false);
 
@@ -157,28 +158,42 @@ export function Player() {
     };
   }, [playerRef, handleBuffering, data]);
 
-  const handleMute = () => {
-    if (playerRef.current) {
-      playerRef.current.muted = !playerRef.current.muted;
-
-      setIsMuted(!isMuted);
-    }
-  };
-
   useEffect(() => {
+    const initialVolume = 0.3;
+
     if (data && playerRef.current) {
-      playerRef.current.volume = 0.3;
+      playerRef.current.volume = initialVolume;
     }
-  }, [playerRef, data]);
+
+    volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) 
+    ${initialVolume * 100}%, var(--white-fade) ${initialVolume * 100}%)`;
+  }, [playerRef, data, volumeRef]);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = Number(event.target.value);
+    const { value } = event.target;
+    volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) ${value}%, var(--white-fade) ${value}%)`;
 
+    const newVolume = Number(value);
     if (playerRef.current) {
       const updatedVolume = Number((newVolume / 100).toFixed(2));
       playerRef.current.volume = updatedVolume;
 
       setVolume(updatedVolume);
+    }
+  };
+
+  const handleMute = () => {
+    if (playerRef.current) {
+      playerRef.current.muted = !playerRef.current.muted;
+
+      setIsMuted(!isMuted);
+
+      if (playerRef.current.muted) {
+        volumeRef.current!.style.background = "var(--white-fade)";
+      } else {
+        const prevVolume = playerRef.current.volume * 100;
+        volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) ${prevVolume}%, var(--white-fade) ${prevVolume}%)`;
+      }
     }
   };
 
@@ -195,7 +210,7 @@ export function Player() {
 
   const convertStringDurationToNumber = (duration: string | undefined) => {
     if (!duration) return 0;
-  
+
     const [hours, minutes, seconds] = duration.split(":");
     return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
   };
@@ -210,12 +225,24 @@ export function Player() {
       <button onClick={handleNextTrack}>PlayNext</button>
       <button onClick={handlePreviousTrack}>PlayPrevious</button>
       <button onClick={handleMute}>Mute</button>
-      <input type="range" value={isMuted ? 0 : volume * 100} onChange={handleVolumeChange} />
+      <input
+        className={styles.volume}
+        ref={volumeRef}
+        type="range"
+        value={isMuted ? 0 : volume * 100}
+        onChange={handleVolumeChange}
+      />
 
-      <progress value={time.current} max={duration}></progress>
       <progress value={time.buffered} max={duration}></progress>
 
-      <input type="range" min={0} max={duration} value={seek} onChange={handleSeekTrack} />
+      <input
+        className={styles.trackSeek}
+        type="range"
+        min={0}
+        max={duration}
+        value={seek}
+        onChange={handleSeekTrack}
+      />
       <video
         style={{ display: "none" }}
         ref={playerRef}

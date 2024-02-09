@@ -7,8 +7,8 @@ import useSWR from "swr";
 import { useSWRConfig } from "swr";
 
 import { handleFetch } from "@/shared/utils/functions";
-import { usePlayerContext } from "@/app/(music)/_/providers";
-import { SongsResponse } from "@/app/(music)/_/types";
+import { usePlayerContext } from "@/music/_/providers";
+import { SongsResponse } from "@/music/_/types";
 
 import styles from "./styles.module.scss";
 
@@ -38,8 +38,6 @@ function SearchSongs() {
     setQuery(input.value);
   };
 
-  if (error) return <div>{error.message}</div>;
-
   const listenToTemporalSong = async (url: string, id: string, duration: string) => {
     type ListenTemporal = {
       message: string;
@@ -56,9 +54,8 @@ function SearchSongs() {
       { url, id, duration }
     );
 
-    console.log(response, "hrer is the response");
     const { message, metadata } = response;
-
+    console.log(response, ' here is the listen temporal response')
     if (
       message === "Song downloaded successfully" ||
       message === "Song already exists in temporal, listening to it"
@@ -123,23 +120,22 @@ function SearchSongs() {
         </button>
       </form>
 
-      <div>
-        {isLoading ? (
-          <div style={{ color: "white" }}>Loading...</div>
-        ) : (
-          <ul style={{ listStyle: "none" }}>
-            {data?.songs?.map(({ id, url, title, duration }) => (
-              <li style={{ color: "white" }} key={id}>
-                <button onClick={() => listenToTemporalSong(url, id, duration)}>Listen</button>
-                <span>
-                  {title} {duration}
-                </span>
-                <button onClick={() => addSongToMyMusic(url, id, title, duration)}>Add</button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {error && !isLoading ? <div style={{ color: "white" }}>{error.message}</div> : ""}
+      {isLoading ? (
+        <div style={{ color: "white" }}>Loading...</div>
+      ) : (
+        <ul style={{ listStyle: "none" }}>
+          {data?.songs?.map(({ id, url, title, duration }) => (
+            <li style={{ color: "white" }} key={id}>
+              <button onClick={() => listenToTemporalSong(url, id, duration)}>Listen</button>
+              <span>
+                {title} {duration}
+              </span>
+              <button onClick={() => addSongToMyMusic(url, id, title, duration)}>Add</button>
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }

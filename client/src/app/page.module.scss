@@ -1,6 +1,6 @@
-@use "../shared/sass/abstracts/colors.scss" as *;
-@use "../shared/sass/abstracts/fonts.scss" as *;
-@use "../shared/sass/mixins/button.module.scss" as *;
+@use "@/shared-styles/abstracts/colors.scss" as *;
+@use "@/shared-styles/abstracts/fonts.scss" as *;
+@use "@/shared-styles/mixins/button.module.scss" as *;
 
 .main {
   display: flex;
@@ -9,7 +9,6 @@
   flex-direction: column;
   padding: 5rem 2rem;
   height: calc(100vh - 100px);
-
 
   @media screen and (max-width: 768px) {
     padding: 3rem 1rem;
@@ -82,7 +81,6 @@
   }
 }
 
-
 .connect {
   @include button();
   background-color: $accent;
@@ -90,5 +88,18 @@
 
   &:hover {
     background-color: $accent-darker;
+  }
+}
+.connected {
+  @include button();
+  background-color: $accent;
+  color: $dark-text;
+
+  &:hover {
+    background-color: $accent-darker;
+  }
+
+  @media screen and (max-width: 425px) {
+    padding: 0.5rem;
   }
 }

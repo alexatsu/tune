@@ -1,4 +1,4 @@
-@use "../../../../../shared/sass/abstracts/colors.scss" as *;
+@use "@/shared-styles/abstracts/colors.scss" as *;
 
 .playerContainer {
   width: 100%;
@@ -8,4 +8,34 @@
   background-color: $bg;
   height: 125px;
   display: flex;
+
+    .volume {
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      width: 15rem;
+      height: 5px;
+      background: transparent;
+      outline: none;
+      // padding: 2rem;
+      
+      &::-webkit-slider-runnable-track {
+        height: 5px;
+        background: rgba(255, 255, 255, 0.104);
+        border-radius: 16px;
+      }
+      
+      &::-webkit-slider-thumb {
+        /* removing default appearance */
+        -webkit-appearance: none;
+        appearance: none;
+        /* creating a custom design */
+        height: 15px;
+        width: 15px;
+        background-color: #000000;
+        border-radius: 50%;
+        margin-top: -5px;
+        border: 2px solid $accent;
+      }
+    }
 }

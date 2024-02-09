@@ -4,7 +4,9 @@ from models.audio import Search
 from utils.functions import format_duration
 
 
-data = {}
+data = {
+    "ignoreerrors": True,
+}
 
 
 def search_songs(query: Search):
