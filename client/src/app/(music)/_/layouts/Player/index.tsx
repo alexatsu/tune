@@ -216,7 +216,6 @@ export function Player() {
   };
 
   const duration = convertStringDurationToNumber(currentTrack.current?.duration);
-
   return (
     <div className={styles.playerContainer}>
       <button onClick={handlePlay}>Play</button>
