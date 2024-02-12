@@ -42,7 +42,7 @@ export function Player() {
     console.log(currentTrack.current, "current track");
     setCurrentState(data.songs[0]);
 
-    const { storage, urlId } = currentTrack.current;
+    const { storage, urlId } = currentTrack.current || {}; 
     hls.attachMedia(playerRef.current as HTMLVideoElement);
     hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
 
@@ -164,9 +164,11 @@ export function Player() {
     if (data && playerRef.current) {
       playerRef.current.volume = initialVolume;
     }
-
-    volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) 
-    ${initialVolume * 100}%, var(--white-fade) ${initialVolume * 100}%)`;
+    
+    if (volumeRef.current) {
+      volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) 
+      ${initialVolume * 100}%, var(--white-fade) ${initialVolume * 100}%)`;
+    }
   }, [playerRef, data, volumeRef]);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,6 +218,9 @@ export function Player() {
   };
 
   const duration = convertStringDurationToNumber(currentTrack.current?.duration);
+
+ 
+
   return (
     <div className={styles.playerContainer}>
       <button onClick={handlePlay}>Play</button>

@@ -1,6 +1,7 @@
 import NextAuth, { AuthOptions, Profile } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import type { Adapter } from 'next-auth/adapters';
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import { db } from "@/shared/services";
@@ -11,7 +12,7 @@ export const authOptions: AuthOptions = {
     signOut: "/",
     error: "/error",
   },
-  adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(db) as Adapter,
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "database",
@@ -21,6 +22,7 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GITHUB_ID ?? "",
       clientSecret: process.env.GITHUB_SECRET ?? "",
       allowDangerousEmailAccountLinking: true,
+      
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_ID ?? "",
@@ -34,13 +36,23 @@ export const authOptions: AuthOptions = {
       const existingUser = await db.user.findUnique({
         where: { id: user.id },
       });
-
-      if (!existingUser) {
-        return false;
-      }
-
       const googleProfilePicture = profile as Profile & { picture?: string };
       const githubProfilePicture = profile as Profile & { avatar_url?: string };
+      
+      if (!existingUser) {
+        const newUser = await db.user.create({
+          data:{
+            id: user.id,
+            name: profile?.name,
+            image: account?.provider
+            ? googleProfilePicture?.picture
+            : githubProfilePicture?.avatar_url,
+          }
+        })
+        await db.$disconnect();
+        return true;
+      }
+
 
       await db.user.update({
         where: { id: existingUser?.id },

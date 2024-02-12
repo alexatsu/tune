@@ -9,6 +9,7 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 
 export default async function Page() {
   const session = (await getServerSession(authOptions)) as Session;
+  console.log(session, 'here is the session')
   // if (session) {
   //   redirect("/music");
   // }
@@ -20,7 +21,7 @@ export default async function Page() {
   //     .getComputedStyle(document.documentElement)
   //     .getPropertyValue("--bg");
   // }, []);
-  console.log(process.env.DATABASE_URL);
+  console.log(process.env.DATABASE_URL, 'database url is here');
 
   return (
     <main className={styles.main}>

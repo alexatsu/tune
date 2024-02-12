@@ -12,7 +12,7 @@ services:
       # hostport:containerport
       - 3000:3000
     env_file:
-      - ./client/.env.dev
+      - ./client/.env
     environment:
       - WATCHPACK_POLLING=true # for nextjs hot reload
 
@@ -27,6 +27,7 @@ services:
       # hostport:containerport
       - 5430:5432
     environment:
+    # test if i need these variables
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
