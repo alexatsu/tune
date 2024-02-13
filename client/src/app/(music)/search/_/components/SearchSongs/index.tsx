@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 
-import useSWR from "swr";
-import { useSWRConfig } from "swr";
+import useSWR,{ useSWRConfig } from "swr";
 
 import { handleFetch } from "@/shared/utils/functions";
 import { usePlayerContext } from "@/music/_/providers";
@@ -22,9 +21,11 @@ function SearchSongs() {
   const [query, setQuery] = useState<string>("");
   const [startSearch, setStartSearch] = useState<boolean>(false);
 
-  const url = startSearch ? `http://localhost:8000/search?query=${query}` : null;
-  const options = { revalidateOnFocus: false };
-  const { data, error, isLoading } = useSWR<SongsResponse>(url, handleFetch, options);
+  const { data, error, isLoading } = useSWR<SongsResponse>(
+    startSearch ? `http://localhost:8000/search?query=${query}` : null,
+    handleFetch,
+    { revalidateOnFocus: false }
+  );
   const { mutate } = useSWRConfig();
   const { data: session } = useSession();
 
@@ -36,7 +37,17 @@ function SearchSongs() {
 
     setStartSearch(true);
     setQuery(input.value);
+    localStorage.setItem("query", input.value);
   };
+
+  useEffect(() => {
+    const savedQuery = localStorage.getItem("query");
+    if (savedQuery && inputRef.current) {
+      setQuery(savedQuery);
+      inputRef.current.value = savedQuery;
+      handleSearch();
+    }
+  }, []);
 
   const listenToTemporalSong = async (url: string, id: string, duration: string) => {
     type ListenTemporal = {
@@ -55,7 +66,7 @@ function SearchSongs() {
     );
 
     const { message, metadata } = response;
-    console.log(response, ' here is the listen temporal response')
+    console.log(response, " here is the listen temporal response");
     if (
       message === "Song downloaded successfully" ||
       message === "Song already exists in temporal, listening to it"
@@ -73,6 +84,7 @@ function SearchSongs() {
 
       loadPlayerSource();
       handlePlay();
+      mutate("http://localhost:3000");
     }
   };
 

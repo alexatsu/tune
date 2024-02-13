@@ -14,7 +14,7 @@ const { Play, Pause, ThreeDots } = playerIcons;
 export function MusicList() {
   const { data: session } = useSession();
   const { isLoading, songs } = useSongs(session);
-  const { isPlaying, handlePlayById, handlePause, currentTrack } = usePlayerContext();
+  const { isPlaying, handlePlayById, handlePause, currentTrack, playerRef } = usePlayerContext();
 
   const renderPlayButton = (song: Song) => {
     const ifIdIsCurrentTrack = song.urlId === currentTrack?.current?.urlId;
@@ -36,7 +36,7 @@ export function MusicList() {
       return playButton;
     }
   };
-
+  console.log(playerRef.current?.currentTime, 'here is the current track')
   if (isLoading) return <div>Loading...</div>;
 
   return (

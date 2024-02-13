@@ -12,16 +12,21 @@ import { useSongs } from "../../hooks";
 
 // TODO:
 // - loading states
-// - make play/pause changing
 // - error handling
-// - fix max attributes
 
 const hls = new Hls();
 
 export function Player() {
   const { data: session } = useSession();
-  const { playerRef, handlePlay, handlePause, currentTrack, loadPlayerSource, setCurrentState } =
-    usePlayerContext();
+  const {
+    playerRef,
+    handlePlay,
+    handlePause,
+    currentTrack,
+    loadPlayerSource,
+    setCurrentState,
+    isPlaying,
+  } = usePlayerContext();
 
   const [time, setTime] = useState({
     current: 0,
@@ -32,9 +37,19 @@ export function Player() {
   const [volume, setVolume] = useState<number>(0.3);
   const [isMuted, setIsMuted] = useState<boolean>(false);
 
+  const trackSeekRef = useRef<HTMLInputElement>(null);
+  const bufferRef = useRef<HTMLInputElement>(null);
   const [seek, setSeek] = useState<number>(0);
 
   const { data, error, isLoading, songs } = useSongs(session);
+  const convertStringDurationToNumber = (duration: string | undefined) => {
+    if (!duration) return 0;
+
+    const [hours, minutes, seconds] = duration.split(":");
+    return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
+  };
+
+  const duration = convertStringDurationToNumber(currentTrack.current?.duration);
 
   useEffect(() => {
     if (!data) return;
@@ -42,7 +57,7 @@ export function Player() {
     console.log(currentTrack.current, "current track");
     setCurrentState(data.songs[0]);
 
-    const { storage, urlId } = currentTrack.current || {}; 
+    const { storage, urlId } = currentTrack.current || {};
     hls.attachMedia(playerRef.current as HTMLVideoElement);
     hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
 
@@ -80,9 +95,14 @@ export function Player() {
       setCurrentState(songs[trackIndex + 1]);
     }
 
+    setSeek(0);
+    trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
+      (0 / duration) * 100
+    }%, var(--white-fade) ${(0 / duration) * 100}%)`;
+
     loadPlayerSource();
     handlePlay();
-  }, [currentTrack, handlePlay, loadPlayerSource, songs, setCurrentState]);
+  }, [currentTrack, handlePlay, loadPlayerSource, songs, setCurrentState, duration]);
 
   const handlePreviousTrack = () => {
     if (currentTrack.current === undefined) {
@@ -106,6 +126,11 @@ export function Player() {
       setCurrentState(songs[trackIndex - 1]);
     }
 
+    setSeek(0);
+    trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
+      (0 / duration) * 100
+    }%, var(--white-fade) ${(0 / duration) * 100}%)`;
+
     loadPlayerSource();
     handlePlay();
   };
@@ -128,10 +153,13 @@ export function Player() {
       setTime((prev) => ({ ...prev, current: playerRef.current?.currentTime || 0 }));
 
       setSeek(playerRef.current?.currentTime || 0);
+      trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
+        (seek / duration) * 100
+      }%, var(--white-fade) ${(seek / duration) * 100}%)`;
     }, 1000);
 
     return () => clearInterval(updateCurrentTime);
-  }, [playerRef]);
+  }, [playerRef, seek, duration]);
 
   const handleBuffering = useCallback(() => {
     if (playerRef.current) {
@@ -149,6 +177,9 @@ export function Player() {
     const player = playerRef.current;
     if (player && data) {
       player.addEventListener("progress", handleBuffering);
+      bufferRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
+        (time.buffered / duration) * 100
+      }%, var(--white-fade) ${(time.buffered / duration) * 100}%)`;
     }
 
     return () => {
@@ -156,7 +187,7 @@ export function Player() {
         player.removeEventListener("progress", handleBuffering);
       }
     };
-  }, [playerRef, handleBuffering, data]);
+  }, [playerRef, handleBuffering, data, time.buffered, duration]);
 
   useEffect(() => {
     const initialVolume = 0.3;
@@ -164,7 +195,7 @@ export function Player() {
     if (data && playerRef.current) {
       playerRef.current.volume = initialVolume;
     }
-    
+
     if (volumeRef.current) {
       volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) 
       ${initialVolume * 100}%, var(--white-fade) ${initialVolume * 100}%)`;
@@ -177,6 +208,8 @@ export function Player() {
 
     const newVolume = Number(value);
     if (playerRef.current) {
+      playerRef.current.muted = false;
+      setIsMuted(false);
       const updatedVolume = Number((newVolume / 100).toFixed(2));
       playerRef.current.volume = updatedVolume;
 
@@ -191,7 +224,8 @@ export function Player() {
       setIsMuted(!isMuted);
 
       if (playerRef.current.muted) {
-        volumeRef.current!.style.background = "var(--white-fade)";
+        volumeRef.current!.style.background =
+          "linear-gradient(to right, var(--accent) 100%, var(--accent) 100%)`";
       } else {
         const prevVolume = playerRef.current.volume * 100;
         volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) ${prevVolume}%, var(--white-fade) ${prevVolume}%)`;
@@ -205,48 +239,54 @@ export function Player() {
     if (playerRef.current) {
       playerRef.current.currentTime = seekTime;
 
+      trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
+        (seekTime / duration) * 100
+      }%, var(--white-fade) ${(seekTime / duration) * 100}%)`;
       setSeek(seekTime);
       setTime((prev) => ({ ...prev, current: seekTime }));
     }
   };
 
-  const convertStringDurationToNumber = (duration: string | undefined) => {
-    if (!duration) return 0;
-
-    const [hours, minutes, seconds] = duration.split(":");
-    return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
-  };
-
-  const duration = convertStringDurationToNumber(currentTrack.current?.duration);
-
- 
-
   return (
     <div className={styles.playerContainer}>
-      <button onClick={handlePlay}>Play</button>
-
-      <button onClick={handlePause}>Pause</button>
+      {isPlaying ? (
+        <button onClick={handlePause}>Pause</button>
+      ) : (
+        <button onClick={handlePlay}>Play</button>
+      )}
       <button onClick={handleNextTrack}>PlayNext</button>
       <button onClick={handlePreviousTrack}>PlayPrevious</button>
-      <button onClick={handleMute}>Mute</button>
-      <input
-        className={styles.volume}
-        ref={volumeRef}
-        type="range"
-        value={isMuted ? 0 : volume * 100}
-        onChange={handleVolumeChange}
-      />
 
-      <progress value={time.buffered} max={duration}></progress>
+      <div className={styles.track}>
+        <input
+          className={styles.trackSeek}
+          ref={trackSeekRef}
+          type="range"
+          min={0}
+          value={seek}
+          onChange={handleSeekTrack}
+          max={duration}
+        />
+        <input
+          className={styles.buffer}
+          ref={bufferRef}
+          type="range"
+          min={0}
+          value={time.buffered}
+          max={duration}
+        />
+      </div>
 
-      <input
-        className={styles.trackSeek}
-        type="range"
-        min={0}
-        max={duration}
-        value={seek}
-        onChange={handleSeekTrack}
-      />
+      <div className={styles.sound}>
+        <button onClick={handleMute}>Mute</button>
+        <input
+          className={styles.volume}
+          ref={volumeRef}
+          type="range"
+          value={isMuted ? 0 : volume * 100}
+          onChange={handleVolumeChange}
+        />
+      </div>
       <video
         style={{ display: "none" }}
         ref={playerRef}

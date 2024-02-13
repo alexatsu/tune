@@ -45,9 +45,9 @@ services:
       - 8000:8000
     volumes:
       - ./music-service:/app
-      - ./music-service/src/audio:/app/src/audio
+      - audio:/app/src/audio
     restart: always
 
-volumes: # without it database will not be created
+volumes:
   db:
-    driver: local
+  audio:
