@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/shared/services";
+import { db } from "@/api/_/services";
 
 type Props = {
   email: string;

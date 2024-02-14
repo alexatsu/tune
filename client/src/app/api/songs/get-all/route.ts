@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/shared/services";
+import { db } from "@/api/_/services";
 
 export async function POST(req: NextRequest) {
   const { email } = await req.json();

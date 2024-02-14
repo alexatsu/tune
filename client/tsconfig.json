@@ -26,6 +26,7 @@
       
       "@/app/*": ["./src/app/*"],
       "@/music/*":["./src/app/(music)/*"],
+      "@/api/*": ["./src/app/api/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
