@@ -1,6 +1,8 @@
-export function PreviousTrack() {
+import { SVGProps } from "react";
+
+export function PreviousTrack(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg {...props} width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M18.2512 7.2936V15.7152C18.2512 17.44 16.3768 18.5224 14.8808 17.66L11.2288 15.5568L7.57677 13.4448C6.08077 12.5824 6.08077 10.4264 7.57677 9.564L11.2288 7.452L14.8808 5.3488C16.3768 4.4864 18.2512 5.56 18.2512 7.2936Z"
         fill="white"

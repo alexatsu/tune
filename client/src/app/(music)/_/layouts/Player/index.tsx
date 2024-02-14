@@ -2,19 +2,28 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
-
 import Hls from "hls.js";
 
 import { usePlayerContext } from "../../providers";
 
-import styles from "./styles.module.scss";
 import { useSongs } from "../../hooks";
+import { playerIcons } from "../../components/icons/player";
+
+import styles from "./styles.module.scss";
 
 // TODO:
 // - loading states
 // - error handling
 
 const hls = new Hls();
+const { Unmuted, Muted, Play, Pause, PreviousTrack, NextTrack } = playerIcons;
+
+const convertStringDurationToNumber = (duration: string | undefined) => {
+  if (!duration) return 0;
+
+  const [hours, minutes, seconds] = duration.split(":");
+  return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
+};
 
 export function Player() {
   const { data: session } = useSession();
@@ -42,12 +51,6 @@ export function Player() {
   const [seek, setSeek] = useState<number>(0);
 
   const { data, error, isLoading, songs } = useSongs(session);
-  const convertStringDurationToNumber = (duration: string | undefined) => {
-    if (!duration) return 0;
-
-    const [hours, minutes, seconds] = duration.split(":");
-    return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
-  };
 
   const duration = convertStringDurationToNumber(currentTrack.current?.duration);
 
@@ -73,6 +76,11 @@ export function Player() {
   }, [currentTrack, playerRef, data, setCurrentState]);
 
   const handleNextTrack = useCallback(() => {
+    setSeek(0);
+    trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
+      (0 / duration) * 100
+    }%, var(--white-fade) ${(0 / duration) * 100}%)`;
+
     if (currentTrack.current === undefined) {
       console.log("no current next track");
       return;
@@ -94,11 +102,6 @@ export function Player() {
       currentTrack.current = songs[trackIndex + 1];
       setCurrentState(songs[trackIndex + 1]);
     }
-
-    setSeek(0);
-    trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
-      (0 / duration) * 100
-    }%, var(--white-fade) ${(0 / duration) * 100}%)`;
 
     loadPlayerSource();
     handlePlay();
@@ -146,16 +149,19 @@ export function Player() {
 
   useEffect(() => {
     const updateCurrentTime = setInterval(() => {
-      if (playerRef.current?.paused) {
+      const player = playerRef.current;
+      if (player?.paused) {
         return;
       }
 
-      setTime((prev) => ({ ...prev, current: playerRef.current?.currentTime || 0 }));
+      if (player) {
+        setTime((prev) => ({ ...prev, current: player.currentTime }));
 
-      setSeek(playerRef.current?.currentTime || 0);
-      trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
-        (seek / duration) * 100
-      }%, var(--white-fade) ${(seek / duration) * 100}%)`;
+        setSeek(player.currentTime);
+        trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
+          (player.currentTime / duration) * 100
+        }%, var(--white-fade) ${(player.currentTime / duration) * 100}%)`;
+      }
     }, 1000);
 
     return () => clearInterval(updateCurrentTime);
@@ -249,36 +255,45 @@ export function Player() {
 
   return (
     <div className={styles.playerContainer}>
-      {isPlaying ? (
-        <button onClick={handlePause}>Pause</button>
-      ) : (
-        <button onClick={handlePlay}>Play</button>
-      )}
-      <button onClick={handleNextTrack}>PlayNext</button>
-      <button onClick={handlePreviousTrack}>PlayPrevious</button>
+      {/* <Image src={currentTrack.current.} alt="cover" width={50} height={50}/> */}
+      <div className={styles.title}>{currentTrack.current?.title}</div>
 
-      <div className={styles.track}>
-        <input
-          className={styles.trackSeek}
-          ref={trackSeekRef}
-          type="range"
-          min={0}
-          value={seek}
-          onChange={handleSeekTrack}
-          max={duration}
-        />
-        <input
-          className={styles.buffer}
-          ref={bufferRef}
-          type="range"
-          min={0}
-          value={time.buffered}
-          max={duration}
-        />
+
+      <div className={styles.mainTrack}>
+        <div className={styles.buttons}>
+          <PreviousTrack onClick={handlePreviousTrack} />
+          {isPlaying ? <Pause onClick={handlePause} /> : <Play onClick={handlePlay} />}
+          <NextTrack onClick={handleNextTrack} />
+        </div>
+
+        <div className={styles.inputs}>
+          <input
+            className={styles.trackSeek}
+            ref={trackSeekRef}
+            type="range"
+            min={0}
+            value={seek}
+            onChange={handleSeekTrack}
+            max={duration}
+          />
+          <input
+            className={styles.buffer}
+            ref={bufferRef}
+            type="range"
+            min={0}
+            defaultValue={time.buffered}
+            max={duration}
+          />
+        </div>
       </div>
 
       <div className={styles.sound}>
-        <button onClick={handleMute}>Mute</button>
+        {isMuted ? (
+          <Muted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
+        ) : (
+          <Unmuted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
+        )}
+
         <input
           className={styles.volume}
           ref={volumeRef}
@@ -287,6 +302,7 @@ export function Player() {
           onChange={handleVolumeChange}
         />
       </div>
+
       <video
         style={{ display: "none" }}
         ref={playerRef}

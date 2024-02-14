@@ -1,6 +1,8 @@
-export function NextTrack() {
+import { SVGProps } from "react";
+
+export function NextTrack(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg {...props} width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3.74876 7.2936V15.7152C3.74876 17.44 5.62316 18.5224 7.11916 17.66L10.7712 15.5568L14.4232 13.4448C15.9192 12.5824 15.9192 10.4264 14.4232 9.564L10.7712 7.452L7.11916 5.3488C5.62316 4.4864 3.74876 5.56 3.74876 7.2936Z"
         fill="white"

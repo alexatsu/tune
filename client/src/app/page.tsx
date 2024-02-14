@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-
-import styles from "./page.module.scss";
-
-import { Session, getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { Session, getServerSession } from "next-auth";
+
+
 import { authOptions } from "./api/auth/[...nextauth]/route";
+import styles from "./page.module.scss";
 
 export default async function Page() {
   const session = (await getServerSession(authOptions)) as Session;

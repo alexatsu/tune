@@ -22,7 +22,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/shared/*":["./src/shared/*"],
-      "@/shared-styles/*":["./src/shared/sass/*"],
+      "@/sass/*":["./src/shared/sass/*"],
+      
       "@/app/*": ["./src/app/*"],
       "@/music/*":["./src/app/(music)/*"],
     }

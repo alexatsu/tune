@@ -48,7 +48,7 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
     loadPlayerSource();
     playerRef.current?.play();
     setIsPlaying(true);
-  }
+  };
 
   const handlePause = () => {
     playerRef.current?.pause();
@@ -65,7 +65,7 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
       console.log("no current track to load");
       return;
     }
-    
+
     console.log(currentTrack.current, "here is the current track in load source");
     const { storage, urlId } = currentTrack.current as Song;
     hls.attachMedia(playerRef.current);
@@ -82,7 +82,7 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
     loadPlayerSource,
     isPlaying,
     setCurrentState,
-    currentState
+    currentState,
   };
 
   return <PlayerContext.Provider value={values}>{children}</PlayerContext.Provider>;

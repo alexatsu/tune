@@ -1,6 +1,6 @@
-@use "@/shared-styles/abstracts/colors.scss" as *;
-@use "@/shared-styles/abstracts/fonts.scss" as *;
-@use "@/shared-styles/mixins/button.module.scss" as *;
+@use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/abstracts/fonts.scss" as *;
+@use "@/sass/mixins/button.module.scss" as *;
 
 .main {
   display: flex;
