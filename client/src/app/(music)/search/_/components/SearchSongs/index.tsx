@@ -3,23 +3,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 
-import useSWR,{ useSWRConfig } from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 import { handleFetch } from "@/shared/utils/functions";
+import { usePlayerStore } from "@/shared/store";
+
 import { usePlayerContext } from "@/music/_/providers";
 import { SongsResponse } from "@/music/_/types";
 
 import styles from "./styles.module.scss";
 
 //TODO:
-// store api in .env
 // improve error handling in ui
 
 function SearchSongs() {
-  const { handlePlay, currentTrack, loadPlayerSource } = usePlayerContext();
+  const { currentTrack, loadPlayerSource, playerRef } = usePlayerContext();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState<string>("");
   const [startSearch, setStartSearch] = useState<boolean>(false);
+  const { handlePlay } = usePlayerStore();
 
   const { data, error, isLoading } = useSWR<SongsResponse>(
     startSearch ? `http://localhost:8000/search?query=${query}` : null,
@@ -83,7 +85,7 @@ function SearchSongs() {
       };
 
       loadPlayerSource();
-      handlePlay();
+      handlePlay(playerRef);
       mutate("http://localhost:3000");
     }
   };

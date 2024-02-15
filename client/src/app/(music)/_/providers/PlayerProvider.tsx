@@ -1,20 +1,14 @@
 "use client";
 
-import { Dispatch, SetStateAction, createContext, useContext, useRef, useState } from "react";
+import { createContext, useContext, useRef } from "react";
 import Hls from "hls.js";
 
 import type { Song } from "../types";
 
 type PlayerContext = {
   playerRef: React.RefObject<HTMLVideoElement>;
-  handlePlay: () => void;
-  handlePlayById: (song: Song) => void;
-  handlePause: () => void;
   currentTrack: React.MutableRefObject<Song | undefined>;
   loadPlayerSource: () => void;
-  isPlaying: boolean;
-  setCurrentState: Dispatch<SetStateAction<Song | undefined>>;
-  currentState: Song | undefined;
 };
 
 const PlayerContext = createContext<PlayerContext | null>(null);
@@ -33,27 +27,7 @@ const hls = new Hls();
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
   const playerRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const currentTrack = useRef<Song | undefined>(undefined);
-  const [currentState, setCurrentState] = useState<Song | undefined>(undefined);
-
-  const handlePlay = () => {
-    playerRef.current?.play();
-    setIsPlaying(true);
-  };
-
-  const handlePlayById = (song: Song) => {
-    currentTrack.current = song;
-    setCurrentState(song);
-    loadPlayerSource();
-    playerRef.current?.play();
-    setIsPlaying(true);
-  };
-
-  const handlePause = () => {
-    playerRef.current?.pause();
-    setIsPlaying(false);
-  };
 
   const loadPlayerSource = () => {
     if (playerRef.current === null) {
@@ -75,14 +49,8 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   const values: PlayerContext = {
     playerRef,
-    handlePlay,
-    handlePlayById,
-    handlePause,
     currentTrack,
     loadPlayerSource,
-    isPlaying,
-    setCurrentState,
-    currentState,
   };
 
   return <PlayerContext.Provider value={values}>{children}</PlayerContext.Provider>;

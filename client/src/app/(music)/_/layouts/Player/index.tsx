@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
+
 import Hls from "hls.js";
 
-import { usePlayerContext } from "../../providers";
-
-import { useSongs } from "../../hooks";
 import { playerIcons } from "../../components/icons/player";
+import { usePlayerContext } from "../../providers";
+import { useSongs } from "../../hooks";
 
 import styles from "./styles.module.scss";
+import { usePlayerStore } from "@/shared/store";
 
 // TODO:
 // - loading states
@@ -27,15 +29,8 @@ const convertStringDurationToNumber = (duration: string | undefined) => {
 
 export function Player() {
   const { data: session } = useSession();
-  const {
-    playerRef,
-    handlePlay,
-    handlePause,
-    currentTrack,
-    loadPlayerSource,
-    setCurrentState,
-    isPlaying,
-  } = usePlayerContext();
+  const { playerRef, currentTrack, loadPlayerSource } = usePlayerContext();
+  const { isPlaying, handlePause, handlePlay } = usePlayerStore();
 
   const [time, setTime] = useState({
     current: 0,
@@ -51,14 +46,15 @@ export function Player() {
   const [seek, setSeek] = useState<number>(0);
 
   const { data, error, isLoading, songs } = useSongs(session);
-
+  const { setCurrentSong } = usePlayerStore();
   const duration = convertStringDurationToNumber(currentTrack.current?.duration);
+
 
   useEffect(() => {
     if (!data) return;
     currentTrack.current = data.songs[0];
     console.log(currentTrack.current, "current track");
-    setCurrentState(data.songs[0]);
+    setCurrentSong(data.songs[0]);
 
     const { storage, urlId } = currentTrack.current || {};
     hls.attachMedia(playerRef.current as HTMLVideoElement);
@@ -73,7 +69,7 @@ export function Player() {
     });
 
     return () => hls.destroy();
-  }, [currentTrack, playerRef, data, setCurrentState]);
+  }, [currentTrack, playerRef, data, setCurrentSong]);
 
   const handleNextTrack = useCallback(() => {
     setSeek(0);
@@ -95,17 +91,17 @@ export function Player() {
 
     if (trackIndex === songs.length - 1) {
       currentTrack.current = songs[0];
-      setCurrentState(songs[0]);
+      setCurrentSong(songs[0]);
     }
 
     if (trackIndex < songs.length - 1) {
       currentTrack.current = songs[trackIndex + 1];
-      setCurrentState(songs[trackIndex + 1]);
+      setCurrentSong(songs[trackIndex + 1]);
     }
 
     loadPlayerSource();
-    handlePlay();
-  }, [currentTrack, handlePlay, loadPlayerSource, songs, setCurrentState, duration]);
+    handlePlay(playerRef);
+  }, [currentTrack, handlePlay, loadPlayerSource, songs, duration, setCurrentSong, playerRef]);
 
   const handlePreviousTrack = () => {
     if (currentTrack.current === undefined) {
@@ -121,12 +117,12 @@ export function Player() {
 
     if (trackIndex === 0) {
       currentTrack.current = songs[songs.length - 1];
-      setCurrentState(songs[songs.length - 1]);
+      setCurrentSong(songs[songs.length - 1]);
     }
 
     if (trackIndex > 0) {
       currentTrack.current = songs[trackIndex - 1];
-      setCurrentState(songs[trackIndex - 1]);
+      setCurrentSong(songs[trackIndex - 1]);
     }
 
     setSeek(0);
@@ -135,7 +131,7 @@ export function Player() {
     }%, var(--white-fade) ${(0 / duration) * 100}%)`;
 
     loadPlayerSource();
-    handlePlay();
+    handlePlay(playerRef);
   };
 
   useEffect(() => {
@@ -150,13 +146,10 @@ export function Player() {
   useEffect(() => {
     const updateCurrentTime = setInterval(() => {
       const player = playerRef.current;
-      if (player?.paused) {
-        return;
-      }
+
+      if (player?.paused) return;
 
       if (player) {
-        setTime((prev) => ({ ...prev, current: player.currentTime }));
-
         setSeek(player.currentTime);
         trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
           (player.currentTime / duration) * 100
@@ -249,20 +242,30 @@ export function Player() {
         (seekTime / duration) * 100
       }%, var(--white-fade) ${(seekTime / duration) * 100}%)`;
       setSeek(seekTime);
-      setTime((prev) => ({ ...prev, current: seekTime }));
     }
   };
 
   return (
     <div className={styles.playerContainer}>
-      {/* <Image src={currentTrack.current.} alt="cover" width={50} height={50}/> */}
-      <div className={styles.title}>{currentTrack.current?.title}</div>
-
+      <div className={styles.titleBlock}>
+        <Image
+          src={`http://localhost:8000/audio/saved/${currentTrack?.current?.urlId}/thumbnail.jpg`}
+          alt="cover"
+          width={50}
+          height={50}
+          unoptimized
+        />
+        <div className={styles.title}>{currentTrack.current?.title}</div>
+      </div>
 
       <div className={styles.mainTrack}>
         <div className={styles.buttons}>
           <PreviousTrack onClick={handlePreviousTrack} />
-          {isPlaying ? <Pause onClick={handlePause} /> : <Play onClick={handlePlay} />}
+          {isPlaying ? (
+            <Pause onClick={() => handlePause(playerRef)} />
+          ) : (
+            <Play onClick={() => handlePlay(playerRef)} />
+          )}
           <NextTrack onClick={handleNextTrack} />
         </div>
 

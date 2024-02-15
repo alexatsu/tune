@@ -9,7 +9,6 @@ fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 requests = "*"
 pydantic = "*"
-numpy = "*"
 
 [scripts]
 dev = "python downloadAudio.py"

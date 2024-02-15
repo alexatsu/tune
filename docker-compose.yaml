@@ -15,6 +15,8 @@ services:
       - ./client/.env
     environment:
       - WATCHPACK_POLLING=true # for nextjs hot reload
+    networks:
+      - tune
 
   # containers can communicate with each other via container name and inner port
   # if normaly you should do 3000:3000, for containers you need only second port
@@ -25,7 +27,7 @@ services:
     container_name: db
     ports:
       # hostport:containerport
-      - 5430:5432
+      - 5432:5432
     environment:
     # test if i need these variables
       - POSTGRES_USER=postgres
@@ -35,6 +37,8 @@ services:
       - db:/var/lib/postgresql/data
     image: postgres:16-alpine
     restart: always
+    networks:
+      - tune
 
   music-service:
     container_name: music-service
@@ -47,7 +51,12 @@ services:
       - ./music-service:/app
       - audio:/app/src/audio
     restart: always
+    networks:
+      - tune
 
 volumes:
   db:
   audio:
+
+networks:
+  tune:

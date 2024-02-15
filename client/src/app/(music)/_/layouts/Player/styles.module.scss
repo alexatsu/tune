@@ -44,13 +44,27 @@
     z-index: -1;
   }
 
-  .title {
-    width: 20%;
+  .titleBlock {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: 500;
-    font-size: 0.8rem;
+    width: 20%;
+    gap: 1rem;
+
+    & img {
+      object-fit: cover;
+      border-radius: 0.5rem;
+      box-shadow: 0px 6px 20px 5px black;
+    }
+
+    .title {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 500;
+      font-size: 0.8rem;
+    }
   }
 
   .mainTrack {
@@ -112,7 +126,6 @@
       gap: 2rem;
       cursor: pointer;
     }
-
   }
 
   .sound {
