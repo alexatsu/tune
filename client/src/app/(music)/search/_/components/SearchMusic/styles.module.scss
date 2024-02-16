@@ -1,0 +1,39 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.form {
+  padding-top: 1rem;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .input {
+    padding: 1rem;
+    background-color: $widget-bg;
+    border: none;
+    border-radius: 10px;
+    transition: 0.15s outline ease-out;
+    color: $text;
+
+    &:focus {
+      outline: 1px solid $accent;
+    }
+  }
+
+  .buttonSearch {
+    display: flex;
+    align-items: center;
+    background-color: $widget-bg;
+    border: none;
+    color: $text;
+    border-radius: 10px;
+    padding: 1rem;
+    height: 40px;
+    cursor: pointer;
+    transition: 0.15s background-color ease-out;
+
+    &:hover {
+      background-color: $bg-alt-hover;
+    }
+  }
+}

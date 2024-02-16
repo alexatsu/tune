@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, RefObject } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
@@ -27,9 +27,16 @@ const convertStringDurationToNumber = (duration: string | undefined) => {
   return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
 };
 
+const updateProgressBar = (ref: RefObject<HTMLInputElement>, value: string) => {
+  ref.current!.style.background = `
+  linear-gradient(to right, 
+  var(--accent) ${value}%, 
+  var(--white-fade) ${value}%)`;
+};
+
 export function Player() {
   const { data: session } = useSession();
-  const { playerRef, currentTrack, loadPlayerSource } = usePlayerContext();
+  const { playerRef, currentSongRef, loadPlayerSource } = usePlayerContext();
   const { isPlaying, handlePause, handlePlay } = usePlayerStore();
 
   const [time, setTime] = useState({
@@ -47,16 +54,15 @@ export function Player() {
 
   const { data, error, isLoading, songs } = useSongs(session);
   const { setCurrentSong } = usePlayerStore();
-  const duration = convertStringDurationToNumber(currentTrack.current?.duration);
-
+  const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
 
   useEffect(() => {
     if (!data) return;
-    currentTrack.current = data.songs[0];
-    console.log(currentTrack.current, "current track");
+    currentSongRef.current = data.songs[0];
+    console.log(currentSongRef.current, "current track");
     setCurrentSong(data.songs[0]);
 
-    const { storage, urlId } = currentTrack.current || {};
+    const { storage, urlId } = currentSongRef.current || {};
     hls.attachMedia(playerRef.current as HTMLVideoElement);
     hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
 
@@ -69,15 +75,13 @@ export function Player() {
     });
 
     return () => hls.destroy();
-  }, [currentTrack, playerRef, data, setCurrentSong]);
+  }, [currentSongRef, playerRef, data, setCurrentSong]);
 
   const handleNextTrack = useCallback(() => {
     setSeek(0);
-    trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
-      (0 / duration) * 100
-    }%, var(--white-fade) ${(0 / duration) * 100}%)`;
+    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`)
 
-    if (currentTrack.current === undefined) {
+    if (currentSongRef.current === undefined) {
       console.log("no current next track");
       return;
     }
@@ -87,24 +91,24 @@ export function Player() {
       return;
     }
 
-    const trackIndex = songs.indexOf(currentTrack.current);
+    const trackIndex = songs.indexOf(currentSongRef.current);
 
     if (trackIndex === songs.length - 1) {
-      currentTrack.current = songs[0];
+      currentSongRef.current = songs[0];
       setCurrentSong(songs[0]);
     }
 
     if (trackIndex < songs.length - 1) {
-      currentTrack.current = songs[trackIndex + 1];
+      currentSongRef.current = songs[trackIndex + 1];
       setCurrentSong(songs[trackIndex + 1]);
     }
 
     loadPlayerSource();
     handlePlay(playerRef);
-  }, [currentTrack, handlePlay, loadPlayerSource, songs, duration, setCurrentSong, playerRef]);
+  }, [currentSongRef, handlePlay, loadPlayerSource, songs, duration, setCurrentSong, playerRef]);
 
   const handlePreviousTrack = () => {
-    if (currentTrack.current === undefined) {
+    if (currentSongRef.current === undefined) {
       console.log("no current previous track");
       return;
     }
@@ -113,23 +117,20 @@ export function Player() {
       console.log("no source to handle previous track");
       return;
     }
-    const trackIndex = songs.indexOf(currentTrack.current);
+    const trackIndex = songs.indexOf(currentSongRef.current);
 
     if (trackIndex === 0) {
-      currentTrack.current = songs[songs.length - 1];
+      currentSongRef.current = songs[songs.length - 1];
       setCurrentSong(songs[songs.length - 1]);
     }
 
     if (trackIndex > 0) {
-      currentTrack.current = songs[trackIndex - 1];
+      currentSongRef.current = songs[trackIndex - 1];
       setCurrentSong(songs[trackIndex - 1]);
     }
 
     setSeek(0);
-    trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
-      (0 / duration) * 100
-    }%, var(--white-fade) ${(0 / duration) * 100}%)`;
-
+    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`)
     loadPlayerSource();
     handlePlay(playerRef);
   };
@@ -151,9 +152,7 @@ export function Player() {
 
       if (player) {
         setSeek(player.currentTime);
-        trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
-          (player.currentTime / duration) * 100
-        }%, var(--white-fade) ${(player.currentTime / duration) * 100}%)`;
+        updateProgressBar(trackSeekRef, `${(player.currentTime / duration) * 100}`)
       }
     }, 1000);
 
@@ -176,9 +175,7 @@ export function Player() {
     const player = playerRef.current;
     if (player && data) {
       player.addEventListener("progress", handleBuffering);
-      bufferRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
-        (time.buffered / duration) * 100
-      }%, var(--white-fade) ${(time.buffered / duration) * 100}%)`;
+      updateProgressBar(bufferRef, `${(time.buffered / duration) * 100}`)
     }
 
     return () => {
@@ -196,22 +193,20 @@ export function Player() {
     }
 
     if (volumeRef.current) {
-      volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) 
-      ${initialVolume * 100}%, var(--white-fade) ${initialVolume * 100}%)`;
+      updateProgressBar(volumeRef, `${initialVolume * 100}`)
     }
   }, [playerRef, data, volumeRef]);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) ${value}%, var(--white-fade) ${value}%)`;
-
+    updateProgressBar(volumeRef, `${value}`)
     const newVolume = Number(value);
+
     if (playerRef.current) {
       playerRef.current.muted = false;
       setIsMuted(false);
       const updatedVolume = Number((newVolume / 100).toFixed(2));
       playerRef.current.volume = updatedVolume;
-
       setVolume(updatedVolume);
     }
   };
@@ -223,11 +218,9 @@ export function Player() {
       setIsMuted(!isMuted);
 
       if (playerRef.current.muted) {
-        volumeRef.current!.style.background =
-          "linear-gradient(to right, var(--accent) 100%, var(--accent) 100%)`";
+        updateProgressBar(volumeRef, `${0}`)
       } else {
-        const prevVolume = playerRef.current.volume * 100;
-        volumeRef.current!.style.background = `linear-gradient(to right, var(--accent) ${prevVolume}%, var(--white-fade) ${prevVolume}%)`;
+        updateProgressBar(volumeRef, `${playerRef.current.volume * 100}`)
       }
     }
   };
@@ -237,10 +230,7 @@ export function Player() {
 
     if (playerRef.current) {
       playerRef.current.currentTime = seekTime;
-
-      trackSeekRef.current!.style.background = `linear-gradient(to right, var(--accent) ${
-        (seekTime / duration) * 100
-      }%, var(--white-fade) ${(seekTime / duration) * 100}%)`;
+      updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`)
       setSeek(seekTime);
     }
   };
@@ -249,13 +239,13 @@ export function Player() {
     <div className={styles.playerContainer}>
       <div className={styles.titleBlock}>
         <Image
-          src={`http://localhost:8000/audio/saved/${currentTrack?.current?.urlId}/thumbnail.jpg`}
+          src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
           alt="cover"
           width={50}
           height={50}
           unoptimized
         />
-        <div className={styles.title}>{currentTrack.current?.title}</div>
+        <div className={styles.title}>{currentSongRef.current?.title}</div>
       </div>
 
       <div className={styles.mainTrack}>

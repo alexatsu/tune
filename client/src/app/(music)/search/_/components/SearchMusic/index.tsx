@@ -16,8 +16,8 @@ import styles from "./styles.module.scss";
 //TODO:
 // improve error handling in ui
 
-function SearchSongs() {
-  const { currentSongRef: currentTrackRef, loadPlayerSource, playerRef } = usePlayerContext();
+function SearchMusic() {
+  const { currentSongRef, loadPlayerSource, playerRef } = usePlayerContext();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState<string>("");
   const [startSearch, setStartSearch] = useState<boolean>(false);
@@ -73,7 +73,7 @@ function SearchSongs() {
       message === "Song downloaded successfully" ||
       message === "Song already exists in temporal, listening to it"
     ) {
-      currentTrackRef.current = {
+      currentSongRef.current = {
         id: "",
         url: "",
         title: "",
@@ -138,20 +138,22 @@ function SearchSongs() {
       {isLoading ? (
         <div style={{ color: "white" }}>Loading...</div>
       ) : (
-        <ul style={{ listStyle: "none" }}>
-          {data?.songs?.map(({ id, url, title, duration }) => (
-            <li style={{ color: "white" }} key={id}>
-              <button onClick={() => listenToTemporalSong(url, id, duration)}>Listen</button>
-              <span>
-                {title} {duration}
-              </span>
-              <button onClick={() => addSongToMyMusic(url, id, title, duration)}>Add</button>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul style={{ listStyle: "none" }}>
+            {data?.songs.map(({ id, url, title, duration }) => (
+              <li style={{ color: "white" }} key={id}>
+                <button onClick={() => listenToTemporalSong(url, id, duration)}>Listen</button>
+                <span>
+                  {title} {duration}
+                </span>
+                <button onClick={() => addSongToMyMusic(url, id, title, duration)}>Add</button>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </>
   );
 }
 
-export { SearchSongs };
+export { SearchMusic };

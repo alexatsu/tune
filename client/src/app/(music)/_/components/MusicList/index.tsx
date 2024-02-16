@@ -17,20 +17,20 @@ const { Play, Pause, ThreeDots } = playerIcons;
 export function MusicList() {
   const { data: session } = useSession();
   const { isLoading } = useSongs(session);
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className={styles.main}>
-      <ul className={styles.musicList}>
-        <Songs />
-      </ul>
+      <Music />
     </div>
   );
 }
 
-function Songs() {
+function Music() {
   const { data: session } = useSession();
   const { songs } = useSongs(session);
+
   const { loadPlayerSource, currentSongRef: currentTrackRef, playerRef } = usePlayerContext();
   const { isPlaying, setIsPlaying, currentSong, setCurrentSong, handlePause } = usePlayerStore();
 
@@ -49,7 +49,7 @@ function Songs() {
   };
 
   const renderPlayButton = (song: Song) => {
-    const ifIdIscurrentTrackRef = song.urlId === currentSong?.urlId;
+    const iscurrentTrackRef = song.urlId === currentSong?.urlId;
 
     const playButton = (
       <div className={styles.notPlaying} onClick={() => handlePlayById(song)}>
@@ -62,7 +62,7 @@ function Songs() {
       </div>
     );
 
-    if (isPlaying && ifIdIscurrentTrackRef) {
+    if (isPlaying && iscurrentTrackRef) {
       return pauseButton;
     } else {
       return playButton;
@@ -70,7 +70,7 @@ function Songs() {
   };
 
   return (
-    <>
+    <ul className={styles.musicList}>
       {songs?.map((song) => (
         <li key={song.urlId} className={styles.musicListItem}>
           <div className={styles.leftSection}>
@@ -95,6 +95,6 @@ function Songs() {
           </div>
         </li>
       ))}
-    </>
+    </ul>
   );
 }
