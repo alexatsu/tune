@@ -17,7 +17,7 @@ def search_songs(query: Search):
             video_entries: list = video_results["entries"]
 
             get_songs_data = []
-            for video in video_entries:                
+            for video in video_entries:
                 try:
                     song_data = {
                         "id": video["id"],

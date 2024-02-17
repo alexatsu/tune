@@ -5,6 +5,7 @@ import { PreviousTrack } from "./PreviousTrack";
 import { ThreeDots } from "./ThreeDots";
 import { Muted } from "./Muted";
 import { Unmuted } from "./Unmuted";
+import { Add } from "./Add";
 
 export const playerIcons = {
   Play,
@@ -14,4 +15,5 @@ export const playerIcons = {
   ThreeDots,
   Muted,
   Unmuted,
+  Add,
 };

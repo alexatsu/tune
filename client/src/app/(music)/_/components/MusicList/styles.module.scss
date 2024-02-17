@@ -1,6 +1,6 @@
 @import "@/sass/abstracts/colors.scss";
 
-.main {
+.container {
   height: calc(100vh - 100px);
   width: 100%;
 }
@@ -88,16 +88,6 @@
 
       & svg {
         cursor: pointer;
-
-        path {
-          transition: 0.15s ease-out;
-        }
-
-        &:hover {
-          path {
-            stroke: $accent;
-          }
-        }
       }
     }
   }

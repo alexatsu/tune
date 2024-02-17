@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function Page() {
   return (
-    <main>
+    <div>
       albums go to <Link href={"/music"}>Music</Link>
-    </main>
+    </div>
   );
 }

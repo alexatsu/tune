@@ -1,14 +1,16 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "../../api/auth/[...nextauth]/route";
-import { MusicList } from "./_/components";
+"use client";
 
-export default async function Page() {
-  const session = await getServerSession(authOptions);
+import { useSession } from "next-auth/react";
 
-  // if (!session) {
-  //   redirect("/signin");
-  // }
+import { MusicList } from "@/music/_/components";
+import { useSongs } from "@/music/_/hooks";
 
-  return <MusicList />;
+export default function Page() {
+  const { data: session } = useSession();
+  const { songs, isLoading } = useSongs(session);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (!songs) return <div>could not get any songs</div>;
+
+  return <MusicList songs={songs || undefined} />;
 }

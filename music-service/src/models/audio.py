@@ -13,3 +13,7 @@ class ListenTemporal(BaseModel):
 class SaveAndStore(BaseModel):
     url: str
     id: str
+
+
+class ListenStream(BaseModel):
+    url: str

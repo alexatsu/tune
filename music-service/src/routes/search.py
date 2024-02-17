@@ -1,10 +1,11 @@
 from fastapi import APIRouter
 
-from models.audio import ListenTemporal, SaveAndStore
+from models.audio import ListenTemporal, SaveAndStore, ListenStream
 from controllers.search import (
     search_songs,
     listen_temporal as listen_temp,
     save_and_store,
+    stream
 )
 
 router = APIRouter()
@@ -24,4 +25,6 @@ async def listen_temporal(payload: ListenTemporal):
 async def save_song_and_store(payload: SaveAndStore):
     return save_and_store(payload)
 
-
+@router.get("/stream")
+async def listenStream(url=""):
+    return stream(url)

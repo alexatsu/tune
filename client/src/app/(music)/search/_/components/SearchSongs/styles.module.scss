@@ -1,5 +1,9 @@
 @use "@/sass/abstracts/colors.scss" as *;
 
+.contaienr {
+  display: flex;
+  flex-direction: column;
+
 .form {
   padding-top: 1rem;
   display: flex;
@@ -36,4 +40,5 @@
       background-color: $bg-alt-hover;
     }
   }
+}
 }

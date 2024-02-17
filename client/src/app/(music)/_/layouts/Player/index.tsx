@@ -52,15 +52,15 @@ export function Player() {
   const bufferRef = useRef<HTMLInputElement>(null);
   const [seek, setSeek] = useState<number>(0);
 
-  const { data, error, isLoading, songs } = useSongs(session);
+  const { error, isLoading, songs } = useSongs(session);
   const { setCurrentSong } = usePlayerStore();
   const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
 
   useEffect(() => {
-    if (!data) return;
-    currentSongRef.current = data.songs[0];
+    if (!songs) return;
+    currentSongRef.current = songs[0];
     console.log(currentSongRef.current, "current track");
-    setCurrentSong(data.songs[0]);
+    setCurrentSong(songs[0]);
 
     const { storage, urlId } = currentSongRef.current || {};
     hls.attachMedia(playerRef.current as HTMLVideoElement);
@@ -75,11 +75,10 @@ export function Player() {
     });
 
     return () => hls.destroy();
-  }, [currentSongRef, playerRef, data, setCurrentSong]);
+  }, [currentSongRef, playerRef,songs, setCurrentSong]);
 
   const handleNextTrack = useCallback(() => {
-    setSeek(0);
-    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`)
+  
 
     if (currentSongRef.current === undefined) {
       console.log("no current next track");
@@ -102,7 +101,8 @@ export function Player() {
       currentSongRef.current = songs[trackIndex + 1];
       setCurrentSong(songs[trackIndex + 1]);
     }
-
+    setSeek(0);
+    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`)
     loadPlayerSource();
     handlePlay(playerRef);
   }, [currentSongRef, handlePlay, loadPlayerSource, songs, duration, setCurrentSong, playerRef]);
@@ -162,6 +162,7 @@ export function Player() {
   const handleBuffering = useCallback(() => {
     if (playerRef.current) {
       const buffered = playerRef.current.buffered;
+      
       if (buffered.length > 0) {
         setTime((prev) => ({
           ...prev,
@@ -173,29 +174,29 @@ export function Player() {
 
   useEffect(() => {
     const player = playerRef.current;
-    if (player && data) {
+    if (player && songs) {
       player.addEventListener("progress", handleBuffering);
       updateProgressBar(bufferRef, `${(time.buffered / duration) * 100}`)
     }
 
     return () => {
-      if (player && data) {
+      if (player && songs) {
         player.removeEventListener("progress", handleBuffering);
       }
     };
-  }, [playerRef, handleBuffering, data, time.buffered, duration]);
+  }, [playerRef, handleBuffering, songs, time.buffered, duration]);
 
   useEffect(() => {
     const initialVolume = 0.3;
 
-    if (data && playerRef.current) {
+    if (songs && playerRef.current) {
       playerRef.current.volume = initialVolume;
     }
 
     if (volumeRef.current) {
       updateProgressBar(volumeRef, `${initialVolume * 100}`)
     }
-  }, [playerRef, data, volumeRef]);
+  }, [playerRef, songs, volumeRef]);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
