@@ -17,6 +17,8 @@ services:
       - WATCHPACK_POLLING=true # for nextjs hot reload
     networks:
       - tune
+    depends_on:
+      - db
 
   # containers can communicate with each other via container name and inner port
   # if normaly you should do 3000:3000, for containers you need only second port

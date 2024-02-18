@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:21-alpine3.18
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ COPY pnpm-lock.yaml ./
 RUN npm install -g pnpm
 RUN pnpm install 
 
-COPY ./prisma/schema.prisma ./prisma/schema.prisma
+COPY ./prisma ./prisma
 RUN pnpx prisma generate
 
 COPY . .
@@ -17,3 +17,4 @@ COPY . .
 # then rebuild it
 
 CMD ["pnpm","run","dev"]
+# CMD ["sh","migrate.sh"] run this when clean insall/no data in volumes
