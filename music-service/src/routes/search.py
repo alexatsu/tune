@@ -5,7 +5,7 @@ from controllers.search import (
     search_songs,
     listen_temporal as listen_temp,
     save_and_store,
-    stream
+    streamTemporal
 )
 
 router = APIRouter()
@@ -27,4 +27,4 @@ async def save_song_and_store(payload: SaveAndStore):
 
 @router.get("/stream")
 async def listenStream(url=""):
-    return stream(url)
+    return streamTemporal(url)

@@ -3,7 +3,7 @@ import yt_dlp
 from fastapi.responses import RedirectResponse
 
 
-def stream(url):
+def streamTemporal(url):
     print(url)
     ydl_opts = {
         "format": "bestaudio/best",
