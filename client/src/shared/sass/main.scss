@@ -19,6 +19,7 @@
 }
 
 * {
+  // outline: 1px solid red;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -29,7 +30,7 @@ body {
   background: url("../../../public/images/bg.avif") lightgray 50% / cover no-repeat;
   background-color: $bg;
   font-size: $default;
-  height: auto;
+  height: 100dvh;
 }
 
 body::before {

@@ -1,22 +1,24 @@
 @import "@/sass/abstracts/colors.scss";
 
 .container {
-  height: calc(100vh - 100px);
-  width: 100%;
+  width: 95%;
+  overflow: auto;
 }
 
 .musicList {
   list-style: none;
   color: $text;
-  height: calc(100% - 125px);
-  padding: 1rem 0rem;
-
+  height: 90%;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #9a3838 #ffffff;
+  // scrollbar-width: thin;
+  // scrollbar-color: $accent #ffffff;
+
+  &::-webkit-scrollbar {
+    width: 2em;
+  }
 
   &::-webkit-scrollbar-track {
-    background-color: $widget-bg;
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
@@ -28,10 +30,10 @@
     width: 4px;
   }
 
+
   .musicListItem {
     background-color: $widget-bg;
     font-size: 1;
-    margin-bottom: 20px;
     padding: 0.6rem 1.4rem;
     border-radius: 1rem;
 
@@ -54,7 +56,7 @@
           opacity: 1;
           cursor: pointer;
         }
-        
+
         .notPlaying {
           opacity: 0;
           transition: opacity 0.15s ease-out;

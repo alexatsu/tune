@@ -43,46 +43,6 @@ export function MusicList({ songs, session }: MusicList) {
     setIsPlaying(true);
   };
 
-  const listenToTemporalSong = async (url: string, id: string, duration: string) => {
-    type ListenTemporal = {
-      message: string;
-      metadata: {
-        url: string;
-        id: string;
-        title: string;
-        duration: string;
-      };
-    };
-    const response = await handleFetch<ListenTemporal>(
-      "http://localhost:8000/listen-temporal",
-      "POST",
-      { url, id, duration }
-    );
-
-    const { message, metadata } = response;
-    console.log(response, " here is the listen temporal response");
-    if (
-      message === "Song downloaded successfully" ||
-      message === "Song already exists in temporal, listening to it"
-    ) {
-      currentSongRef.current = {
-        id: "",
-        url: "",
-        title: "",
-        duration: metadata.duration,
-        userId: "",
-        urlId: id,
-        storage: "temporal",
-        addedAt: new Date(),
-        cover: "",
-      };
-
-      loadPlayerSource();
-      handlePlay(playerRef);
-      mutate("http://localhost:3000");
-    }
-  };
-
   const addSongToMyMusic = async (url: string, id: string, title: string, duration: string) => {
     type SaveAndStoreProps = {
       message: string;
@@ -140,11 +100,6 @@ export function MusicList({ songs, session }: MusicList) {
           <>
             <li key={song.id} className={styles.musicListItem}>
               <div className={styles.leftSection}>
-                {pathname === "/search" && (
-                  <button onClick={() => listenToTemporalSong(song.url, song.id, song.duration)}>
-                    Listen
-                  </button>
-                )}
                 <div className={styles.imageBlock}>
                   {pathname !== "/search" && renderPlayButton(song)}
                   <Image

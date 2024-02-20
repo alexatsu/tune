@@ -19,7 +19,7 @@ import { MusicList } from "@/app/(music)/_/components";
 
 function SearchSongs() {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  
+
   const [query, setQuery] = useState<string>("");
   const [startSearch, setStartSearch] = useState<boolean>(false);
 
@@ -51,9 +51,8 @@ function SearchSongs() {
     }
   }, []);
 
-
   return (
-    <div style={{display: 'flex', flexDirection: "column"}} className={styles.contaienr}>
+    <>
       <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
         <input type="text" placeholder="search songs" className={styles.input} ref={inputRef} />
 
@@ -71,9 +70,9 @@ function SearchSongs() {
       {isLoading ? (
         <div style={{ color: "white" }}>Loading...</div>
       ) : (
-        <MusicList songs={data?.songs || undefined} session={session}/>
+        <MusicList songs={data?.songs || undefined} session={session} />
       )}
-    </div>
+    </>
   );
 }
 
