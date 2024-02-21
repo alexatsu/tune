@@ -1,5 +1,14 @@
 .container {
   display: flex;
   gap: 2rem;
-  padding: 0rem 20%;
+  padding: 0rem 15%;
+  
+  @media screen and (max-width: 768px){
+    padding: 0rem 1rem;
+  }
+
+  @media screen and (max-width: 576px){
+    padding: 0rem 0.5rem;
+    gap: 0;
+  }
 }

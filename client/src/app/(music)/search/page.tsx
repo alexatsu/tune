@@ -3,7 +3,7 @@ import styles from "./styles.module.scss";
 
 export default function Page() {
   return (
-    <div className={styles.container}>
+    <div className={styles.searchContainer}>
       <SearchSongs />
     </div>
   );

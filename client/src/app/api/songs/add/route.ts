@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         user: null,
         message: "Song already exists in database",
       },
-      { status: 409 }
+      { status: 200 }
     );
   }
 

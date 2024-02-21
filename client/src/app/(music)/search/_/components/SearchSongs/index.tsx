@@ -20,9 +20,8 @@ import { MusicList } from "@/app/(music)/_/components";
 function SearchSongs() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const [query, setQuery] = useState<string>("");
-  const [startSearch, setStartSearch] = useState<boolean>(false);
-
+  const [query, setQuery] = useState("");
+  const [startSearch, setStartSearch] = useState(false);
   const { data: session } = useSession();
 
   const { data, error, isLoading } = useSWR<SongsResponse>(

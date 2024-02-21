@@ -63,8 +63,10 @@ export function Player() {
     setCurrentSong(songs[0]);
 
     const { storage, urlId } = currentSongRef.current || {};
-    hls.attachMedia(playerRef.current as HTMLVideoElement);
-    hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+    if (playerRef.current) {
+      hls.attachMedia(playerRef.current);
+      hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+    }
 
     hls.on(Hls.Events.MEDIA_ATTACHED, () => {
       console.log("video and hls.js are now bound together !");
@@ -75,12 +77,10 @@ export function Player() {
     });
 
     return () => hls.destroy();
-  }, [currentSongRef, playerRef,songs, setCurrentSong]);
+  }, [currentSongRef, playerRef, songs, setCurrentSong]);
 
   const handleNextTrack = useCallback(() => {
-  
-
-    if (currentSongRef.current === undefined) {
+    if (currentSongRef.current === null) {
       console.log("no current next track");
       return;
     }
@@ -102,13 +102,13 @@ export function Player() {
       setCurrentSong(songs[trackIndex + 1]);
     }
     setSeek(0);
-    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`)
+    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
     loadPlayerSource();
     handlePlay(playerRef);
   }, [currentSongRef, handlePlay, loadPlayerSource, songs, duration, setCurrentSong, playerRef]);
 
   const handlePreviousTrack = () => {
-    if (currentSongRef.current === undefined) {
+    if (currentSongRef.current === null) {
       console.log("no current previous track");
       return;
     }
@@ -130,7 +130,7 @@ export function Player() {
     }
 
     setSeek(0);
-    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`)
+    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
     loadPlayerSource();
     handlePlay(playerRef);
   };
@@ -152,7 +152,7 @@ export function Player() {
 
       if (player) {
         setSeek(player.currentTime);
-        updateProgressBar(trackSeekRef, `${(player.currentTime / duration) * 100}`)
+        updateProgressBar(trackSeekRef, `${(player.currentTime / duration) * 100}`);
       }
     }, 1000);
 
@@ -162,7 +162,7 @@ export function Player() {
   const handleBuffering = useCallback(() => {
     if (playerRef.current) {
       const buffered = playerRef.current.buffered;
-      
+
       if (buffered.length > 0) {
         setTime((prev) => ({
           ...prev,
@@ -176,7 +176,7 @@ export function Player() {
     const player = playerRef.current;
     if (player && songs) {
       player.addEventListener("progress", handleBuffering);
-      updateProgressBar(bufferRef, `${(time.buffered / duration) * 100}`)
+      updateProgressBar(bufferRef, `${(time.buffered / duration) * 100}`);
     }
 
     return () => {
@@ -194,13 +194,13 @@ export function Player() {
     }
 
     if (volumeRef.current) {
-      updateProgressBar(volumeRef, `${initialVolume * 100}`)
+      updateProgressBar(volumeRef, `${initialVolume * 100}`);
     }
   }, [playerRef, songs, volumeRef]);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    updateProgressBar(volumeRef, `${value}`)
+    updateProgressBar(volumeRef, `${value}`);
     const newVolume = Number(value);
 
     if (playerRef.current) {
@@ -219,9 +219,9 @@ export function Player() {
       setIsMuted(!isMuted);
 
       if (playerRef.current.muted) {
-        updateProgressBar(volumeRef, `${0}`)
+        updateProgressBar(volumeRef, `${0}`);
       } else {
-        updateProgressBar(volumeRef, `${playerRef.current.volume * 100}`)
+        updateProgressBar(volumeRef, `${playerRef.current.volume * 100}`);
       }
     }
   };
@@ -231,7 +231,7 @@ export function Player() {
 
     if (playerRef.current) {
       playerRef.current.currentTime = seekTime;
-      updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`)
+      updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`);
       setSeek(seekTime);
     }
   };

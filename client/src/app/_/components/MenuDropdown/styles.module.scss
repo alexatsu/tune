@@ -25,6 +25,7 @@
     animation: fadeIn 0.15s ease;
     top: 40px;
     right: 0px;
+    z-index: 1;
 
     & li {
       cursor: pointer;

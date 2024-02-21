@@ -13,6 +13,11 @@
   height: 80px;
   margin-top: 1rem;
 
+  @media screen and (max-width: 576px) {
+    display: none;
+  }
+
+
   &:has(li:nth-child(2)) {
     height: 120px;
   }

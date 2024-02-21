@@ -19,7 +19,7 @@ const list = [
   },
 ];
 
-export function Sidebar() {
+export function NavigationBar() {
   const pathname = usePathname();
 
   return (

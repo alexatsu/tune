@@ -1,8 +1,9 @@
 @import "@/sass/abstracts/colors.scss";
 
-.container {
-  width: 95%;
+.musicListContainer {
   overflow: auto;
+  width: 100%;
+  height: calc(100dvh - 125px);
 }
 
 .musicList {
@@ -10,8 +11,7 @@
   color: $text;
   height: 90%;
   overflow-y: auto;
-  // scrollbar-width: thin;
-  // scrollbar-color: $accent #ffffff;
+  padding: 0.5rem 0;
 
   &::-webkit-scrollbar {
     width: 2em;
@@ -30,22 +30,31 @@
     width: 4px;
   }
 
-
   .musicListItem {
     background-color: $widget-bg;
-    font-size: 1;
+    font-size: 1rem;
     padding: 0.6rem 1.4rem;
     border-radius: 1rem;
-
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
 
+    @media screen and (max-width: 576px) {
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+    @media screen and (max-width: 425px) {
+      padding: 0.4rem;
+      font-size: 0.8rem;
+    }
+
     .leftSection {
       display: flex;
       align-items: center;
       gap: 1rem;
+      max-width: 80%;
 
       .imageBlock {
         position: relative;
@@ -81,6 +90,15 @@
           border-radius: 5px;
         }
       }
+
+      .title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* number of lines to show */
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
     }
 
     .rightSection {
@@ -90,6 +108,34 @@
 
       & svg {
         cursor: pointer;
+      }
+
+      .loader {
+        border: 2px solid transparent;
+        border-radius: 50%;
+        border-top: 2px solid $accent;
+        width: 18px;
+        height: 18px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
     }
   }

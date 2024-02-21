@@ -7,7 +7,7 @@ import type { Song } from "../types";
 
 type PlayerContext = {
   playerRef: React.RefObject<HTMLVideoElement>;
-  currentSongRef: React.MutableRefObject<Song | undefined>;
+  currentSongRef: React.MutableRefObject<Song | null>;
   loadPlayerSource: () => void;
 };
 
@@ -27,7 +27,7 @@ const hls = new Hls();
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
   const playerRef = useRef<HTMLVideoElement>(null);
-  const currentSongRef = useRef<Song | undefined>(undefined);
+  const currentSongRef = useRef<Song | null>(null);
 
   const loadPlayerSource = () => {
     if (playerRef.current === null) {
@@ -41,7 +41,7 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
     }
 
     console.log(currentSongRef.current, "here is the current track in load source");
-    const { storage, urlId } = currentSongRef.current as Song;
+    const { storage, urlId } = currentSongRef.current;
     hls.attachMedia(playerRef.current);
     hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
     console.log("loadPlayerSource is finished ");
