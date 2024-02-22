@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navigationIcons } from "../../components/icons/navigation";
+import { useMobile } from "@/music/_/hooks";
+import { navigationIcons } from "@/music/_/components/icons/navigation";
 
 import styles from "./styles.module.scss";
 
@@ -19,12 +20,37 @@ const list = [
   },
 ];
 
-export function NavigationBar() {
+function DesktopNavigationBar() {
   const pathname = usePathname();
+  const isMobile = useMobile(576);
 
-  return (
-    <aside>
-      <ul className={styles.list}>
+  if (!isMobile) {
+    return (
+      <aside>
+        <ul className={styles.listDeksktop}>
+          {list.map(({ path, icon }) => {
+            const isActive: boolean = path === pathname;
+            return (
+              <li key={path}>
+                <Link href={path} className={isActive ? styles.active : ""}>
+                  {icon}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </aside>
+    );
+  }
+}
+
+function MobileNavigationbar() {
+  const pathname = usePathname();
+  const isMobile = useMobile(576);
+  
+  if (isMobile) {
+    return (
+      <ul className={styles.listMobile}>
         {list.map(({ path, icon }) => {
           const isActive: boolean = path === pathname;
           return (
@@ -36,6 +62,9 @@ export function NavigationBar() {
           );
         })}
       </ul>
-    </aside>
-  );
+    );
+  }
 }
+
+export { DesktopNavigationBar, MobileNavigationbar };
+    

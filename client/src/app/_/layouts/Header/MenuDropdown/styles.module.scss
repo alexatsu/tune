@@ -1,4 +1,4 @@
-@use "../../../../shared/sass/abstracts/colors.scss" as *;
+@use "@/sass/abstracts/colors.scss" as *;
 
 .container {
   position: relative;
@@ -26,17 +26,21 @@
     top: 40px;
     right: 0px;
     z-index: 1;
-
+    color: $text;
+    
+    & a {
+      text-decoration: none;
+      color: inherit;
+    }
+    
     & li {
-      cursor: pointer;
       padding: 0.8rem;
+      text-decoration: none;
+      color: $text;
+      cursor: pointer;
+      transition: 0.15s color linear;
 
-      & span {
-        color: $text;
-        transition: color 0.15s ease-out;
-      }
-
-      &:hover span {
+      &:hover {
         color: $accent;
       }
     }

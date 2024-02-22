@@ -1,2 +1,2 @@
 export { Player } from "./Player";
-export { NavigationBar } from "./NavigationBar";
+export { DesktopNavigationBar, MobileNavigationbar } from "./NavigationBar";

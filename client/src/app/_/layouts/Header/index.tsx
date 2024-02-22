@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { MenuDropdown } from "../../components";
+import { MenuDropdown } from "./MenuDropdown";
 
 import styles from "./styles.module.scss";
 

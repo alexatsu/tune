@@ -6,9 +6,9 @@ import Image from "next/image";
 
 import Hls from "hls.js";
 
-import { playerIcons } from "../../components/icons/player";
-import { usePlayerContext } from "../../providers";
-import { useSongs } from "../../hooks";
+import { playerIcons } from "@/music/_/components/icons/player";
+import { usePlayerContext } from "@/music/_/providers";
+import { useMobile, useSongs } from "@/music/_/hooks";
 
 import styles from "./styles.module.scss";
 import { usePlayerStore } from "@/shared/store";
@@ -37,7 +37,8 @@ const updateProgressBar = (ref: RefObject<HTMLInputElement>, value: string) => {
 export function Player() {
   const { data: session } = useSession();
   const { playerRef, currentSongRef, loadPlayerSource } = usePlayerContext();
-  const { isPlaying, handlePause, handlePlay } = usePlayerStore();
+  const { isPlaying, handlePause, handlePlay, setCurrentSong } = usePlayerStore();
+  const { error, isLoading, songs } = useSongs(session);
 
   const [time, setTime] = useState({
     current: 0,
@@ -52,8 +53,6 @@ export function Player() {
   const bufferRef = useRef<HTMLInputElement>(null);
   const [seek, setSeek] = useState<number>(0);
 
-  const { error, isLoading, songs } = useSongs(session);
-  const { setCurrentSong } = usePlayerStore();
   const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
 
   useEffect(() => {
@@ -62,7 +61,7 @@ export function Player() {
     console.log(currentSongRef.current, "current track");
     setCurrentSong(songs[0]);
 
-    const { storage, urlId } = currentSongRef.current || {};
+    const { storage, urlId } = currentSongRef.current;
     if (playerRef.current) {
       hls.attachMedia(playerRef.current);
       hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
@@ -236,7 +235,9 @@ export function Player() {
     }
   };
 
-  return (
+  const isMobile = useMobile(576);
+
+  return !isMobile ? (
     <div className={styles.playerContainer}>
       <div className={styles.titleBlock}>
         <Image
@@ -306,5 +307,7 @@ export function Player() {
         id="video"
       ></video>
     </div>
+  ) : (
+    <div className={styles.mobilePlayerContainer}>Mobile</div>
   );
 }

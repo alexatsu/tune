@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
-import { Menu } from "../icons";
+import { Menu } from "@/app/_/components/icons";
 import styles from "./styles.module.scss";
+import Link from "next/link";
 
 export function MenuDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,11 +31,9 @@ export function MenuDropdown() {
 
       <ul className={isOpen ? styles.ulOpen : styles.ul} ref={dropdownRef}>
         <li>
-          <span>Settings</span>
+          <Link href={"/settings"}>Settings</Link>
         </li>
-        <li onClick={() => signOut({ callbackUrl: "/" })}>
-          <span>Sign out</span>
-        </li>
+        <li onClick={() => signOut({ callbackUrl: "/" })}>Sign out</li>
       </ul>
     </div>
   );
