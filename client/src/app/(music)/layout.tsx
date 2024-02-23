@@ -11,7 +11,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <Player />
-      <MobileNavigationbar/>
+      <MobileNavigationbar />
     </PlayerProvider>
   );
 }

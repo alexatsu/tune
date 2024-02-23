@@ -86,11 +86,12 @@
         }
 
         & > img {
-          object-fit: cover;
+          -o-object-fit: cover;
+             object-fit: cover;
           border-radius: 5px;
         }
       }
-
+      
       .title {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -108,6 +109,17 @@
 
       & svg {
         cursor: pointer;
+      }
+
+      .threeDotsMenu {
+        & path {
+          transition: 0.15s color linear;
+          stroke: $text;
+        }
+
+        &:hover path {
+          stroke: $accent;
+        }
       }
 
       .loader {

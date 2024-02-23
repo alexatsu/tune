@@ -1,6 +1,8 @@
-export function ThreeDots() {
+import { SVGProps } from "react";
+
+export function ThreeDots(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg {...props} width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M8.24962 8.94595C8.61109 8.94595 8.90413 8.63785 8.90413 8.25779C8.90413 7.87774 8.61109 7.56964 8.24962 7.56964C7.88814 7.56964 7.59511 7.87774 7.59511 8.25779C7.59511 8.63785 7.88814 8.94595 8.24962 8.94595Z"
         stroke="#ECECEC"

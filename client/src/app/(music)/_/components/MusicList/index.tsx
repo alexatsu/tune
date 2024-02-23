@@ -1,6 +1,6 @@
 "use client";
 
-import React,{ useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { Session } from "next-auth";
 import { usePathname } from "next/navigation";
@@ -12,7 +12,6 @@ import { Song } from "@/music/_/types";
 
 import { usePlayerStore } from "@/shared/store";
 import { handleFetch } from "@/shared/utils/functions";
-
 import styles from "./styles.module.scss";
 
 const { Play, Pause, ThreeDots, Add } = playerIcons;
@@ -103,7 +102,7 @@ export function MusicList({ songs, session }: MusicList) {
   const renderAddButton = (song: Song) => {
     const ifIsSongID = song.id === currentAddedSongRef.current;
     if (isAddingSong && ifIsSongID) {
-      return <div className={styles.loader}/>;
+      return <div className={styles.loader} />;
     } else {
       return <Add onClick={() => addSongToMyMusic(song.url, song.id, song.title, song.duration)} />;
     }
@@ -114,7 +113,7 @@ export function MusicList({ songs, session }: MusicList) {
       <ul className={styles.musicList}>
         {songs?.map((song) => (
           <React.Fragment key={song.id}>
-            <li className={styles.musicListItem} onClick={() => console.log(song)}>
+            <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
                 <div className={styles.imageBlock}>
                   {pathname !== "/search" && renderPlayButton(song)}
@@ -137,7 +136,7 @@ export function MusicList({ songs, session }: MusicList) {
               <div className={styles.rightSection}>
                 <span>{song.duration}</span>
                 {pathname === "/search" && renderAddButton(song)}
-                <ThreeDots />
+                <ThreeDots className={styles.threeDotsMenu} />
               </div>
             </li>
             {pathname === "/search" && (

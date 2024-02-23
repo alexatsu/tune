@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 
 const useMobile = (threshold: number) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= threshold);
@@ -20,8 +20,11 @@ const useMobile = (threshold: number) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [threshold]);
-  console.log(isMobile, 'isMobile');
-  return isMobile;
+
+  const cachedValue = useMemo(() => isMobile, [isMobile]);
+  console.log(cachedValue)
+
+  return cachedValue;
 };
 
 export { useMobile };

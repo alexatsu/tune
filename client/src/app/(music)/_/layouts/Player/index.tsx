@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, RefObject } from "react";
+import { useState, useEffect, useCallback, useRef, RefObject, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
@@ -10,15 +10,15 @@ import { playerIcons } from "@/music/_/components/icons/player";
 import { usePlayerContext } from "@/music/_/providers";
 import { useMobile, useSongs } from "@/music/_/hooks";
 
-import styles from "./styles.module.scss";
 import { usePlayerStore } from "@/shared/store";
+import styles from "./styles.module.scss";
 
 // TODO:
 // - loading states
 // - error handling
 
 const hls = new Hls();
-const { Unmuted, Muted, Play, Pause, PreviousTrack, NextTrack } = playerIcons;
+const { Unmuted, Muted, Play, Pause, PreviousTrack, NextTrack, ThreeDots } = playerIcons;
 
 const convertStringDurationToNumber = (duration: string | undefined) => {
   if (!duration) return 0;
@@ -39,6 +39,8 @@ export function Player() {
   const { playerRef, currentSongRef, loadPlayerSource } = usePlayerContext();
   const { isPlaying, handlePause, handlePlay, setCurrentSong } = usePlayerStore();
   const { error, isLoading, songs } = useSongs(session);
+
+  const isMobile = useMobile(576);
 
   const [time, setTime] = useState({
     current: 0,
@@ -156,7 +158,7 @@ export function Player() {
     }, 1000);
 
     return () => clearInterval(updateCurrentTime);
-  }, [playerRef, seek, duration]);
+  }, [playerRef, duration]);
 
   const handleBuffering = useCallback(() => {
     if (playerRef.current) {
@@ -192,10 +194,11 @@ export function Player() {
       playerRef.current.volume = initialVolume;
     }
 
-    if (volumeRef.current) {
+    if (volumeRef.current && !isMobile) {
       updateProgressBar(volumeRef, `${initialVolume * 100}`);
+      console.log(initialVolume, "here is the initial volume");
     }
-  }, [playerRef, songs, volumeRef]);
+  }, [playerRef, songs, volumeRef, isMobile]);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -235,69 +238,114 @@ export function Player() {
     }
   };
 
-  const isMobile = useMobile(576);
+  return (
+    <>
+      {!isMobile ? (
+        <div className={styles.playerContainer}>
+          <div className={styles.titleBlock}>
+            <Image
+              src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
+              alt="cover"
+              width={50}
+              height={50}
+              unoptimized
+            />
+            <div className={styles.title}>{currentSongRef.current?.title}</div>
+          </div>
 
-  return !isMobile ? (
-    <div className={styles.playerContainer}>
-      <div className={styles.titleBlock}>
-        <Image
-          src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
-          alt="cover"
-          width={50}
-          height={50}
-          unoptimized
-        />
-        <div className={styles.title}>{currentSongRef.current?.title}</div>
-      </div>
+          <div className={styles.mainTrack}>
+            <div className={styles.buttons}>
+              <PreviousTrack onClick={handlePreviousTrack} />
+              {isPlaying ? (
+                <Pause onClick={() => handlePause(playerRef)} />
+              ) : (
+                <Play onClick={() => handlePlay(playerRef)} />
+              )}
+              <NextTrack onClick={handleNextTrack} />
+            </div>
 
-      <div className={styles.mainTrack}>
-        <div className={styles.buttons}>
-          <PreviousTrack onClick={handlePreviousTrack} />
-          {isPlaying ? (
-            <Pause onClick={() => handlePause(playerRef)} />
-          ) : (
-            <Play onClick={() => handlePlay(playerRef)} />
-          )}
-          <NextTrack onClick={handleNextTrack} />
+            <div className={styles.inputs}>
+              <input
+                className={styles.trackSeek}
+                ref={trackSeekRef}
+                type="range"
+                min={0}
+                value={seek}
+                onChange={handleSeekTrack}
+                max={duration}
+              />
+              <input
+                className={styles.buffer}
+                ref={bufferRef}
+                type="range"
+                min={0}
+                defaultValue={time.buffered}
+                max={duration}
+              />
+            </div>
+          </div>
+
+          <div className={styles.sound}>
+            {isMuted ? (
+              <Muted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
+            ) : (
+              <Unmuted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
+            )}
+
+            <input
+              className={styles.volume}
+              ref={volumeRef}
+              type="range"
+              value={isMuted ? 0 : volume * 100}
+              onChange={handleVolumeChange}
+            />
+          </div>
         </div>
+      ) : (
+        <div className={styles.mobilePlayerContainer}>
+          <div className={styles.inputs}>
+            <input
+              className={styles.trackSeek}
+              ref={trackSeekRef}
+              type="range"
+              min={0}
+              value={seek}
+              onChange={handleSeekTrack}
+              max={duration}
+            />
+            <input
+              className={styles.buffer}
+              ref={bufferRef}
+              type="range"
+              min={0}
+              defaultValue={time.buffered}
+              max={duration}
+            />
+          </div>
 
-        <div className={styles.inputs}>
-          <input
-            className={styles.trackSeek}
-            ref={trackSeekRef}
-            type="range"
-            min={0}
-            value={seek}
-            onChange={handleSeekTrack}
-            max={duration}
-          />
-          <input
-            className={styles.buffer}
-            ref={bufferRef}
-            type="range"
-            min={0}
-            defaultValue={time.buffered}
-            max={duration}
-          />
+          <div className={styles.main}>
+            <div className={styles.imageBlock}>
+              <Image
+                src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
+                alt="cover"
+                width={35}
+                height={35}
+                unoptimized
+              />
+              {isPlaying ? (
+                <Pause onClick={() => handlePause(playerRef)} />
+              ) : (
+                <Play onClick={() => handlePlay(playerRef)} />
+              )}
+            </div>
+
+            <div className={styles.title}>{currentSongRef.current?.title}</div>
+            <div className={styles.menuContainer}>
+              <ThreeDots className={styles.threeDotsMenu} />
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className={styles.sound}>
-        {isMuted ? (
-          <Muted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
-        ) : (
-          <Unmuted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
-        )}
-
-        <input
-          className={styles.volume}
-          ref={volumeRef}
-          type="range"
-          value={isMuted ? 0 : volume * 100}
-          onChange={handleVolumeChange}
-        />
-      </div>
-
+      )}
       <video
         style={{ display: "none" }}
         ref={playerRef}
@@ -306,8 +354,6 @@ export function Player() {
         height={240}
         id="video"
       ></video>
-    </div>
-  ) : (
-    <div className={styles.mobilePlayerContainer}>Mobile</div>
+    </>
   );
 }
