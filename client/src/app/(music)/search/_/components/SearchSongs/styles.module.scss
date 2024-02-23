@@ -1,6 +1,5 @@
 @use "@/sass/abstracts/colors.scss" as *;
 
-
 .form {
   padding-top: 1rem;
   display: flex;
@@ -24,17 +23,17 @@
   .buttonSearch {
     display: flex;
     align-items: center;
-    background-color: $widget-bg;
     border: none;
-    color: $text;
+    background: transparent;
     border-radius: 10px;
-    padding: 1rem;
-    height: 40px;
     cursor: pointer;
-    transition: 0.15s background-color ease-out;
+    
+    svg path {
+      transition: 0.15s stroke linear;
+    }
 
-    &:hover {
-      background-color: $bg-alt-hover;
+    &:hover svg path {
+      stroke: $accent;
     }
   }
 }

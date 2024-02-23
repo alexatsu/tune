@@ -7,7 +7,6 @@ const useMobile = (threshold: number) => {
   useEffect(() => {
     const handleResize = () => {
       const currentWidth = window.innerWidth;
-
       if (previousWidth.current <= threshold) {
         setIsMobile(true);
       } else {

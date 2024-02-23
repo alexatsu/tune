@@ -2,20 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
+import useSWR from "swr";
 
-import useSWR, { useSWRConfig } from "swr";
+import { SongsResponse } from "@/music/_/types";
+import { MusicList } from "@/music/_/components";
 
 import { handleFetch } from "@/shared/utils/functions";
-import { usePlayerStore } from "@/shared/store";
-
-import { usePlayerContext } from "@/music/_/providers";
-import { SongsResponse } from "@/music/_/types";
-
+import { playerIcons } from "@/music/_/components/icons/player";
 import styles from "./styles.module.scss";
-import { MusicList } from "@/app/(music)/_/components";
 
-//TODO:
-// improve error handling in ui
+const { TriggerSearch } = playerIcons;
 
 function SearchSongs() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -61,7 +57,7 @@ function SearchSongs() {
           type="submit"
           onClick={handleSearch}
         >
-          Search
+          <TriggerSearch />
         </button>
       </form>
 

@@ -21,6 +21,17 @@ type MusicList = {
   session?: Session | null;
 };
 
+const formatedDuration = (duration: string) => {
+  const [hours, minutes, seconds] = duration.split(":");
+  return (
+    <span>
+      {+hours < 1 ? "" : hours + ":"}
+      {minutes && minutes + ":"}
+      {+seconds < 10 ? "0" + seconds : seconds}
+    </span>
+  );
+};
+
 export function MusicList({ songs, session }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
@@ -28,6 +39,7 @@ export function MusicList({ songs, session }: MusicList) {
   const { isPlaying, setIsPlaying, currentSong, setCurrentSong, handlePause } = usePlayerStore();
 
   const [isAddingSong, setIsAddingSong] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const currentAddedSongRef = useRef("");
 
   const handlePlayById = (song: Song) => {
@@ -108,6 +120,22 @@ export function MusicList({ songs, session }: MusicList) {
     }
   };
 
+  const handleMute = () => {
+    if (!audioRef.current) return;
+
+    if (audioRef.current.muted) {
+      audioRef.current.muted = false;
+      console.log(audioRef.current.muted, "here is the muted value");
+    } else {
+      audioRef.current.muted = true;
+      console.log(audioRef.current.muted, "here is the muted value");
+    }
+  };
+
+  const handleAudioPlay = () => {
+    audioRef.current?.play()
+  }
+
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
@@ -134,7 +162,7 @@ export function MusicList({ songs, session }: MusicList) {
               </div>
 
               <div className={styles.rightSection}>
-                <span>{song.duration}</span>
+                {formatedDuration(song.duration)}
                 {pathname === "/search" && renderAddButton(song)}
                 <ThreeDots className={styles.threeDotsMenu} />
               </div>
@@ -144,8 +172,11 @@ export function MusicList({ songs, session }: MusicList) {
                 controls
                 src={`http://localhost:8000/stream?url=${song.url}`}
                 preload={"metadata"}
+                ref={audioRef}
               />
             )}
+            <button onClick={handleAudioPlay}>Play</button>
+            <button onClick={handleMute}>test</button>
           </React.Fragment>
         ))}
       </ul>

@@ -6,6 +6,7 @@ import { ThreeDots } from "./ThreeDots";
 import { Muted } from "./Muted";
 import { Unmuted } from "./Unmuted";
 import { Add } from "./Add";
+import { TriggerSearch } from "./TriggerSearch";
 
 export const playerIcons = {
   Play,
@@ -16,4 +17,5 @@ export const playerIcons = {
   Muted,
   Unmuted,
   Add,
+  TriggerSearch
 };
