@@ -1,7 +1,7 @@
 import { Session } from "next-auth";
 import useSWR from "swr";
 
-import { SongsResponse } from "../types";
+import { SongsResponse } from "@/music/_/types";
 
 function useSongs(session: Session | null) {
   const fetchAllMusic = async () => {

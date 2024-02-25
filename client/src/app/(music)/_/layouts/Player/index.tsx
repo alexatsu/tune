@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, RefObject, useMemo } from "react";
+import { useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
@@ -8,7 +8,8 @@ import Hls from "hls.js";
 
 import { playerIcons } from "@/music/_/components/icons/player";
 import { usePlayerContext } from "@/music/_/providers";
-import { useMobile, useSongs } from "@/music/_/hooks";
+import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
+import { updateProgressBar } from "@/music/_/utils/functions";
 
 import { usePlayerStore } from "@/shared/store";
 import styles from "./styles.module.scss";
@@ -27,13 +28,6 @@ const convertStringDurationToNumber = (duration: string | undefined) => {
   return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
 };
 
-const updateProgressBar = (ref: RefObject<HTMLInputElement>, value: string) => {
-  ref.current!.style.background = `
-  linear-gradient(to right, 
-  var(--accent) ${value}%, 
-  var(--white-fade) ${value}%)`;
-};
-
 export function Player() {
   const { data: session } = useSession();
   const { playerRef, currentSongRef, loadPlayerSource } = usePlayerContext();
@@ -43,17 +37,18 @@ export function Player() {
   const isMobile = useMobile(576);
   const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
 
-  
-  const volumeRef = useRef<HTMLInputElement>(null);
-  const [volume, setVolume] = useState<number>(0.3);
-  const [isMuted, setIsMuted] = useState<boolean>(false);
-  
-  const bufferRef = useRef<HTMLInputElement>(null);
-  const [bufferedTime, setBufferedTime] = useState(0);
-
-  const trackSeekRef = useRef<HTMLInputElement>(null);
-  const [seek, setSeek] = useState<number>(0);
-
+  const {
+    volumeRef,
+    volume,
+    handleVolumeChange,
+    handleMute,
+    bufferRef,
+    bufferedTime,
+    trackSeekRef,
+    seek,
+    setSeek,
+    handleSeekTrack,
+  } = usePlayer(playerRef);
 
   useEffect(() => {
     if (!songs) return;
@@ -104,7 +99,17 @@ export function Player() {
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
     loadPlayerSource();
     handlePlay(playerRef);
-  }, [currentSongRef, handlePlay, loadPlayerSource, songs, duration, setCurrentSong, playerRef]);
+  }, [
+    currentSongRef,
+    duration,
+    handlePlay,
+    loadPlayerSource,
+    playerRef,
+    setCurrentSong,
+    setSeek,
+    songs,
+    trackSeekRef,
+  ]);
 
   const handlePreviousTrack = () => {
     if (currentSongRef.current === null) {
@@ -143,96 +148,33 @@ export function Player() {
     };
   }, [handleNextTrack, playerRef]);
 
-
-  const handleBuffering = useCallback(() => {
-    if (playerRef.current) {
-      const buffered = playerRef.current.buffered;
-
-      if (buffered.length > 0) {
-        setBufferedTime(buffered.end(buffered.length - 1));
-      }
-    }
-  }, [playerRef]);
-
   useEffect(() => {
-    const player = playerRef.current;
-    if (player && songs) {
-      player.addEventListener("progress", handleBuffering);
-      updateProgressBar(bufferRef, `${(bufferedTime / duration) * 100}`);
+    if (playerRef.current && volumeRef.current && !isMobile) {
+      updateProgressBar(volumeRef, `${playerRef.current?.volume * 100}`);
     }
+  }, [playerRef, isMobile, volumeRef]);
 
-    return () => {
-      if (player && songs) {
-        player.removeEventListener("progress", handleBuffering);
-      }
-    };
-  }, [playerRef, handleBuffering, songs, bufferedTime, duration]);
-
-  useEffect(() => {
-    const initialVolume = 0.3;
-
-    if (songs && playerRef.current) {
-      playerRef.current.volume = initialVolume;
-    }
-
-    if (volumeRef.current && !isMobile) {
-      updateProgressBar(volumeRef, `${initialVolume * 100}`);
-      console.log(initialVolume, "here is the initial volume");
-    }
-  }, [playerRef, songs, volumeRef, isMobile]);
-
-  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    updateProgressBar(volumeRef, `${value}`);
-    const newVolume = Number(value);
-
-    if (playerRef.current) {
-      playerRef.current.muted = false;
-      setIsMuted(false);
-      const updatedVolume = Number((newVolume / 100).toFixed(2));
-      playerRef.current.volume = updatedVolume;
-      setVolume(updatedVolume);
-    }
-  };
-
-  const handleMute = () => {
-    if (playerRef.current) {
-      playerRef.current.muted = !playerRef.current.muted;
-
-      setIsMuted(!isMuted);
-
-      if (playerRef.current.muted) {
-        updateProgressBar(volumeRef, `${0}`);
-      } else {
-        updateProgressBar(volumeRef, `${playerRef.current.volume * 100}`);
-      }
-    }
-  };
-
-  const handleSeekTrack = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const seekTime = Number(event.target.value);
-
-    if (playerRef.current) {
-      playerRef.current.currentTime = seekTime;
-      updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`);
-      setSeek(seekTime);
-    }
-  };
-
-  useEffect(() => {
-    const updateCurrentTime = setInterval(() => {
-      const player = playerRef.current;
-
-      if (player?.paused) return;
-
-      if (player) {
-        setSeek(player.currentTime);
-        updateProgressBar(trackSeekRef, `${(player.currentTime / duration) * 100}`);
-      }
-    }, 1000);
-
-    return () => clearInterval(updateCurrentTime);
-  }, [playerRef, duration]);
+  const inputs = (
+    <>
+      <input
+        className={styles.trackSeek}
+        ref={trackSeekRef}
+        type="range"
+        min={0}
+        value={seek}
+        onChange={handleSeekTrack}
+        max={duration}
+      />
+      <input
+        className={styles.buffer}
+        ref={bufferRef}
+        type="range"
+        min={0}
+        defaultValue={bufferedTime}
+        max={duration}
+      />
+    </>
+  );
 
   return (
     <>
@@ -260,64 +202,27 @@ export function Player() {
               <NextTrack onClick={handleNextTrack} />
             </div>
 
-            <div className={styles.inputs}>
-              <input
-                className={styles.trackSeek}
-                ref={trackSeekRef}
-                type="range"
-                min={0}
-                value={seek}
-                onChange={handleSeekTrack}
-                max={duration}
-              />
-              <input
-                className={styles.buffer}
-                ref={bufferRef}
-                type="range"
-                min={0}
-                defaultValue={bufferedTime}
-                max={duration}
-              />
-            </div>
+            <div className={styles.inputs}>{inputs}</div>
           </div>
 
           <div className={styles.sound}>
-            {isMuted ? (
+            {volume.muted ? (
               <Muted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
             ) : (
               <Unmuted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
             )}
-
             <input
               className={styles.volume}
               ref={volumeRef}
               type="range"
-              value={isMuted ? 0 : volume * 100}
+              value={volume.muted ? 0 : volume.value * 100}
               onChange={handleVolumeChange}
             />
           </div>
         </div>
       ) : (
         <div className={styles.mobilePlayerContainer}>
-          <div className={styles.inputs}>
-            <input
-              className={styles.trackSeek}
-              ref={trackSeekRef}
-              type="range"
-              min={0}
-              value={seek}
-              onChange={handleSeekTrack}
-              max={duration}
-            />
-            <input
-              className={styles.buffer}
-              ref={bufferRef}
-              type="range"
-              min={0}
-              defaultValue={bufferedTime}
-              max={duration}
-            />
-          </div>
+          <div className={styles.inputs}>{inputs}</div>
 
           <div className={styles.main}>
             <div className={styles.imageBlock}>
@@ -342,6 +247,7 @@ export function Player() {
           </div>
         </div>
       )}
+      
       <video
         style={{ display: "none" }}
         ref={playerRef}

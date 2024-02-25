@@ -33,6 +33,9 @@
   flex: 1 1 0px;
   padding: 0 15%;
 
+  @media screen and (max-width: 1024px) {
+    padding: 0rem 5%;
+  }
   @media screen and (max-width: 768px) {
     padding: 0rem 1rem;
   }
@@ -258,6 +261,12 @@
       font-size: 0.8rem;
       width: 70%;
       text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
     .menuContainer {
       width: 15%;

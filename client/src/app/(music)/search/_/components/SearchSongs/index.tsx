@@ -26,6 +26,7 @@ function SearchSongs() {
     { revalidateOnFocus: false }
   );
 
+
   const handleSearch = () => {
     const input = inputRef.current;
     if (!input) return;
@@ -65,7 +66,7 @@ function SearchSongs() {
       {isLoading ? (
         <div style={{ color: "white" }}>Loading...</div>
       ) : (
-        <MusicList songs={data?.songs || undefined} session={session} />
+        <MusicList songs={data?.songs || null} session={session} />
       )}
     </>
   );

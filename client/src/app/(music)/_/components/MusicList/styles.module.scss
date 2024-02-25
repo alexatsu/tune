@@ -4,6 +4,10 @@
   overflow: auto;
   width: 100%;
   height: calc(100dvh - 125px);
+
+  @media screen and (max-width: 425px) {
+    height: calc(100dvh - 140px);
+  }
 }
 
 .musicList {
@@ -30,12 +34,22 @@
     width: 4px;
   }
 
+  .liWrapper {
+    &:not(:has(.previewContainer)) {
+      .musicListItem {
+        border-radius: 1rem;
+        margin-bottom: 10px;
+      }
+    }
+  }
+
   .musicListItem {
     background-color: $widget-bg;
     font-size: 0.9rem;
     padding: 0.6rem 1.4rem;
-    border-radius: 1rem;
-    margin-bottom: 10px;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -171,55 +185,111 @@
   appearance: none;
   background-color: #000000;
   border-radius: 50%;
-  border: 1px solid $accent;
 }
 
-.inputs {
-  width: 100%;
-  position: relative;
-  height: 4px;
+.previewContainer {
+  background-color: $widget-bg;
+  z-index: -1;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  margin-bottom: 10px;
+  padding: 0rem 5%;
+  margin-top: -1px;
 
-  .trackSeek {
-    @extend %inputContainer;
-    position: absolute;
-    cursor: pointer;
+  .trackBlock {
     width: 100%;
-    height: 4px;
-    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 
-    &::-webkit-slider-runnable-track {
-      @extend %runTrack;
+    .previewHandlers {
+      & svg {
+        cursor: pointer;
+        width: 15px;
+        height: 15px;
+      }
     }
 
-    &::-webkit-slider-thumb {
-      @extend %thumb;
-      margin-top: -2px;
-      height: 8px;
-      width: 8px;
+    .inputs {
+      width: 70%;
+      position: relative;
+      height: 4px;
+      display: flex;
+
+      .trackSeek {
+        @extend %inputContainer;
+        position: absolute;
+        cursor: pointer;
+        width: 100%;
+        height: 4px;
+        outline: none;
+        z-index: 1;
+        &::-webkit-slider-runnable-track {
+          @extend %runTrack;
+        }
+
+        &::-webkit-slider-thumb {
+          @extend %thumb;
+          margin-top: -1px;
+          height: 0;
+          width: 0;
+        }
+      }
+
+      .buffer {
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        border-radius: 10px;
+        width: 100%;
+        position: absolute;
+        opacity: 0.3;
+
+        &::-webkit-slider-runnable-track {
+          height: 5px;
+          background: rgba(255, 255, 255, 0.104);
+          border-radius: 16px;
+        }
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+        }
+      }
     }
   }
 
-  .buffer {
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    border-radius: 10px;
-    width: 100%;
-    position: absolute;
-    z-index: -1;
-    opacity: 0.3;
+  .sound {
+    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 
-    &::-webkit-slider-runnable-track {
-      height: 5px;
-      background: rgba(255, 255, 255, 0.104);
-      border-radius: 16px;
+    @media screen and (max-width: 576px) {
+      width: 30%;
     }
 
-    &::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
+    .volume {
+      @extend %inputContainer;
+      cursor: pointer;
+      width: 100%;
+      height: 5px;
+      outline: none;
+
+      &::-webkit-slider-runnable-track {
+        @extend %runTrack;
+      }
+
+      &::-webkit-slider-thumb {
+        @extend %thumb;
+        margin-top: -2px;
+        height: 0;
+        width: 0;
+      }
     }
   }
 }
