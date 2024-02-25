@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Session } from "next-auth";
 import { usePathname } from "next/navigation";
@@ -32,6 +32,13 @@ const formatedDuration = (duration: string) => {
   );
 };
 
+const updateProgressBar = (ref: RefObject<HTMLInputElement>, value: string) => {
+  ref.current!.style.background = `
+  linear-gradient(to right, 
+  var(--accent) ${value}%, 
+  var(--white-fade) ${value}%)`;
+};
+
 export function MusicList({ songs, session }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
@@ -39,7 +46,7 @@ export function MusicList({ songs, session }: MusicList) {
   const { isPlaying, setIsPlaying, currentSong, setCurrentSong, handlePause } = usePlayerStore();
 
   const [isAddingSong, setIsAddingSong] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const currentAddedSongRef = useRef("");
 
   const handlePlayById = (song: Song) => {
@@ -120,22 +127,6 @@ export function MusicList({ songs, session }: MusicList) {
     }
   };
 
-  const handleMute = () => {
-    if (!audioRef.current) return;
-
-    if (audioRef.current.muted) {
-      audioRef.current.muted = false;
-      console.log(audioRef.current.muted, "here is the muted value");
-    } else {
-      audioRef.current.muted = true;
-      console.log(audioRef.current.muted, "here is the muted value");
-    }
-  };
-
-  const handleAudioPlay = () => {
-    audioRef.current?.play()
-  }
-
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
@@ -167,19 +158,126 @@ export function MusicList({ songs, session }: MusicList) {
                 <ThreeDots className={styles.threeDotsMenu} />
               </div>
             </li>
-            {pathname === "/search" && (
-              <audio
-                controls
-                src={`http://localhost:8000/stream?url=${song.url}`}
-                preload={"metadata"}
-                ref={audioRef}
-              />
-            )}
-            <button onClick={handleAudioPlay}>Play</button>
-            <button onClick={handleMute}>test</button>
+
+            {pathname === "/search" && <SongPreview song={song} />}
           </React.Fragment>
         ))}
       </ul>
     </div>
+  );
+}
+
+function SongPreview({ song }: { song: Song }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  const bufferRef = useRef<HTMLInputElement | null>(null);
+  const [bufferedTime, setBufferedTime] = useState(0);
+  
+  const trackSeekRef = useRef<HTMLInputElement | null>(null);
+  const [seek, setSeek] = useState<number>(0);
+
+  const [isSongPreviewPlaying, setIsSongPreviewPlaying] = useState(false);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current?.addEventListener("loadedmetadata", () => {
+        console.log("loaded metadata");
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.addEventListener("progress", () => {
+        console.log(audio.buffered, "buffered");
+        if (audio.buffered.length > 0) {
+          setBufferedTime(audio.buffered.end(audio.buffered.length - 1));
+          updateProgressBar(bufferRef, `${(bufferedTime / audio.duration) * 100}`);
+        }
+      });
+    }
+  }, [bufferedTime]);
+
+  useEffect(() => {
+    const updateCurrentTime = setInterval(() => {
+      const audio = audioRef.current;
+
+      if (audio?.paused) return;
+
+      if (audio) {
+        setSeek(audio.currentTime);
+        updateProgressBar(trackSeekRef, `${(audio.currentTime / audio.duration) * 100}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(updateCurrentTime);
+  }, [audioRef]);
+
+  const handleSeekTrack = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const seekTime = Number(event.target.value);
+    const audio = audioRef.current;
+
+    if (audio) {
+      audio.currentTime = seekTime;
+      updateProgressBar(trackSeekRef, `${(seekTime / audio.duration) * 100}`);
+      setSeek(seekTime);
+    }
+  };
+
+  const previewMute = () => {
+    if (!audioRef.current) return;
+
+    if (audioRef.current.muted) {
+      audioRef.current.muted = false;
+    } else {
+      audioRef.current.muted = true;
+    }
+  };
+
+  const previewPlay = () => {
+    audioRef.current?.play();
+    setIsSongPreviewPlaying(true);
+  };
+
+  const previewPause = () => {
+    audioRef.current?.pause();
+    setIsSongPreviewPlaying(false);
+  };
+
+  const pathname = usePathname();
+
+  return (
+    <>
+      {pathname === "/search" && (
+        <audio
+          controls
+          src={`http://localhost:8000/stream?url=${song.url}`}
+          preload={"metadata"}
+          ref={audioRef}
+        />
+      )}
+      {isSongPreviewPlaying ? <Pause onClick={previewPause} /> : <Play onClick={previewPlay} />}
+      <button onClick={previewMute}>mute</button>
+      <div className={styles.inputs}>
+        <input
+          className={styles.trackSeek}
+          ref={trackSeekRef}
+          type="range"
+          min={0}
+          value={seek}
+          onChange={handleSeekTrack}
+          max={audioRef.current?.duration}
+        />
+        <input
+          className={styles.buffer}
+          ref={bufferRef}
+          type="range"
+          min={0}
+          defaultValue={bufferedTime}
+          max={audioRef.current?.duration}
+        />
+      </div>
+    </>
   );
 }

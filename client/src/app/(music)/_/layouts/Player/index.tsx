@@ -41,21 +41,19 @@ export function Player() {
   const { error, isLoading, songs } = useSongs(session);
 
   const isMobile = useMobile(576);
+  const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
 
-  const [time, setTime] = useState({
-    current: 0,
-    buffered: 0,
-  });
-
+  
   const volumeRef = useRef<HTMLInputElement>(null);
   const [volume, setVolume] = useState<number>(0.3);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  
+  const bufferRef = useRef<HTMLInputElement>(null);
+  const [bufferedTime, setBufferedTime] = useState(0);
 
   const trackSeekRef = useRef<HTMLInputElement>(null);
-  const bufferRef = useRef<HTMLInputElement>(null);
   const [seek, setSeek] = useState<number>(0);
 
-  const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
 
   useEffect(() => {
     if (!songs) return;
@@ -145,30 +143,13 @@ export function Player() {
     };
   }, [handleNextTrack, playerRef]);
 
-  useEffect(() => {
-    const updateCurrentTime = setInterval(() => {
-      const player = playerRef.current;
-
-      if (player?.paused) return;
-
-      if (player) {
-        setSeek(player.currentTime);
-        updateProgressBar(trackSeekRef, `${(player.currentTime / duration) * 100}`);
-      }
-    }, 1000);
-
-    return () => clearInterval(updateCurrentTime);
-  }, [playerRef, duration]);
 
   const handleBuffering = useCallback(() => {
     if (playerRef.current) {
       const buffered = playerRef.current.buffered;
 
       if (buffered.length > 0) {
-        setTime((prev) => ({
-          ...prev,
-          buffered: buffered.end(buffered.length - 1),
-        }));
+        setBufferedTime(buffered.end(buffered.length - 1));
       }
     }
   }, [playerRef]);
@@ -177,7 +158,7 @@ export function Player() {
     const player = playerRef.current;
     if (player && songs) {
       player.addEventListener("progress", handleBuffering);
-      updateProgressBar(bufferRef, `${(time.buffered / duration) * 100}`);
+      updateProgressBar(bufferRef, `${(bufferedTime / duration) * 100}`);
     }
 
     return () => {
@@ -185,7 +166,7 @@ export function Player() {
         player.removeEventListener("progress", handleBuffering);
       }
     };
-  }, [playerRef, handleBuffering, songs, time.buffered, duration]);
+  }, [playerRef, handleBuffering, songs, bufferedTime, duration]);
 
   useEffect(() => {
     const initialVolume = 0.3;
@@ -238,6 +219,21 @@ export function Player() {
     }
   };
 
+  useEffect(() => {
+    const updateCurrentTime = setInterval(() => {
+      const player = playerRef.current;
+
+      if (player?.paused) return;
+
+      if (player) {
+        setSeek(player.currentTime);
+        updateProgressBar(trackSeekRef, `${(player.currentTime / duration) * 100}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(updateCurrentTime);
+  }, [playerRef, duration]);
+
   return (
     <>
       {!isMobile ? (
@@ -279,7 +275,7 @@ export function Player() {
                 ref={bufferRef}
                 type="range"
                 min={0}
-                defaultValue={time.buffered}
+                defaultValue={bufferedTime}
                 max={duration}
               />
             </div>
@@ -318,7 +314,7 @@ export function Player() {
               ref={bufferRef}
               type="range"
               min={0}
-              defaultValue={time.buffered}
+              defaultValue={bufferedTime}
               max={duration}
             />
           </div>
