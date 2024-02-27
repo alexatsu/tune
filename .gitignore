@@ -1,3 +1,5 @@
 !include /client .gitignore
 node_modules
+
 checkTypes.js
+test.ts

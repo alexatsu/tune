@@ -12,5 +12,5 @@ export default function Page() {
   if (isLoading) return <div>Loading...</div>;
   if (!songs) return <div>could not get any songs</div>;
 
-  return <MusicList songs={songs || undefined} />;
+  return <MusicList songs={songs || undefined} session={session} />;
 }
