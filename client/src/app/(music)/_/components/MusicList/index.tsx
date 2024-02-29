@@ -42,8 +42,8 @@ export function MusicList({ songs, session }: MusicList) {
   const [isAddingSong, setIsAddingSong] = useState(false);
 
   const currentAddedSongRef = useRef("");
-  const {songs: userSongs} = useSongs(session)
-  console.log(songs, userSongs, 'here is the payload')
+  const { songs: userSongs } = useSongs(session);
+  console.log(songs, userSongs, "here is the payload");
 
   const handlePlayById = (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
@@ -59,7 +59,8 @@ export function MusicList({ songs, session }: MusicList) {
     setIsPlaying(true);
   };
 
-  const addSongToMyMusic = async (url: string, id: string, title: string, duration: string) => {
+  const addSongToMyMusic = async (song: Song) => {
+    const { url, id, title, duration } = song;
     type SaveAndStoreProps = {
       message: string;
       metadata: {
@@ -118,11 +119,14 @@ export function MusicList({ songs, session }: MusicList) {
     if (pathname !== "/search") return;
 
     const ifIsSongID = song.id === currentAddedSongRef.current;
-
+    const isSongInDB = userSongs?.find((userSong) => userSong.urlId === song.id);
+    
     if (isAddingSong && ifIsSongID) {
       return <div className={styles.loader} />;
+    } else if (isSongInDB) {
+      return <Add key={song.id} style={{ backgroundColor: "red" }} />;
     } else {
-      return <Add onClick={() => addSongToMyMusic(song.url, song.id, song.title, song.duration)} />;
+      return <Add key={song.id} onClick={() => addSongToMyMusic(song)} />;
     }
   };
 
