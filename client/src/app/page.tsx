@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { Session, getServerSession } from "next-auth";
 
 
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/shared/utils/functions";
 import styles from "./page.module.scss";
 
 export default async function Page() {

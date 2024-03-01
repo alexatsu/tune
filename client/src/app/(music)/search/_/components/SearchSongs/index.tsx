@@ -1,33 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import useSWR from "swr";
 
-import { SongsResponse } from "@/music/_/types";
 import { MusicList } from "@/music/_/components";
 
-import { handleFetch } from "@/shared/utils/functions";
 import { playerIcons } from "@/music/_/components/icons/player";
 import styles from "./styles.module.scss";
+import { useSearch } from "@/app/(music)/_/hooks";
 
 const { TriggerSearch } = playerIcons;
 
 function SearchSongs() {
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const [query, setQuery] = useState("");
-  const [startSearch, setStartSearch] = useState(false);
   const { data: session } = useSession();
+  const { setQuery, setStartSearch, data, error, isLoading} = useSearch();
 
-  const { data, error, isLoading } = useSWR<SongsResponse>(
-    startSearch ? `http://localhost:8000/search?query=${query}` : null,
-    handleFetch,
-    { revalidateOnFocus: false }
-  );
-
-
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     const input = inputRef.current;
     if (!input) return;
 
@@ -36,7 +25,7 @@ function SearchSongs() {
     setStartSearch(true);
     setQuery(input.value);
     localStorage.setItem("query", input.value);
-  };
+  }, [setQuery, setStartSearch]);
 
   useEffect(() => {
     const savedQuery = localStorage.getItem("query");
@@ -45,7 +34,7 @@ function SearchSongs() {
       inputRef.current.value = savedQuery;
       handleSearch();
     }
-  }, []);
+  }, [handleSearch, setQuery]);
 
   return (
     <>

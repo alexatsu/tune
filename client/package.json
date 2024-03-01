@@ -9,17 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "5.7.1",
     "@auth/prisma-adapter": "^1.0.12",
-    "next-auth": "^4.24.5",
+    "@next/bundle-analyzer": "^14.1.1",
+    "@prisma/client": "5.7.1",
+    "hls.js": "^1.4.14",
+    "immer": "^10.0.3",
     "next": "14.0.4",
+    "next-auth": "^4.24.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "hls.js": "^1.4.14",
-    "swr": "^2.2.4",
     "sass": "^1.69.5",
-    "zustand": "^4.5.0",
-    "immer": "^10.0.3"
+    "swr": "^2.2.4",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

@@ -27,7 +27,7 @@ export function MenuDropdown() {
 
   return (
     <div className={styles.container}>
-      <Menu onClick={() => setIsOpen(true)} />
+      <Menu onClick={() => setIsOpen((prev) => !prev)} />
 
       <ul className={isOpen ? styles.ulOpen : styles.ul} ref={dropdownRef}>
         <li>

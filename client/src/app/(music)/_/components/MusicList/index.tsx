@@ -8,9 +8,9 @@ import { useSWRConfig } from "swr";
 
 import { playerIcons } from "@/music/_/components/icons/player";
 import { updateProgressBar } from "@/music/_/utils/functions";
-import { usePlayer, useSongs } from "@/music/_/hooks";
+import { usePlayer, useSearch, useSongs } from "@/music/_/hooks";
 import { usePlayerContext } from "@/music/_/providers";
-import { Song } from "@/music/_/types";
+import { Song, SongsResponse } from "@/music/_/types";
 
 import { usePlayerStore } from "@/shared/store";
 import { handleFetch } from "@/shared/utils/functions";
@@ -43,7 +43,21 @@ export function MusicList({ songs, session }: MusicList) {
 
   const currentAddedSongRef = useRef("");
   const { songs: userSongs } = useSongs(session);
+  const { searchMutate } = useSearch();
   console.log(songs, userSongs, "here is the payload");
+
+  const checkIfSongIsAddedToUsersMusic = () => {
+    if (pathname !== "/search") return;
+    const result = songs?.map((song) => {
+      if (userSongs?.includes(song)) {
+        return { ...song, isAdded: true };
+      } else {
+        return { ...song, isAdded: false };
+      }
+    });
+    return result;
+  };
+  console.log(checkIfSongIsAddedToUsersMusic(), "here is the check");
 
   const handlePlayById = (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
@@ -120,13 +134,21 @@ export function MusicList({ songs, session }: MusicList) {
 
     const ifIsSongID = song.id === currentAddedSongRef.current;
     const isSongInDB = userSongs?.find((userSong) => userSong.urlId === song.id);
-    
+
     if (isAddingSong && ifIsSongID) {
       return <div className={styles.loader} />;
     } else if (isSongInDB) {
       return <Add key={song.id} style={{ backgroundColor: "red" }} />;
     } else {
-      return <Add key={song.id} onClick={() => addSongToMyMusic(song)} />;
+      return (
+        <Add
+          key={song.id}
+          onClick={async () => {
+            await addSongToMyMusic(song);
+            searchMutate();
+          }}
+        />
+      );
     }
   };
 

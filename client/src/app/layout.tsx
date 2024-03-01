@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Quicksand, Qwitcher_Grypen } from "next/font/google";
 import { Session, getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/shared/utils/functions";
 
 import { Header } from "@/app/_/layouts";
 import { SessionProvider } from "@/app/_/providers";
