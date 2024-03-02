@@ -1,0 +1,14 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.menuPropsList {
+  padding: 0.8rem;
+  text-decoration: none;
+  color: $text;
+  cursor: pointer;
+  transition: 0.15s color linear;
+  white-space: nowrap;
+
+  &:hover {
+    color: $accent;
+  }
+}

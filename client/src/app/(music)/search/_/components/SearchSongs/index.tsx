@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 
-import { MusicList } from "@/music/_/components";
-
-import { playerIcons } from "@/music/_/components/icons/player";
-import styles from "./styles.module.scss";
 import { useSearch } from "@/app/(music)/_/hooks";
+
+import { MusicList } from "@/music/_/components";
+import { playerIcons } from "@/music/_/components/icons/player";
+
+import styles from "./styles.module.scss";
 
 const { TriggerSearch } = playerIcons;
 
@@ -15,7 +16,7 @@ function SearchSongs() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
   const { setQuery, setStartSearch, data, error, isLoading} = useSearch();
-
+  
   const handleSearch = useCallback(() => {
     const input = inputRef.current;
     if (!input) return;
@@ -55,7 +56,7 @@ function SearchSongs() {
       {isLoading ? (
         <div style={{ color: "white" }}>Loading...</div>
       ) : (
-        <MusicList songs={data?.songs || null} session={session} />
+        <MusicList data={data || undefined} session={session} />
       )}
     </>
   );

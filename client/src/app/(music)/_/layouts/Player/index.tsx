@@ -180,7 +180,7 @@ export function Player() {
     <>
       {!isMobile ? (
         <div className={styles.playerContainer}>
-          <div className={styles.titleBlock}>
+          <div className={styles.imageBlock}>
             <Image
               src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
               alt="cover"
@@ -188,7 +188,7 @@ export function Player() {
               height={50}
               unoptimized
             />
-            <div className={styles.title}>{currentSongRef.current?.title}</div>
+            
           </div>
 
           <div className={styles.mainTrack}>
@@ -203,6 +203,7 @@ export function Player() {
             </div>
 
             <div className={styles.inputs}>{inputs}</div>
+            <div className={styles.title}>{currentSongRef.current?.title}</div>
           </div>
 
           <div className={styles.sound}>

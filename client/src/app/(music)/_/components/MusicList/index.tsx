@@ -15,11 +15,12 @@ import { Song, SongsResponse } from "@/music/_/types";
 import { usePlayerStore } from "@/shared/store";
 import { handleFetch } from "@/shared/utils/functions";
 import styles from "./styles.module.scss";
+import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 
 const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
 
 type MusicList = {
-  songs: Song[] | null;
+  data: SongsResponse | undefined;
   session: Session | null;
 };
 
@@ -34,7 +35,7 @@ const formatedDuration = (duration: string) => {
   );
 };
 
-export function MusicList({ songs, session }: MusicList) {
+export function MusicList({ data, session }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
   const { loadPlayerSource, currentSongRef, playerRef } = usePlayerContext();
@@ -42,22 +43,8 @@ export function MusicList({ songs, session }: MusicList) {
   const [isAddingSong, setIsAddingSong] = useState(false);
 
   const currentAddedSongRef = useRef("");
-  const { songs: userSongs } = useSongs(session);
+  const { data: userSongs } = useSongs(session);
   const { searchMutate } = useSearch();
-  console.log(songs, userSongs, "here is the payload");
-
-  const checkIfSongIsAddedToUsersMusic = () => {
-    if (pathname !== "/search") return;
-    const result = songs?.map((song) => {
-      if (userSongs?.includes(song)) {
-        return { ...song, isAdded: true };
-      } else {
-        return { ...song, isAdded: false };
-      }
-    });
-    return result;
-  };
-  console.log(checkIfSongIsAddedToUsersMusic(), "here is the check");
 
   const handlePlayById = (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
@@ -71,6 +58,27 @@ export function MusicList({ songs, session }: MusicList) {
     loadPlayerSource();
     playerRef.current?.play();
     setIsPlaying(true);
+  };
+
+  const renderPlayButton = (song: Song) => {
+    const iscurrentTrackRef = song.urlId === currentSong?.urlId;
+
+    const playButton = (
+      <div className={styles.notPlaying} onClick={() => handlePlayById(song)}>
+        <Play />
+      </div>
+    );
+    const pauseButton = (
+      <div className={styles.playing} onClick={() => handlePause(playerRef)}>
+        <Pause />
+      </div>
+    );
+
+    if (isPlaying && iscurrentTrackRef) {
+      return pauseButton;
+    } else {
+      return playButton;
+    }
   };
 
   const addSongToMyMusic = async (song: Song) => {
@@ -108,37 +116,14 @@ export function MusicList({ songs, session }: MusicList) {
     currentAddedSongRef.current = "";
   };
 
-  const renderPlayButton = (song: Song) => {
-    const iscurrentTrackRef = song.urlId === currentSong?.urlId;
-
-    const playButton = (
-      <div className={styles.notPlaying} onClick={() => handlePlayById(song)}>
-        <Play />
-      </div>
-    );
-    const pauseButton = (
-      <div className={styles.playing} onClick={() => handlePause(playerRef)}>
-        <Pause />
-      </div>
-    );
-
-    if (isPlaying && iscurrentTrackRef) {
-      return pauseButton;
-    } else {
-      return playButton;
-    }
-  };
-
-  const renderAddButton = (song: Song) => {
-    if (pathname !== "/search") return;
-
+  const renderAddButton = (song: Song & { isAdded?: boolean }) => {
     const ifIsSongID = song.id === currentAddedSongRef.current;
-    const isSongInDB = userSongs?.find((userSong) => userSong.urlId === song.id);
+    const isSongInDB = userSongs?.songs.find((userSong) => userSong.urlId === song.id);
 
     if (isAddingSong && ifIsSongID) {
       return <div className={styles.loader} />;
     } else if (isSongInDB) {
-      return <Add key={song.id} style={{ backgroundColor: "red" }} />;
+      return <Add key={song.id} className={styles.added} />;
     } else {
       return (
         <Add
@@ -155,7 +140,7 @@ export function MusicList({ songs, session }: MusicList) {
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
-        {songs?.map((song) => (
+        {data?.songs.map((song) => (
           <div className={styles.liWrapper} key={song.id}>
             <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
@@ -179,8 +164,23 @@ export function MusicList({ songs, session }: MusicList) {
 
               <div className={styles.rightSection}>
                 {formatedDuration(song.duration)}
-                {renderAddButton(song)}
-                <ThreeDots className={styles.threeDotsMenu} />
+                {pathname === "/search" && renderAddButton(song)}
+                <MenuDropdown
+                  props={
+                    <li
+                      style={{
+                        color: "#FAA0A0",
+                        textAlign: "center",
+                        cursor: "pointer",
+                        padding: "0.5rem",
+                        width: "100%",
+                      }}
+                    >
+                      x
+                    </li>
+                  }
+                  Icon={<ThreeDots className={styles.threeDotsMenu} />}
+                />
               </div>
             </li>
 
@@ -251,7 +251,7 @@ function SongPreview({ song }: { song: Song }) {
             min={0}
             value={seek}
             onChange={handleSeekTrack}
-            max={audioRef.current?.duration}
+            max={audioRef.current?.duration || ""}
           />
           <input
             className={styles.buffer}
@@ -259,7 +259,7 @@ function SongPreview({ song }: { song: Song }) {
             type="range"
             min={0}
             defaultValue={bufferedTime}
-            max={audioRef.current?.duration}
+            max={audioRef.current?.duration || ""}
           />
         </div>
       </div>

@@ -103,6 +103,7 @@
           -o-object-fit: cover;
           object-fit: cover;
           border-radius: 5px;
+          user-select: none;
         }
       }
 
@@ -161,6 +162,16 @@
         }
         100% {
           transform: rotate(360deg);
+        }
+      }
+
+      .added {
+        background-color: $widget-bg;
+        user-select: none;
+        cursor: default;
+        
+        & path {
+          fill: $grey;
         }
       }
     }
@@ -291,5 +302,16 @@
         width: 0;
       }
     }
+  }
+}
+
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

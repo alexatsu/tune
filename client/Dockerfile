@@ -16,5 +16,7 @@ COPY . .
 # after installing new packages
 # then rebuild it
 
+ENV HOSTNAME "0.0.0.0"
+
 CMD ["pnpm","run","dev"]
 # CMD ["sh","migrate.sh"] run this when clean insall/no data in volumes

@@ -18,13 +18,13 @@ export async function POST(req: NextRequest) {
   const userSongs = await db.user.findUnique({
     where: { email },
     select: {
-      allSongs: true,
+      Songs: true,
     },
   });
 
   return NextResponse.json(
     {
-      songs: userSongs?.allSongs,
+      songs: userSongs?.Songs,
       message: "Songs fetched successfully",
     },
     { status: 200 }

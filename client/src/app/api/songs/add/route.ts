@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   const findUser = await db.user.findUnique({
     where: { email },
     include: {
-      allSongs: true,
+      Songs: true,
     },
   });
 
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const checkIfSongAlreadyExist = findUser.allSongs.find((song) => song.urlId === id);
+  const checkIfSongAlreadyExist = findUser.Songs.find((song) => song.urlId === id);
 
   if (checkIfSongAlreadyExist) {
     return NextResponse.json(

@@ -1,11 +1,12 @@
+import { SVGProps } from "react";
 import styles from "./styles.module.scss";
 
-export function Menu({ onClick }: { onClick: () => void }) {
+export function Menu(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
-      id="menu-icon"
-      onClick={onClick}
-      className={styles.menu}
+      {...props}
+      role={"list"}
+      className={`${styles.menu} menu-icon`}
       width="71"
       height="36"
       viewBox="0 0 71 36"

@@ -1,7 +1,9 @@
 import Link from "next/link";
 
-import { MenuDropdown } from "./MenuDropdown";
+import { MenuDropdown } from "@/app/_/components/MenuDropdown";
+import { Menu } from "@/app/_/components/icons";
 
+import { MenuProps } from "./MenuProps/MenuProps";
 import styles from "./styles.module.scss";
 
 export function Header() {
@@ -11,7 +13,7 @@ export function Header() {
         <h1>Tune</h1>
       </Link>
 
-      <MenuDropdown />
+      <MenuDropdown props={<MenuProps />} Icon={<Menu />} />
     </header>
   );
 }

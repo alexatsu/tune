@@ -13,10 +13,10 @@ const MusicList = dynamic(() =>
 );
 export default function Page() {
   const { data: session } = useSession();
-  const { songs, isLoading } = useSongs(session);
+  const { songs, isLoading,data } = useSongs(session);
 
   if (isLoading) return <div>Loading...</div>;
   if (!songs) return <div>could not get any songs</div>;
 
-  return <MusicList songs={songs || undefined} session={session} />;
+  return <MusicList data={data || undefined} session={session} />;
 }

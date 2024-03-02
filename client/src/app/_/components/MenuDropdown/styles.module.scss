@@ -11,7 +11,7 @@
     list-style: none;
     right: 0;
     user-select: none;
-    width: 200px;
+    max-width: 200px;
     display: none;
     background-color: rgb(50, 50, 50);
   }
@@ -23,7 +23,7 @@
     border-radius: 10px;
     display: block;
     animation: fadeIn 0.15s ease;
-    top: 40px;
+    top: 35px;
     right: 0px;
     z-index: 1;
     color: $text;
@@ -33,17 +33,7 @@
       color: inherit;
     }
     
-    & li {
-      padding: 0.8rem;
-      text-decoration: none;
-      color: $text;
-      cursor: pointer;
-      transition: 0.15s color linear;
-
-      &:hover {
-        color: $accent;
-      }
-    }
+    
   }
 }
 
