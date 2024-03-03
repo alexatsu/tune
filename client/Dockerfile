@@ -18,5 +18,6 @@ COPY . .
 
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["pnpm","run","dev"]
-# CMD ["sh","migrate.sh"] run this when clean insall/no data in volumes
+# CMD ["pnpm","run","dev"]
+CMD ["sh","migrate.sh"] 
+#run this when clean insall/no data in volumes
