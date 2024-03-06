@@ -1,3 +1,4 @@
+import { signOut } from "next-auth/react";
 import NextAuth, { AuthOptions, Profile } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -69,6 +70,9 @@ export const authOptions: AuthOptions = {
       return session;
     },
   },
+  events: {
+    async signOut({ token, session }) {
+      signOut();
+    },
+  },
 };
-
-
