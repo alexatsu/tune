@@ -13,6 +13,7 @@ import { updateProgressBar } from "@/music/_/utils/functions";
 
 import { usePlayerStore } from "@/shared/store";
 import styles from "./styles.module.scss";
+import { redirect } from "next/navigation";
 
 // TODO:
 // - loading states
@@ -176,6 +177,8 @@ export function Player() {
     </>
   );
 
+  if (!session) redirect("/signin");
+
   return (
     <>
       {!isMobile ? (
@@ -188,7 +191,6 @@ export function Player() {
               height={50}
               unoptimized
             />
-            
           </div>
 
           <div className={styles.mainTrack}>
@@ -248,7 +250,7 @@ export function Player() {
           </div>
         </div>
       )}
-      
+
       <video
         style={{ display: "none" }}
         ref={playerRef}

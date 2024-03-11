@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-yt-dlp = "*"
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 requests = "*"
 pydantic = "*"
+yt-dlp = "*"
 
 [scripts]
 dev = "python downloadAudio.py"
@@ -18,3 +18,6 @@ server = "uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 
 [requires]
 python_version = "3.12"
+
+[pipenv]
+allow_prereleases = true

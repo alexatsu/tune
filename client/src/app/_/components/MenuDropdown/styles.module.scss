@@ -22,26 +22,33 @@
     padding: 0.5rem 1rem;
     border-radius: 10px;
     display: block;
-    animation: fadeIn 0.15s ease;
-    top: 35px;
+    // top: 35px; //to open at the top
+    // bottom: calc(100% + 10px); //to open at the bottom
     right: 0px;
     z-index: 1;
     color: $text;
-    
+    animation: fadeIn 0.15s ease;
+
     & a {
       text-decoration: none;
       color: inherit;
     }
-    
-    
+
+    & li {
+      white-space: nowrap;
+    }
   }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0px);
   }
 }
+
+
