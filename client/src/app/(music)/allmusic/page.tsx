@@ -13,6 +13,7 @@ const MusicList = dynamic(() =>
     return mod.MusicList;
   })
 );
+
 export default function Page() {
   const { data: session } = useSession();
   const { songs, isLoading, data } = useSongs(session);
