@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef} from "react";
 import { useSession } from "next-auth/react";
 
-import { useSearch } from "@/app/(music)/_/hooks";
-
+import { useSearch } from "@/music/_/hooks";
 import { MusicList } from "@/music/_/components";
 import { playerIcons } from "@/music/_/components/icons/player";
 

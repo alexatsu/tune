@@ -6,16 +6,18 @@ import { Session } from "next-auth";
 import { usePathname } from "next/navigation";
 import { useSWRConfig } from "swr";
 
+import { usePlayerStore } from "@/shared/store";
+import { handleFetch } from "@/shared/utils/functions";
+
+import { MenuDropdown } from "@/app/_/components/MenuDropdown";
+
 import { playerIcons } from "@/music/_/components/icons/player";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayer, useSearch, useSongs } from "@/music/_/hooks";
 import { usePlayerContext } from "@/music/_/providers";
 import { Song, SongsResponse } from "@/music/_/types";
 
-import { usePlayerStore } from "@/shared/store";
-import { handleFetch } from "@/shared/utils/functions";
 import styles from "./styles.module.scss";
-import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 
 const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
 

@@ -54,6 +54,8 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  await db.$disconnect();
+  
   return NextResponse.json(
     { message: "Song removed successfully from database", data: findUser.Songs },
     { status: 200 }

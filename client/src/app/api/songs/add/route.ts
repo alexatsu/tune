@@ -53,5 +53,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  await db.$disconnect();
+  
   return NextResponse.json({ message: "Song added successfully in database" }, { status: 201 });
 }

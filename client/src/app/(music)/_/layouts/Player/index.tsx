@@ -96,6 +96,7 @@ export function Player() {
       currentSongRef.current = songs[trackIndex + 1];
       setCurrentSong(songs[trackIndex + 1]);
     }
+
     setSeek(0);
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
     loadPlayerSource();

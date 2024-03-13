@@ -6,7 +6,6 @@ import { Song } from "@/app/(music)/_/types";
 
 export async function POST(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  console.log(searchParams, 'params in api')
   const query = searchParams.get("query");
   const { session }: { session: Session } = await request.json();
 
@@ -15,9 +14,7 @@ export async function POST(request: NextRequest) {
   }
 
   const res = await fetch(`http://music-service:8000/search?query=${query}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
   });
 
   const data: { songs: Song[]; message: string } = await res.json();
@@ -38,7 +35,7 @@ export async function POST(request: NextRequest) {
     return { ...song, isAdded: findInUser ? true : false };
   });
 
-  // console.log(attachIsAddedToSongs, "here is the attached songs");
+  await db.$disconnect();
 
   return NextResponse.json({ songs: attachIsAddedToSongs, message: "success" }, { status: 200 });
 }
