@@ -1,5 +1,6 @@
+.idea
 !include /client .gitignore
 node_modules
-
+docker-compose.yaml
 checkTypes.js
 test.ts

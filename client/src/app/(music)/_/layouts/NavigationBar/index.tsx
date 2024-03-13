@@ -7,7 +7,7 @@ import { navigationIcons } from "@/music/_/components/icons/navigation";
 
 import styles from "./styles.module.scss";
 
-const { Music, Search } = navigationIcons;
+const { Music, Search, Albums } = navigationIcons;
 
 const list = [
   {
@@ -17,6 +17,10 @@ const list = [
   {
     path: "/search",
     icon: <Search />,
+  },
+  {
+    path: "/albums",
+    icon: <Albums />,
   },
 ];
 
