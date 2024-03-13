@@ -21,7 +21,7 @@ const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
 
 type MusicList = {
   data: SongsResponse | undefined;
-  session: Session | null;
+  session: Session;
 };
 
 const formatedDuration = (duration: string) => {
@@ -45,7 +45,6 @@ export function MusicList({ data, session }: MusicList) {
   const currentAddedSongRef = useRef("");
   const { data: userSongs } = useSongs(session);
   const { searchMutate } = useSearch();
-  const userEmail = session?.user?.email;
 
   const handlePlayById = (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
@@ -98,11 +97,10 @@ export function MusicList({ data, session }: MusicList) {
     setIsAddingSong(true);
     currentAddedSongRef.current = id;
 
-    const userEmail = session?.user?.email;
     const addSongDataToDB = await handleFetch<{ message: string }>(
       "http://localhost:3000/api/songs/add",
       "POST",
-      { url, id, title, duration, email: userEmail }
+      { url, id, title, duration, session }
     );
 
     const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
@@ -138,11 +136,11 @@ export function MusicList({ data, session }: MusicList) {
     }
   };
 
-  const deleteFromMyMusic = async (songId: Song["urlId"], email: typeof userEmail) => {
+  const deleteFromMyMusic = async (songId: Song["urlId"]) => {
     const addSongDataToDB = await handleFetch<{ message: string }>(
       "http://localhost:3000/api/songs/delete",
       "POST",
-      { songId, email: userEmail }
+      { songId, session }
     );
 
     mutate("http://localhost:3000/api/songs/get-all");
@@ -186,7 +184,7 @@ export function MusicList({ data, session }: MusicList) {
                         padding: "0.5rem",
                         width: "100%",
                       }}
-                      onClick={() => deleteFromMyMusic(song.id, userEmail)}
+                      onClick={() => deleteFromMyMusic(song.id)}
                     >
                       x from music
                     </li>

@@ -8,7 +8,7 @@ function useSongs(session: Session | null) {
     const response = await fetch("http://localhost:3000/api/songs/get-all", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: session?.user?.email }),
+      body: JSON.stringify({ session }),
     });
 
     return response.json();
@@ -27,7 +27,7 @@ function useSongs(session: Session | null) {
     isLoading,
     songs,
     mutate,
-    data
+    data,
   };
 }
 

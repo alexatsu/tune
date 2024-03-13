@@ -56,7 +56,7 @@ function SearchSongs() {
       {isLoading ? (
         <div style={{ color: "white" }}>Loading...</div>
       ) : (
-        <MusicList data={data || undefined} session={session} />
+        <MusicList data={data || undefined} session={session!} />
       )}
     </>
   );

@@ -7,19 +7,27 @@
 //if there is none, then send request to music-service and delete folder with a music
 
 import { NextRequest, NextResponse } from "next/server";
+import { Session } from "next-auth";
+
 import { db } from "@/api/_/services";
 
 type Props = {
-  email: string;
+  session: Session;
   songId: string;
 };
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { email, songId }: Props = body;
+  const { session, songId }: Props = body;
+
+  if (!session) {
+    return NextResponse.json({ user: null, message: "Session is required" }, { status: 404 });
+  }
+
+  const userEmail = session?.user?.email || "";
 
   const findUser = await db.user.findUnique({
-    where: { email },
+    where: { email: userEmail },
     include: {
       Songs: true,
     },
@@ -38,7 +46,7 @@ export async function POST(req: NextRequest) {
   const findSongForDeletion = findUser.Songs.find((song) => song.id === songId);
 
   await db.user.update({
-    where: { email },
+    where: { email: userEmail },
     data: {
       Songs: {
         delete: findSongForDeletion,

@@ -1,18 +1,21 @@
-import useSWR from "swr";
-import { SongsResponse } from "../types";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+
+import useSWR from "swr";
+
+import { SongsResponse } from "../types";
 
 export function useSearch() {
   const [query, setQuery] = useState("");
   const [startSearch, setStartSearch] = useState(false);
   const session = useSession();
+  const url = `http://localhost:3000/api/songs/search?query=${query}`;
 
   const fetchAllMusic = async () => {
-    const response = await fetch(`http://localhost:3000/api/songs/search?query=${query}`, {
+    const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: session.data?.user?.email }),
+      body: JSON.stringify({ session }),
     });
 
     return response.json();
@@ -23,11 +26,7 @@ export function useSearch() {
     error,
     isLoading,
     mutate: searchMutate,
-  } = useSWR<SongsResponse>(
-    startSearch ? `http://localhost:3000/api/songs/search?query=${query}` : null,
-    fetchAllMusic,
-    { revalidateOnFocus: false }
-  );
+  } = useSWR<SongsResponse>(startSearch ? url : null, fetchAllMusic, { revalidateOnFocus: false });
 
   return {
     setQuery,
