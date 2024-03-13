@@ -18,6 +18,7 @@ import { usePlayerContext } from "@/music/_/providers";
 import { Song, SongsResponse } from "@/music/_/types";
 
 import styles from "./styles.module.scss";
+import Link from "next/link";
 
 const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
 
@@ -120,16 +121,14 @@ export function MusicList({ data, session }: MusicList) {
       const getFirstSong = async (): Promise<SongsResponse> => {
         const res = await fetch("http://localhost:3000/api/songs/get-all", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ session }),
         });
+
         const data = await res.json();
-        console.log(data);
         return data;
       };
-      
+
       currentSongRef.current = (await getFirstSong()).songs[0] as Song;
       loadPlayerSource();
     }
@@ -166,6 +165,35 @@ export function MusicList({ data, session }: MusicList) {
     mutate("http://localhost:3000/api/songs/get-all");
   };
 
+  const menuProps = (song: Song) => {
+    const list = (className: string) => [
+      {
+        node: pathname !== "/search" && (
+          <li className={className} onClick={() => deleteFromMyMusic(song.id)}>
+            x from music
+          </li>
+        ),
+      },
+      {
+        node: (
+          <li className={className}>
+            <Link href={song.url} target="_blank">source video</Link>
+          </li>
+        ),
+      },
+    ];
+
+    const result = (
+      <>
+        {list(styles.musicListMenuProps).map(({ node }) => (
+          <React.Fragment key={crypto.randomUUID()}>{node}</React.Fragment>
+        ))}
+      </>
+    );
+
+    return result;
+  };
+
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
@@ -195,20 +223,7 @@ export function MusicList({ data, session }: MusicList) {
                 {formatedDuration(song.duration)}
                 {pathname === "/search" && renderAddButton(song)}
                 <MenuDropdown
-                  props={
-                    <li
-                      style={{
-                        color: "#FAA0A0",
-                        textAlign: "center",
-                        cursor: "pointer",
-                        padding: "0.5rem",
-                        width: "100%",
-                      }}
-                      onClick={() => deleteFromMyMusic(song.id)}
-                    >
-                      x from music
-                    </li>
-                  }
+                  props={menuProps(song)}
                   Icon={<ThreeDots className={styles.threeDotsMenu} />}
                 />
               </div>

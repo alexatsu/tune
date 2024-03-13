@@ -7,6 +7,7 @@ import { Header } from "@/app/_/layouts";
 import { SessionProvider } from "@/app/_/providers";
 
 import "@/shared/sass/main.scss";
+import { PlayerProvider } from "./(music)/_/providers";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });
 const qwitcher = Qwitcher_Grypen({
@@ -28,7 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={`${quicksand.className} ${qwitcher.variable}`}>
         <SessionProvider session={session}>
           <Header />
-          {children}
+          <PlayerProvider>{children}</PlayerProvider>
         </SessionProvider>
       </body>
     </html>

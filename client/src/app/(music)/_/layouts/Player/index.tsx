@@ -2,18 +2,19 @@
 
 import { useEffect, useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 
 import Hls from "hls.js";
+
+import { usePlayerStore } from "@/shared/store";
 
 import { playerIcons } from "@/music/_/components/icons/player";
 import { usePlayerContext } from "@/music/_/providers";
 import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
 import { updateProgressBar } from "@/music/_/utils/functions";
 
-import { usePlayerStore } from "@/shared/store";
 import styles from "./styles.module.scss";
-import { redirect } from "next/navigation";
 
 // TODO:
 // - loading states
@@ -37,7 +38,6 @@ export function Player() {
 
   const isMobile = useMobile(576);
   const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
-  const [message, setMessage] = useState<string>("");
 
   const {
     volumeRef,
@@ -53,30 +53,28 @@ export function Player() {
   } = usePlayer(playerRef);
 
   useEffect(() => {
-    if (!songs) {
-      setMessage("No songs found");
-      return;
+    if (songs) {
+      currentSongRef.current = songs[0];
+      console.log(currentSongRef.current, "current track");
+      setCurrentSong(songs[0]);
+
+      const { storage, urlId } = currentSongRef.current || {};
+      if (playerRef.current) {
+        hls.attachMedia(playerRef.current);
+      }
+
+      hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+
+      hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+        console.log("video and hls.js are now bound together !");
+      });
+
+      hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+        console.log("manifest loaded, found " + data.levels.length + " quality level");
+      });
+
+      return () => hls.destroy();
     }
-    currentSongRef.current = songs[0];
-    console.log(currentSongRef.current, "current track");
-    setCurrentSong(songs[0]);
-
-    const { storage, urlId } = currentSongRef.current || {};
-    if (playerRef.current) {
-      hls.attachMedia(playerRef.current);
-    }
-    
-    hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
-
-    hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-      console.log("video and hls.js are now bound together !");
-    });
-
-    hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-      console.log("manifest loaded, found " + data.levels.length + " quality level");
-    });
-
-    return () => hls.destroy();
   }, [currentSongRef, playerRef, songs, setCurrentSong]);
 
   const handleNextTrack = useCallback(() => {
@@ -161,6 +159,18 @@ export function Player() {
     }
   }, [playerRef, isMobile, volumeRef]);
 
+  useEffect(() => {
+    const initialVolume = 0.3;
+
+    if (playerRef.current && volumeRef.current) {
+      playerRef.current.volume = initialVolume;
+
+      console.log(volumeRef.current);
+      volumeRef.current.value = `${initialVolume * 100}`;
+      updateProgressBar(volumeRef, `${playerRef.current?.volume * 100}`);
+    }
+  }, [playerRef, volumeRef]);
+
   const inputs = (
     <>
       <input
@@ -184,18 +194,14 @@ export function Player() {
   );
 
   if (!session) redirect("/signin");
-
-  if (!message) {
-    return <div className={styles.loader}>No songs here, add them</div>;
-  }
-
+  
   return (
     <>
       {!isMobile ? (
         <div className={styles.playerContainer}>
           <div className={styles.imageBlock}>
             <Image
-              src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
+              src={`http://localhost:8000/audio/saved/${currentSongRef.current?.urlId}/thumbnail.jpg`}
               alt="cover"
               width={50}
               height={50}

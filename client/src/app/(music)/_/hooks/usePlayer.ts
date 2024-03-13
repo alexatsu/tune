@@ -91,15 +91,8 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
   useEffect(() => {
     const initialVolume = 0.3;
 
-    if (playerRef.current) {
-      playerRef.current.volume = initialVolume;
-    }
-
-    if (volumeRef.current) {
-      console.log('volume triggered')
-      updateProgressBar(volumeRef, `${initialVolume * 100}`);
-    }
-  }, [playerRef, volumeRef]);
+    updateProgressBar(volumeRef, `${initialVolume * 100}`);
+  }, [volumeRef]);
 
   return {
     handleBuffering,

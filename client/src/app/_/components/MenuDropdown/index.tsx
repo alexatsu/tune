@@ -24,7 +24,6 @@ export function MenuDropdown({ props, Icon }: Props) {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [isOpen]);
 
-  
   const toggleDropdown = () => {
     setIsOpen((prevState) => !prevState);
 
