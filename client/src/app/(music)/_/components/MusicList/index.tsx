@@ -115,6 +115,24 @@ export function MusicList({ data, session }: MusicList) {
     mutate("http://localhost:3000/api/songs/get-all");
     setIsAddingSong(false);
     currentAddedSongRef.current = "";
+
+    if (!currentSongRef.current) {
+      const getFirstSong = async (): Promise<SongsResponse> => {
+        const res = await fetch("http://localhost:3000/api/songs/get-all", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ session }),
+        });
+        const data = await res.json();
+        console.log(data);
+        return data;
+      };
+      
+      currentSongRef.current = (await getFirstSong()).songs[0] as Song;
+      loadPlayerSource();
+    }
   };
 
   const renderAddButton = (song: Song & { isAdded?: boolean }) => {

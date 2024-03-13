@@ -96,6 +96,7 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
     }
 
     if (volumeRef.current) {
+      console.log('volume triggered')
       updateProgressBar(volumeRef, `${initialVolume * 100}`);
     }
   }, [playerRef, volumeRef]);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
@@ -37,6 +37,7 @@ export function Player() {
 
   const isMobile = useMobile(576);
   const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
+  const [message, setMessage] = useState<string>("");
 
   const {
     volumeRef,
@@ -52,16 +53,20 @@ export function Player() {
   } = usePlayer(playerRef);
 
   useEffect(() => {
-    if (!songs) return;
+    if (!songs) {
+      setMessage("No songs found");
+      return;
+    }
     currentSongRef.current = songs[0];
     console.log(currentSongRef.current, "current track");
     setCurrentSong(songs[0]);
 
-    const { storage, urlId } = currentSongRef.current;
+    const { storage, urlId } = currentSongRef.current || {};
     if (playerRef.current) {
       hls.attachMedia(playerRef.current);
-      hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
     }
+    
+    hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
 
     hls.on(Hls.Events.MEDIA_ATTACHED, () => {
       console.log("video and hls.js are now bound together !");
@@ -179,6 +184,10 @@ export function Player() {
   );
 
   if (!session) redirect("/signin");
+
+  if (!message) {
+    return <div className={styles.loader}>No songs here, add them</div>;
+  }
 
   return (
     <>
