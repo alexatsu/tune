@@ -1,12 +1,13 @@
+import "@/shared/sass/main.scss";
+
 import type { Metadata } from "next";
 import { Quicksand, Qwitcher_Grypen } from "next/font/google";
-import { Session, getServerSession } from "next-auth";
-import { authOptions } from "@/shared/utils/functions";
+import { getServerSession, Session } from "next-auth";
 
 import { Header } from "@/app/_/layouts";
 import { SessionProvider } from "@/app/_/providers";
+import { authOptions } from "@/shared/utils/functions";
 
-import "@/shared/sass/main.scss";
 import { PlayerProvider } from "./(music)/_/providers";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });

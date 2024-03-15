@@ -1,9 +1,10 @@
-import { signOut } from "next-auth/react";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { AuthOptions, Profile } from "next-auth";
+import type { Adapter } from "next-auth/adapters";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import type { Adapter } from "next-auth/adapters";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { signOut } from "next-auth/react";
+
 import { db } from "@/api/_/services";
 
 export const authOptions: AuthOptions = {
@@ -68,7 +69,6 @@ export const authOptions: AuthOptions = {
     async session({ session, user, token }) {
       return session;
     },
-
   },
   // events: {
   //   async signOut({ token, session }) {

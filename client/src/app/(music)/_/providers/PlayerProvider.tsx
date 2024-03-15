@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useRef } from "react";
 import Hls from "hls.js";
+import { createContext, useContext, useRef } from "react";
 
 import type { Song } from "../types";
 

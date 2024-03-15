@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { Session } from "next-auth";
 
 import { db } from "@/api/_/services";

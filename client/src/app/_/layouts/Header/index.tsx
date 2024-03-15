@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { Menu } from "@/app/_/components/icons";
+import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 
 import { MenuProps } from "./MenuProps/MenuProps";
 import styles from "./styles.module.scss";

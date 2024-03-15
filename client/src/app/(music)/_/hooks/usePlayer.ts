@@ -1,4 +1,5 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+
 import { updateProgressBar } from "@/music/_/utils/functions";
 
 export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTMLVideoElement>) {
@@ -68,10 +69,9 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
 
     if (playerRef.current) {
       playerRef.current.muted = false;
-      setVolume((prev) => ({ ...prev, muted: false }));
       const updatedVolume = Number((newVolume / 100).toFixed(2));
       playerRef.current.volume = updatedVolume;
-      setVolume((prev) => ({ ...prev, value: updatedVolume }));
+      setVolume({ muted: false, value: updatedVolume });
     }
   };
 

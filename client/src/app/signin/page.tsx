@@ -1,5 +1,4 @@
 import { GithubSignIn, GoogleSignIn } from "./_/components";
-
 import styles from "./page.module.scss";
 
 export default function Page() {

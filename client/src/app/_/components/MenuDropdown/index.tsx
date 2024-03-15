@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import React from "react";
 
 import styles from "./styles.module.scss";
-import React from "react";
 
 type Props = { props: JSX.Element; Icon: React.ReactNode };
 

@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import styles from "./styles.module.scss";
 import React from "react";
+
+import styles from "./styles.module.scss";
 
 export function MenuProps() {
   const list = (className: string) => {

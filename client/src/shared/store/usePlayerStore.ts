@@ -1,7 +1,8 @@
-import { Song } from "@/app/(music)/_/types";
 import { RefObject } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+
+import { Song } from "@/app/(music)/_/types";
 
 type PlayerStore = {
   isPlaying: boolean;
@@ -35,7 +36,7 @@ const usePlayerStore = create<PlayerStore>()(
         playerRef.current?.pause();
         state.isPlaying = false;
       }),
-  }))
+  })),
 );
 
 export { usePlayerStore };

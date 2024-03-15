@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Session, getServerSession } from "next-auth";
-
+import { getServerSession, Session } from "next-auth";
+import { useEffect, useRef, useState } from "react";
 
 import { authOptions } from "@/shared/utils/functions";
+
 import styles from "./page.module.scss";
 
 export default async function Page() {
   const session = (await getServerSession(authOptions)) as Session;
-  console.log(session, 'here is the session')
+  console.log(session, "here is the session");
   // if (session) {
   //   redirect("/music");
   // }
@@ -21,7 +21,7 @@ export default async function Page() {
   //     .getComputedStyle(document.documentElement)
   //     .getPropertyValue("--bg");
   // }, []);
-  console.log(process.env.DATABASE_URL, 'database url is here');
+  console.log(process.env.DATABASE_URL, "database url is here");
 
   return (
     <main className={styles.main}>

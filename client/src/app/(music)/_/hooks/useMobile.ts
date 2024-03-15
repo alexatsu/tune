@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const useMobile = (threshold: number) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= threshold);
@@ -21,7 +21,6 @@ const useMobile = (threshold: number) => {
   }, [threshold]);
 
   const cachedValue = useMemo(() => isMobile, [isMobile]);
-  console.log(cachedValue)
 
   return cachedValue;
 };

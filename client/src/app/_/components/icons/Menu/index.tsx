@@ -1,4 +1,5 @@
 import { SVGProps } from "react";
+
 import styles from "./styles.module.scss";
 
 export function Menu(props: SVGProps<SVGSVGElement>) {

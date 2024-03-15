@@ -1,24 +1,22 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Session } from "next-auth";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Session } from "next-auth";
+import React, { useEffect, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 
-import { usePlayerStore } from "@/shared/store";
-import { handleFetch } from "@/shared/utils/functions";
-
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
-
 import { playerIcons } from "@/music/_/components/icons/player";
-import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayer, useSearch, useSongs } from "@/music/_/hooks";
 import { usePlayerContext } from "@/music/_/providers";
 import { Song, SongsResponse } from "@/music/_/types";
+import { updateProgressBar } from "@/music/_/utils/functions";
+import { usePlayerStore } from "@/shared/store";
+import { handleFetch } from "@/shared/utils/functions";
 
 import styles from "./styles.module.scss";
-import Link from "next/link";
 
 const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
 
@@ -103,13 +101,13 @@ export function MusicList({ data, session }: MusicList) {
     const addSongDataToDB = await handleFetch<{ message: string }>(
       "http://localhost:3000/api/songs/add",
       "POST",
-      { url, id, title, duration, session }
+      { url, id, title, duration, session },
     );
 
     const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
       "http://localhost:8000/save-and-store",
       "POST",
-      { url, id }
+      { url, id },
     );
     console.log(saveAndStoreSong, " here is save and store");
 
@@ -159,7 +157,7 @@ export function MusicList({ data, session }: MusicList) {
     const addSongDataToDB = await handleFetch<{ message: string }>(
       "http://localhost:3000/api/songs/delete",
       "POST",
-      { songId, session }
+      { songId, session },
     );
 
     mutate("http://localhost:3000/api/songs/get-all");
@@ -177,7 +175,9 @@ export function MusicList({ data, session }: MusicList) {
       {
         node: (
           <li className={className}>
-            <Link href={song.url} target="_blank">source video</Link>
+            <Link href={song.url} target="_blank">
+              source video
+            </Link>
           </li>
         ),
       },

@@ -15,4 +15,4 @@ type SongsResponse = {
   songs: Song[];
 };
 
-export type { SongsResponse, Song };
+export type { Song, SongsResponse };

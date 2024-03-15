@@ -17,7 +17,7 @@ function useSongs(session: Session | null) {
   const { data, error, isLoading, mutate } = useSWR<SongsResponse>(
     `http://localhost:3000/api/songs/get-all`,
     fetchAllMusic,
-    { revalidateOnFocus: false }
+    { revalidateOnFocus: false },
   );
 
   const songs = data?.songs;

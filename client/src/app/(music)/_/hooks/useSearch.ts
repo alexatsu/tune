@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { useSession } from "next-auth/react";
-
+import { useState } from "react";
 import useSWR from "swr";
 
 import { SongsResponse } from "../types";

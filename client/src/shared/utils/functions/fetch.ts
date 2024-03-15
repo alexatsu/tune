@@ -11,7 +11,7 @@ const handleFetch = async <T>(url: string, method = "GET", body = {}, headers = 
 
   if (!response.ok) {
     const error = new Error(
-      `An error occurred while fetching the data. Status: ${response.status} `
+      `An error occurred while fetching the data. Status: ${response.status} `,
     );
 
     error.message = await response.json();

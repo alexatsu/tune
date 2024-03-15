@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
         user: null,
         message: "User not found",
       },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -55,9 +55,9 @@ export async function POST(req: NextRequest) {
   });
 
   await db.$disconnect();
-  
+
   return NextResponse.json(
     { message: "Song removed successfully from database", data: findUser.Songs },
-    { status: 200 }
+    { status: 200 },
   );
 }

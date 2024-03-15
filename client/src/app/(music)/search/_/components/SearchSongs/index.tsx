@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef} from "react";
 import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useRef } from "react";
 
-import { useSearch } from "@/music/_/hooks";
 import { MusicList } from "@/music/_/components";
 import { playerIcons } from "@/music/_/components/icons/player";
+import { useSearch } from "@/music/_/hooks";
 
 import styles from "./styles.module.scss";
 
@@ -14,8 +14,8 @@ const { TriggerSearch } = playerIcons;
 function SearchSongs() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
-  const { setQuery, setStartSearch, data, error, isLoading} = useSearch();
-  
+  const { setQuery, setStartSearch, data, error, isLoading } = useSearch();
+
   const handleSearch = useCallback(() => {
     const input = inputRef.current;
     if (!input) return;

@@ -1,6 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+
 import { Github, Google } from "../icons";
 import styles from "./styles.module.scss";
 

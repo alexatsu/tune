@@ -1,10 +1,9 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-
 // import { MusicList } from "@/music/_/components";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import { useSongs } from "@/music/_/hooks";
 

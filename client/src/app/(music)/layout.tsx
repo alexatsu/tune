@@ -1,5 +1,4 @@
-import { Player, DesktopNavigationBar, MobileNavigationbar } from "./_/layouts";
-
+import { DesktopNavigationBar, MobileNavigationbar, Player } from "./_/layouts";
 import styles from "./layout.module.scss";
 
 export default function layout({ children }: { children: React.ReactNode }) {

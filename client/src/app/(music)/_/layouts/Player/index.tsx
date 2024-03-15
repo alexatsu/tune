@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useCallback, useState } from "react";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import Image from "next/image";
-
 import Hls from "hls.js";
-
-import { usePlayerStore } from "@/shared/store";
+import Image from "next/image";
+import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
 
 import { playerIcons } from "@/music/_/components/icons/player";
-import { usePlayerContext } from "@/music/_/providers";
 import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
+import { usePlayerContext } from "@/music/_/providers";
 import { updateProgressBar } from "@/music/_/utils/functions";
+import { usePlayerStore } from "@/shared/store";
 
 import styles from "./styles.module.scss";
 
@@ -154,22 +152,22 @@ export function Player() {
   }, [handleNextTrack, playerRef]);
 
   useEffect(() => {
-    if (playerRef.current && volumeRef.current && !isMobile) {
-      updateProgressBar(volumeRef, `${playerRef.current?.volume * 100}`);
-    }
-  }, [playerRef, isMobile, volumeRef]);
-
-  useEffect(() => {
     const initialVolume = 0.3;
 
     if (playerRef.current && volumeRef.current) {
       playerRef.current.volume = initialVolume;
 
-      console.log(volumeRef.current);
       volumeRef.current.value = `${initialVolume * 100}`;
       updateProgressBar(volumeRef, `${playerRef.current?.volume * 100}`);
     }
   }, [playerRef, volumeRef]);
+
+  ///
+  useEffect(() => {
+    if (playerRef.current && volumeRef.current && !isMobile) {
+      updateProgressBar(volumeRef, `${playerRef.current?.volume * 100}`);
+    }
+  }, [playerRef, isMobile, volumeRef]);
 
   const inputs = (
     <>
@@ -194,7 +192,7 @@ export function Player() {
   );
 
   if (!session) redirect("/signin");
-  
+
   return (
     <>
       {!isMobile ? (
