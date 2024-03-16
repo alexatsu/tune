@@ -31,7 +31,7 @@ const convertStringDurationToNumber = (duration: string | undefined) => {
 export function Player() {
   const { data: session } = useSession();
   const { playerRef, currentSongRef, loadPlayerSource } = usePlayerContext();
-  const { isPlaying, handlePause, handlePlay, setCurrentSong } = usePlayerStore();
+  const { isPlaying, handlePause, handlePlay, setCurrentSong, setIsPlaying } = usePlayerStore();
   const { error, isLoading, songs } = useSongs(session);
 
   const isMobile = useMobile(576);
@@ -59,9 +59,10 @@ export function Player() {
       const { storage, urlId } = currentSongRef.current || {};
       if (playerRef.current) {
         hls.attachMedia(playerRef.current);
+        hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
       }
 
-      hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+      loadPlayerSource();
 
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         console.log("video and hls.js are now bound together !");
@@ -71,9 +72,12 @@ export function Player() {
         console.log("manifest loaded, found " + data.levels.length + " quality level");
       });
 
-      return () => hls.destroy();
+      return () => {
+        hls.destroy();
+        setIsPlaying(false);
+      };
     }
-  }, [currentSongRef, playerRef, songs, setCurrentSong]);
+  }, [currentSongRef, playerRef, songs, setCurrentSong, loadPlayerSource, setIsPlaying]);
 
   const handleNextTrack = useCallback(() => {
     if (currentSongRef.current === null) {
