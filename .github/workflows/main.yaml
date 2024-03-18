@@ -33,7 +33,7 @@ jobs:
         run: |
           echo ${#TESTO}
       - name: test env
-        run: echo TESTO="${{ secrets.TESTO }}" -e TESTO="${{ secrets.TESTO }}"
+        run: echo TESTO=${{ secrets.TESTO }} -e TESTO="${{ secrets.TESTO }}"
       # - name: run client
       #   run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production \
       #     -e GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
