@@ -11,10 +11,12 @@ COPY ./music-service/Pipfile .
 COPY ./music-service/Pipfile.lock .
 
 RUN pipenv install
-
+RUN pipenv requirements > requirements.txt
+RUN pip install -r requirements.txt
 FROM python:3.12.2-slim
 
 WORKDIR /app/src
 
-
-CMD ["pipenv", "run", "server"]
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# CMD ["pipenv", "run", "server"]
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
