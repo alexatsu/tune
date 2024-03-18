@@ -10,14 +10,14 @@ ARG DATABASE_URL
 
 WORKDIR /app
 
-COPY ./test-next/package.json ./
-COPY ./test-next/pnpm-lock.yaml ./
-COPY ./test-next ./
+COPY ./client/package.json ./
+COPY ./client/pnpm-lock.yaml ./
+COPY ./client ./
 
 RUN npm install -g pnpm
 RUN pnpm install 
 
-COPY ./test-next/prisma ./prisma
+COPY ./client/prisma ./prisma
 RUN pnpx prisma generate
 
 RUN touch .env.local
