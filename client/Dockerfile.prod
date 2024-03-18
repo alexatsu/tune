@@ -4,20 +4,33 @@ FROM node:18-alpine AS base
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
-WORKDIR /app/client
-
+WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY ./client/package.json ./
+COPY ./client/tsconfig.json ./
 COPY ./client/pnpm-lock.yaml ./
+COPY ./client/prisma ./prisma
+COPY ./client/src ./src
+COPY ./client/public ./public
+COPY ./client/next.config.js ./
+RUN ls
 RUN corepack enable pnpm && pnpm i --frozen-lockfile;
 
 # Rebuild the source code only when needed
 FROM base AS builder
-WORKDIR /app/client
-COPY --from=deps /app/client/node_modules ./node_modules
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./package.json
+COPY --from=deps /app/tsconfig.json ./tsconfig.json
+COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=deps /app/prisma ./prisma
+COPY --from=deps /app/src ./src
+COPY --from=deps /app/public ./public
+COPY --from=deps /app/next.config.js ./next.config.js
+
 COPY . .
-COPY ./client/package.json ./
-COPY ./client/pnpm-lock.yaml ./
+# COPY package.json ./
+# COPY pnpm-lock.yaml ./
 
 RUN corepack enable pnpm && pnpm prisma generate
 RUN corepack enable pnpm && pnpm run build;
@@ -26,7 +39,6 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
-
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -42,8 +54,8 @@ RUN chown nextjs:nodejs .next
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/client/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/client/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
