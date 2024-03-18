@@ -20,10 +20,8 @@ jobs:
       #   continue-on-error: true
 
       - uses: actions/checkout@v2
-      - name: cd into music-service
-        run: cd music-service
       - name: build music-service
-        run: docker build -t tune-ms-production -f ./Dockerfile.prod .
+        run: docker build -t tune-ms-production -f ./music-service/Dockerfile.prod .
 
       - name: build client
         run: docker build -t tune-client-production -f ./client/Dockerfile.prod .
