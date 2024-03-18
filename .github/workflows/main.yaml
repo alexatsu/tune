@@ -27,7 +27,8 @@ jobs:
 
       - name: build client
         run: docker build -t tune-client-production -f ./client/Dockerfile.prod .
-
+      - name: test env
+        run: echo TESTO=${{ secrets.TESTO }}
       - name: run client
         run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production \
           -e GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
