@@ -20,14 +20,16 @@ RUN pnpm install
 COPY ./client/prisma ./prisma
 RUN pnpx prisma generate
 
+RUN echo "DATABASE_URL"
+
 RUN touch .env.local
-RUN echo "$GOOGLE_ID" >> .env.local
-RUN echo "$GOOGLE_SECRET" >> .env.local
-RUN echo "$OAUTH_GITHUB_GITHUB_ID" >> .env.local
-RUN echo "$OAUTH_GITHUB_GITHUB_SECRET" >> .env.local
-RUN echo "$NEXTAUTH_URL" >> .env.local
-RUN echo "$NEXTAUTH_SECRET" >> .env.local
-RUN echo "$DATABASE_URL" >> .env.local
+RUN echo "GOOGLE_ID=$GOOGLE_ID" >> .env.local
+RUN echo "GOOGLE_SECRET=$GOOGLE_SECRET" >> .env.local
+RUN echo "OAUTH_GITHUB_ID=$OAUTH_GITHUB_ID" >> .env.local
+RUN echo "OAUTH_GITHUB_SECRET=$OAUTH_GITHUB_SECRET" >> .env.local
+RUN echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env.local
+RUN echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env.local
+RUN echo "DATABASE_URL=$DATABASE_URL" >> .env.local
 
 RUN pnpm run build;
 
