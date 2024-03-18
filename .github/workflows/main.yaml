@@ -48,4 +48,4 @@ jobs:
         run: docker build -t tune-ms-production -f ./music-service/Dockerfile.prod .
 
       - name: run music-service
-        run: docker run -it -d --name tune-ms -p 8000:8000 tune-ms-production -v audio:/app/src/audio
+        run: docker run -it -d --name tune-ms -p 8000:8000 -v audio:/app/src/audio tune-ms-production 
