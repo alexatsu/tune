@@ -28,9 +28,9 @@ jobs:
 
       - name: run db
         run: docker run -d --name db -p 5432:5432 -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
-        -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
-        -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
-        -v db:/var/lib/postgresql/data postgres:16-alpine
+          -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+          -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
+          -v db:/var/lib/postgresql/data postgres:16-alpine
 
       - name: run client
         run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production
