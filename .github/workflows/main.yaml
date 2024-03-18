@@ -15,7 +15,7 @@ jobs:
         run: docker build -t test-next -f ./test-next/Dockerfile .
 
       - name: run client
-        run: docker run -it -d --name test-next-container -p 3000:3000 test-next -e TESTO=${{ secrets.TESTO }}
+        run: docker run -it -d --name test-next-container -p 3000:3000 test-next -e TESTO="${{ secrets.TESTO }}"
       # client
       # - name: stop client container
       #   run: docker stop tune-c
