@@ -13,52 +13,46 @@ jobs:
       #   run: docker run -d --name db -p 5432:5432 -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" -v db:/var/lib/postgresql/data postgres:16-alpine
 
       # client
-      # - name: stop client container
-      #   run: docker stop tune-c
-      #   continue-on-error: true
+      - name: stop client container
+        run: docker stop tune-c
+        continue-on-error: true
 
-      # - name: remove client container
-      #   run: docker rm tune-c
-      #   continue-on-error: true
+      - name: remove client container
+        run: docker rm tune-c
+        continue-on-error: true
 
-      # - name: remove client image
-      #   run: docker rmi tune-client-production
-      #   continue-on-error: true
+      - name: remove client image
+        run: docker rmi tune-client-production
+        continue-on-error: true
 
-      # - name: build client
-      #   run: docker build -t tune-client-production -f ./client/Dockerfile.prod .
-      - name: Test
-        env:
-          TESTO: ${{ secrets.TEST_SECRET }}
-        run: |
-          echo ${#TESTO}
-      - name: test env
-        run: echo TESTO=${{ secrets.TESTO }} -e TESTO="${{ secrets.TESTO }}"
-      # - name: run client
-      #   run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production \
-      #     -e GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
-      #     -e GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} \
-      #     -e OAUTH_GITHUB_GITHUB_ID=${{ secrets.OAUTH_GITHUB_GITHUB_ID }} \
-      #     -e OAUTH_GITHUB_GITHUB_SECRET=${{ secrets.OAUTH_GITHUB_GITHUB_SECRET }} \
-      #     -e NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
-      #     -e NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
-      #     -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+      - name: build client
+        run: docker build -t tune-client-production -f ./client/Dockerfile.prod .
+
+      - name: run client
+        run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production \
+          -e GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
+          -e GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} \
+          -e OAUTH_GITHUB_GITHUB_ID=${{ secrets.OAUTH_GITHUB_GITHUB_ID }} \
+          -e OAUTH_GITHUB_GITHUB_SECRET=${{ secrets.OAUTH_GITHUB_GITHUB_SECRET }} \
+          -e NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
+          -e NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+          -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
 
         # music sevice
-      # - name: stop music-service container
-      #   run: docker stop tune-ms
-      #   continue-on-error: true
+      - name: stop music-service container
+        run: docker stop tune-ms
+        continue-on-error: true
 
-      # - name: remove music-service container
-      #   run: docker rm tune-ms
-      #   continue-on-error: true
+      - name: remove music-service container
+        run: docker rm tune-ms
+        continue-on-error: true
 
-      # - name: remove music-service image
-      #   run: docker rmi tune-ms-production
-      #   continue-on-error: true
+      - name: remove music-service image
+        run: docker rmi tune-ms-production
+        continue-on-error: true
 
-      # - name: build music-service
-      #   run: docker build -t tune-ms-production -f ./music-service/Dockerfile.prod .
+      - name: build music-service
+        run: docker build -t tune-ms-production -f ./music-service/Dockerfile.prod .
 
-      # - name: run music-service
-      #   run: docker run -it -d --name tune-ms -p 8000:8000 tune-ms-production
+      - name: run music-service
+        run: docker run -it -d --name tune-ms -p 8000:8000 tune-ms-production
