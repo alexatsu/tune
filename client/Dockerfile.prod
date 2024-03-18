@@ -10,15 +10,17 @@ WORKDIR /app/client
 COPY ./client/package.json ./
 COPY ./client/pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm i --frozen-lockfile;
-RUN corepack enable pnpm && pnpm prisma generate
-RUN corepack enable pnpm && pnpm run build;
 
 # Rebuild the source code only when needed
 FROM base AS builder
-WORKDIR /app
+WORKDIR /app/client
 COPY --from=deps /app/client/node_modules ./node_modules
 COPY . .
+COPY ./client/package.json ./
+COPY ./client/pnpm-lock.yaml ./
 
+RUN corepack enable pnpm && pnpm prisma generate
+RUN corepack enable pnpm && pnpm run build;
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Production image, copy all the files and run next
