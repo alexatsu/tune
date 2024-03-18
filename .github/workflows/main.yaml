@@ -33,19 +33,19 @@ jobs:
 
         # music sevice
       - name: stop music-service container
-        run: docker stop music-service
+        run: docker stop tune-ms
         continue-on-error: true
 
       - name: remove music-service container
-        run: docker rm music-service
+        run: docker rm tune-ms
         continue-on-error: true
 
       - name: remove music-service image
-        run: docker rmi tune-ms-production:latest
+        run: docker rmi tune-ms-production
         continue-on-error: true
 
       - name: build music-service
         run: docker build -t tune-ms-production -f ./music-service/Dockerfile.prod .
 
       - name: run music-service
-        run: docker run -it -d --name tune-ms -p 8000:8000 tune-ms-production:latest
+        run: docker run -it -d --name tune-ms -p 8000:8000 tune-ms-production
