@@ -1,5 +1,4 @@
-FROM python:3.12.2-slim
-RUN apt-get update && apt-get install -y ffmpeg
+FROM python:3.12.2-slim AS builder
 
 WORKDIR /app
 
@@ -13,6 +12,10 @@ COPY Pipfile.lock .
 
 RUN pipenv install
 
-WORKDIR /app/src
+FROM python:3.12.2-slim
+
+WORKDIR /app
+
+COPY --from=builder /app/src .
 
 CMD ["pipenv", "run", "server"]

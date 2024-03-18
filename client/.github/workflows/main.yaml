@@ -1,0 +1,43 @@
+name: main
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      # - name: stop container
+      #   run: docker stop reacto
+      #   continue-on-error: true
+
+      # - name: remove container
+      #   run: docker rm reacto
+      #   continue-on-error: true
+
+      # - name: remove image
+      #   run: docker rmi test-react
+      #   continue-on-error: true
+
+      - uses: actions/checkout@v2
+      - name: build music-service
+        run: docker build -t tune-ms-production -f Dockerfile.prod .
+
+      - name: build client
+        run: docker build -t tune-client-production -f Dockerfile.prod .
+
+      - name: run db
+        run: docker run -d \
+          --name db \
+          -p 5432:5432 \
+          -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+          -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+          -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
+          -v db:/var/lib/postgresql/data \
+          postgres:16-alpine
+
+      - name: run client
+        run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production
+
+      - name: run music-service
+        run: docker run -it -d --name tune-ms -p 8000:8000 tune-ms-production:latest

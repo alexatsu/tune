@@ -19,6 +19,8 @@ services:
       - tune
     depends_on:
       - db
+    restart: always
+
 
   # containers can communicate with each other via container name and inner port
   # if normaly you should do 3000:3000, for containers you need only second port

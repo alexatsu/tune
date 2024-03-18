@@ -6,6 +6,7 @@
 const path = require("path");
 
 const nextConfig = {
+  output: "standalone",
   reactStrictMode: false,
   images: {
     remotePatterns: [
