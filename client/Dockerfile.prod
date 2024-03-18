@@ -14,7 +14,7 @@ RUN corepack enable pnpm && pnpm prisma generate
 
 # Rebuild the source code only when needed
 FROM base AS builder
-WORKDIR /app/client
+WORKDIR /app
 COPY --from=deps /app/client/node_modules ./node_modules
 COPY . .
 
