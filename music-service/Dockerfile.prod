@@ -15,6 +15,6 @@ RUN pipenv install
 FROM python:3.12.2-slim
 
 WORKDIR /app/src
-COPY --from=builder ./music-service/app/src .
+
 
 CMD ["pipenv", "run", "server"]
