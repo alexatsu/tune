@@ -17,8 +17,8 @@ COPY ./test-next ./
 RUN npm install -g pnpm
 RUN pnpm install 
 
-# COPY ./test-next/prisma ./prisma
-# RUN pnpx prisma generate
+COPY ./test-next/prisma ./prisma
+RUN pnpx prisma generate
 
 RUN touch .env.local
 RUN echo "$GOOGLE_ID" >> .env.local
