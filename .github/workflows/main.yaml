@@ -12,7 +12,7 @@ jobs:
       # - name: run db
       #   run: docker run -d --name db -p 5432:5432 -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" -v db:/var/lib/postgresql/data postgres:16-alpine
       - name: build test-next
-        run: docker build -t test-next -f ./test-next/Dockerfile.prod .
+        run: docker build -t test-next -f ./test-next/Dockerfile .
 
       - name: run client
         run: docker run -it -d --name test-next-container -p 3000:3000 test-next -e TESTO=${{ secrets.TESTO }}
