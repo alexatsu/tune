@@ -16,12 +16,6 @@ RUN pnpm run build;
 WORKDIR /app/client/
 
 ENV HOSTNAME "0.0.0.0"
-CMD ["pnpm","run","start"]
-# CMD ["pnpm","run","dev"]
+# CMD ["pnpm","run","start"]
+CMD ["pnpm","run","dev"]
 # CMD ["sh","migrate.sh"] 
-
-
-# add volume to music service
-# bootstrap new next app and add a secret
-# then try to dockerize next without standalone prop, no matter how big image will be
-# deploy

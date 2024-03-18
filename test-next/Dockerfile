@@ -1,5 +1,7 @@
 FROM node:18-alpine
 
+ARG TESTO
+
 WORKDIR /app
 
 COPY ./test-next/package.json ./
@@ -11,6 +13,10 @@ RUN pnpm install
 
 # COPY ./test-next/prisma ./prisma
 # RUN pnpx prisma generate
+
+RUN touch .env.local
+RUN echo "$TESTO" >> .env.local
+
 RUN pnpm run build;
 
 WORKDIR /app/client/
