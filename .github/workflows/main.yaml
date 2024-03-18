@@ -27,11 +27,11 @@ jobs:
 
       # - name: build client
       #   run: docker build -t tune-client-production -f ./client/Dockerfile.prod .
-      - name: Set up secrets
+      - name: Test
         env:
-          MY_SECRET: ${{ secrets.TESTO }}
-      - name: Run a command using the secret
-        run: echo $TESTO
+          TESTO: ${{ secrets.TEST_SECRET }}
+        run: |
+          echo ${#TESTO}
       - name: test env
         run: echo TESTO="${{ secrets.TESTO }}" -e TESTO="${{ secrets.TESTO }}"
       # - name: run client
