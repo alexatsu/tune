@@ -30,8 +30,15 @@ jobs:
         run: docker build -t tune-client-production -f ./client/Dockerfile.prod .
 
       - name: run client
-        run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production
-
+        run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production \
+        -e GOOGLE_ID="${{ secrets.GOOGLE_ID }}" \
+        -e GOOGLE_SECRET="${{ secrets.GOOGLE_SECRET }}" \
+        -e OAUTH_GITHUB_GITHUB_ID="${{ secrets.OAUTH_GITHUB_GITHUB_ID }}" \
+        -e OAUTH_GITHUB_GITHUB_SECRET="${{ secrets.OAUTH_GITHUB_GITHUB_SECRET }}" \
+        -e NEXTAUTH_URL="${{ secrets.NEXTAUTH_URL }}" \
+        -e NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" \
+        -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+        
         # music sevice
       - name: stop music-service container
         run: docker stop tune-ms
