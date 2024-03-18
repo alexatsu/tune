@@ -8,8 +8,8 @@ COPY . .
 RUN pip install --upgrade pip
 RUN pip install pipenv
 
-COPY ./music-service/Pipfile .
-COPY ./music-service/Pipfile.lock .
+COPY Pipfile .
+COPY Pipfile.lock .
 
 RUN pipenv install
 
