@@ -2,15 +2,15 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY ./client/package.json ./
-COPY ./client/pnpm-lock.yaml ./
-COPY ./client ./
+COPY ./test-next/package.json ./
+COPY ./test-next/pnpm-lock.yaml ./
+COPY ./test-next ./
 
 RUN npm install -g pnpm
 RUN pnpm install 
 
-COPY ./client/prisma ./prisma
-RUN pnpx prisma generate
+# COPY ./test-next/prisma ./prisma
+# RUN pnpx prisma generate
 RUN pnpm run build;
 
 WORKDIR /app/client/
