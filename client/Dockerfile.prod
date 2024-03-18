@@ -10,7 +10,7 @@ WORKDIR /app/client
 COPY ./client/package.json ./
 COPY ./client/pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm i --frozen-lockfile;
-
+RUN corepack enable pnpm && pnpm prisma generate
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -22,7 +22,6 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
-RUN corepack enable pnpm && pnpm prisma generate
 RUN corepack enable pnpm && pnpm run build;
 
 # Production image, copy all the files and run next
