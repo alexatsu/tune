@@ -9,11 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         # db
-
-      - name: stop db container
-        run: docker stop db
-      - name: remove db container
-        run: docker rm db
         
       - name: run db
         run: docker run -d --name db -p 5432:5432 -e POSTGRES_USER=${{ secrets.POSTGRES_USER }} -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} -e POSTGRES_DB=${{ secrets.POSTGRES_DB }} -v db:/var/lib/postgresql/data postgres:16-alpine
