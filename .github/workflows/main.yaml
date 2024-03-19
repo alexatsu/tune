@@ -36,8 +36,7 @@ jobs:
 
       - name: build client
         uses: docker/build-push-action@v2
-        run: |
-          docker build -t tune-client-production -f ./client/Dockerfile.prod .
+        run: docker build -t tune-client-production -f ./client/Dockerfile.prod .
         build-args: |
           GOOGLE_ID=${{ secrets.GOOGLE_ID }}
           GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}
