@@ -22,6 +22,7 @@ RUN pnpx prisma generate
 
 RUN echo "DATABASE_URL"
 
+# general env for next.js
 RUN touch .env.local
 RUN echo "GOOGLE_ID=$GOOGLE_ID" >> .env.local
 RUN echo "GOOGLE_SECRET=$GOOGLE_SECRET" >> .env.local
@@ -30,6 +31,10 @@ RUN echo "OAUTH_GITHUB_SECRET=$OAUTH_GITHUB_SECRET" >> .env.local
 RUN echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env.local
 RUN echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env.local
 RUN echo "DATABASE_URL=$DATABASE_URL" >> .env.local
+
+# env for prisma migrations
+RUN touch .env 
+RUN echo "DATABASE_URL=$DATABASE_URL" >> .env
 
 RUN pnpm run build;
 
