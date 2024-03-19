@@ -15,10 +15,8 @@ services:
       - ./client/.env
     environment:
       - WATCHPACK_POLLING=true # for nextjs hot reload
-    networks:
-      - tune
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     restart: always
 
 
@@ -27,22 +25,21 @@ services:
   # because docker create network automatically
   # like db:5432
 
-  db:
-    container_name: db
-    ports:
-      # hostport:containerport
-      - 5432:5432
-    environment:
-    # test if i need these variables
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - db:/var/lib/postgresql/data
-    image: postgres:16-alpine
-    restart: always
-    networks:
-      - tune
+  # db:
+  #   container_name: db
+  #   ports:
+  #     # hostport:containerport
+  #     - 5432:5432
+  #   environment:
+  #   # test if i need these variables
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=postgres
+  #   volumes:
+  #     - db:/var/lib/postgresql/data
+  #   image: postgres:16-alpine
+  #   restart: always
+
 
   music-service:
     container_name: music-service
@@ -55,12 +52,9 @@ services:
       - ./music-service:/app
       - audio:/app/src/audio
     restart: always
-    networks:
-      - tune
+
 
 volumes:
   db:
   audio:
 
-networks:
-  tune:

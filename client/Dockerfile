@@ -9,9 +9,10 @@ RUN npm install -g pnpm
 RUN pnpm install 
 
 COPY ./prisma ./prisma
-RUN pnpx prisma generate
+COPY ./migrate.sh ./migrate.sh
 
-WORKDIR /app/client/
 
 ENV HOSTNAME "0.0.0.0"
-CMD ["pnpm","run","dev"]
+# CMD ["pnpm","run","start"]
+
+CMD ["sh","migrate.sh"] 
