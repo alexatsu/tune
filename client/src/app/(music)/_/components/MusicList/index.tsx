@@ -98,11 +98,13 @@ export function MusicList({ data, session }: MusicList) {
     setIsAddingSong(true);
     currentAddedSongRef.current = id;
 
-    const addSongDataToDB = await handleFetch<{ message: string }>(
-      `${process.env.NEXTAUTH_URL}/api/songs/add`,
-      "POST",
-      { url, id, title, duration, session },
-    );
+    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/add`, "POST", {
+      url,
+      id,
+      title,
+      duration,
+      session,
+    });
 
     const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
       `http://localhost:8000/save-and-store`,
@@ -111,13 +113,13 @@ export function MusicList({ data, session }: MusicList) {
     );
     console.log(saveAndStoreSong, " here is save and store");
 
-    mutate(`${process.env.NEXTAUTH_URL}/api/songs/get-all`);
+    mutate(`/api/songs/get-all`);
     setIsAddingSong(false);
     currentAddedSongRef.current = "";
 
     if (!currentSongRef.current) {
       const getFirstSong = async (): Promise<SongsResponse> => {
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/songs/get-all`, {
+        const res = await fetch(`/api/songs/get-all`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ session }),
@@ -154,13 +156,12 @@ export function MusicList({ data, session }: MusicList) {
   };
 
   const deleteFromMyMusic = async (songId: Song["urlId"]) => {
-    const addSongDataToDB = await handleFetch<{ message: string }>(
-      `${process.env.NEXTAUTH_URL}/api/songs/delete`,
-      "POST",
-      { songId, session },
-    );
+    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/delete`, "POST", {
+      songId,
+      session,
+    });
 
-    mutate(`${process.env.NEXTAUTH_URL}/api/songs/get-all`);
+    mutate(`/api/songs/get-all`);
   };
 
   const menuProps = (song: Song) => {

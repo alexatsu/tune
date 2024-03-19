@@ -5,7 +5,7 @@ import { SongsResponse } from "@/music/_/types";
 
 function useSongs(session: Session | null) {
   const fetchAllMusic = async () => {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/songs/get-all`, {
+    const response = await fetch(`/api/songs/get-all`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ session }),
@@ -15,7 +15,7 @@ function useSongs(session: Session | null) {
   };
 
   const { data, error, isLoading, mutate } = useSWR<SongsResponse>(
-    `${process.env.NEXTAUTH_URL}/api/songs/get-all`,
+    `/api/songs/get-all`,
     fetchAllMusic,
     { revalidateOnFocus: false },
   );

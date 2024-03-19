@@ -8,7 +8,7 @@ export function useSearch() {
   const [query, setQuery] = useState("");
   const [startSearch, setStartSearch] = useState(false);
   const session = useSession();
-  const url = `${process.env.NEXTAUTH_URL}/api/songs/search?query=${query}`;
+  const url = `/api/songs/search?query=${query}`;
 
   const fetchAllMusic = async () => {
     const response = await fetch(url, {
