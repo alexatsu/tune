@@ -29,8 +29,8 @@ const nextConfig = {
         destination: "http://localhost:8000/audio",
       },
       {
-        source: "/audio/saved/:path*",
-        destination: "http://localhost:8000/audio/saved/:path*",
+        source: "/audio/saved/:id/thumbnail.jpg",
+        destination: "http://localhost:8000/audio/saved/:id/thumbnail.jpg",
       },
       {
         source: "/stream",
