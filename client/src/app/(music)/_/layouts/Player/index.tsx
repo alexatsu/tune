@@ -200,7 +200,7 @@ export function Player() {
           <div className={styles.imageBlock}>
             {currentSongRef.current && (
               <Image
-                src={`${process.env.MUSIC_SERVICE_CONTAINER}/audio/saved/${currentSongRef.current?.urlId}/thumbnail.jpg`}
+                src={`http://localhost:8000/audio/saved/${currentSongRef.current?.urlId}/thumbnail.jpg`}
                 alt="cover"
                 width={50}
                 height={50}
@@ -247,7 +247,7 @@ export function Player() {
             <div className={styles.imageBlock}>
               {currentSongRef.current && (
                 <Image
-                  src={`${process.env.MUSIC_SERVICE_CONTAINER}/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
+                  src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
                   alt="cover"
                   width={35}
                   height={35}
