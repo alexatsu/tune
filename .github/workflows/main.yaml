@@ -37,16 +37,16 @@ jobs:
       - name: build client
         run: docker build -t tune-client-production -f ./client/Dockerfile.prod .
         build-args: |
-          GOOGLE_ID=${{ secrets.GOOGLE_ID }}
-          GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}
-          GOOGLE_ID=${{ secrets.GOOGLE_ID }} 
-          OAUTH_GITHUB_ID=${{ secrets.OAUTH_GITHUB_ID }} 
-          OAUTH_GITHUB_SECRET=${{ secrets.OAUTH_GITHUB_SECRET }} 
-          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} 
-          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} 
-          DATABASE_URL=${{ secrets.DATABASE_URL }} 
-          CLIENT_API_URL=${{ secrets.CLIENT_API_URL }} 
-          MUSIC_SERVICE_API_URL=${{ secrets.MUSIC_SERVICE_API_URL }}
+          "GOOGLE_ID=${{ secrets.GOOGLE_ID }}"
+          "GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}"
+          "GOOGLE_ID=${{ secrets.GOOGLE_ID }}" 
+          "OAUTH_GITHUB_ID=${{ secrets.OAUTH_GITHUB_ID }}" 
+          "OAUTH_GITHUB_SECRET=${{ secrets.OAUTH_GITHUB_SECRET }}" 
+          "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" 
+          "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" 
+          "DATABASE_URL=${{ secrets.DATABASE_URL }}" 
+          "CLIENT_API_URL=${{ secrets.CLIENT_API_URL }}" 
+          "MUSIC_SERVICE_API_URL=${{ secrets.MUSIC_SERVICE_API_URL }}"
 
       - name: run client
         run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production
