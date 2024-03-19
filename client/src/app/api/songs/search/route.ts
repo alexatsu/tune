@@ -6,15 +6,12 @@ import { Song } from "@/app/(music)/_/types";
 
 export async function POST(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  console.log(searchParams, "here is the searchParams");
   const query = searchParams.get("query");
-  console.log(query, "here is the query");
   const { session }: { session: Session } = await request.json();
 
   if (!session) {
     return NextResponse.json({ user: null, message: "Session is required" }, { status: 404 });
   }
-  console.log(process.env.MUSIC_SERVICE_CONTAINER, "Here is the env container");
   const res = await fetch(`${process.env.MUSIC_SERVICE_CONTAINER}/search?query=${query}`, {
     headers: { "Content-Type": "application/json" },
   });
