@@ -25,8 +25,12 @@ const nextConfig = {
         destination: "http://localhost:8000/save-and-store",
       },
       {
-        source: "/audio/:path*",
+        source: "/audio",
         destination: "http://localhost:8000/audio",
+      },
+      {
+        source: "/audio/saved/:path*",
+        destination: "http://localhost:8000/audio/saved/:path*",
       },
       {
         source: "/stream",
