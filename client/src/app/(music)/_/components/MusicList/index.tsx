@@ -106,11 +106,10 @@ export function MusicList({ data, session }: MusicList) {
       session,
     });
 
-    const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
-      `http://localhost:8000/save-and-store`,
-      "POST",
-      { url, id },
-    );
+    const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(`/save-and-store`, "POST", {
+      url,
+      id,
+    });
     console.log(saveAndStoreSong, " here is save and store");
 
     mutate(`/api/songs/get-all`);
