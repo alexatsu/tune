@@ -107,7 +107,7 @@ export function MusicList({ data, session }: MusicList) {
     });
 
     const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
-      `http://localhost:8000/save-and-store`,
+      `${process.env.MUSIC_SERVICE_CONTAINER}/save-and-store`,
       "POST",
       { url, id },
     );
@@ -208,7 +208,7 @@ export function MusicList({ data, session }: MusicList) {
                     src={
                       pathname === "/search"
                         ? song.cover
-                        : `http://localhost:8000/audio/saved/${song.urlId}/thumbnail.jpg`
+                        : `${process.env.MUSIC_SERVICE_CONTAINER}/audio/saved/${song.urlId}/thumbnail.jpg`
                     }
                     alt={song.title}
                     width={40}
@@ -327,7 +327,7 @@ function SongPreview({ song }: { song: Song }) {
 
       <audio
         controls
-        src={`http://localhost:8000/stream?url=${song.url}`}
+        src={`${process.env.MUSIC_SERVICE_CONTAINER}/stream?url=${song.url}`}
         preload={"metadata"}
         ref={audioRef}
         style={{ display: "none" }}
