@@ -18,6 +18,22 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/save-and-store",
+        destination: "http://localhost:8000/save-and-store",
+      },
+      {
+        source: "/audio",
+        destination: "http://localhost:8000/audio",
+      },
+      {
+        source: "/stream",
+        destination: "http://localhost:8000/stream",
+      },
+    ];
+  },
 };
 module.exports = nextConfig;
 // module.exports = withBundleAnalyzer(nextConfig)

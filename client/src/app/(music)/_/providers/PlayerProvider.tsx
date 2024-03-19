@@ -42,7 +42,7 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
     console.log(currentSongRef.current, "here is the current track in load source");
     const { storage, urlId } = currentSongRef.current;
     hls.attachMedia(playerRef.current);
-    hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+    hls.loadSource(`/audio/${storage}/${urlId}/index.m3u8`);
     console.log("loadPlayerSource is finished ");
   };
 

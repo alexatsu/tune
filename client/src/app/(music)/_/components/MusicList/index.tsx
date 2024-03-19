@@ -207,7 +207,7 @@ export function MusicList({ data, session }: MusicList) {
                     src={
                       pathname === "/search"
                         ? song.cover
-                        : `http://localhost:8000/audio/saved/${song.urlId}/thumbnail.jpg`
+                        : `audio/saved/${song.urlId}/thumbnail.jpg`
                     }
                     alt={song.title}
                     width={40}
@@ -326,7 +326,7 @@ function SongPreview({ song }: { song: Song }) {
 
       <audio
         controls
-        src={`http://localhost:8000/stream?url=${song.url}`}
+        src={`/stream?url=${song.url}`}
         preload={"metadata"}
         ref={audioRef}
         style={{ display: "none" }}
