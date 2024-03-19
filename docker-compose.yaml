@@ -25,20 +25,20 @@ services:
   # because docker create network automatically
   # like db:5432
 
-  # db:
-  #   container_name: db
-  #   ports:
-  #     # hostport:containerport
-  #     - 5432:5432
-  #   environment:
-  #   # test if i need these variables
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-  #     - POSTGRES_DB=postgres
-  #   volumes:
-  #     - db:/var/lib/postgresql/data
-  #   image: postgres:16-alpine
-  #   restart: always
+  db:
+    container_name: db
+    ports:
+      # hostport:containerport
+      - 5432:5432
+    environment:
+    # test if i need these variables
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+    image: postgres:16-alpine
+    restart: always
 
 
   music-service:

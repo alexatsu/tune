@@ -1,0 +1,36 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.errorMessageContainer {
+  margin: 0 auto;
+  background-color: $widget-bg;
+  border-radius: 15px;
+  width: 80%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    color: $text;
+    font-weight: 600;
+    font-size: clamp(1rem, 2.5vw, 2rem);
+    text-align: center;
+  }
+
+  a {
+    color: $accent;
+    text-decoration: none;
+    transition: 0.15s color linear;
+    font-size: clamp(1rem, 2.5vw, 2rem);
+    width: fit-content;
+
+    &:visited {
+      color: $accent;
+    }
+
+    &:hover {
+      color: $accent-darker;
+    }
+  }
+}

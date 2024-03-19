@@ -57,12 +57,11 @@ export function Player() {
       setCurrentSong(songs[0]);
 
       const { storage, urlId } = currentSongRef.current || {};
-      if (playerRef.current) {
-        hls.attachMedia(playerRef.current);
-        hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+      if (playerRef.current && currentSongRef.current) {
+        // hls.attachMedia(playerRef.current);
+        // hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+        loadPlayerSource();
       }
-
-      loadPlayerSource();
 
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         console.log("video and hls.js are now bound together !");
@@ -202,13 +201,15 @@ export function Player() {
       {!isMobile ? (
         <div className={styles.playerContainer}>
           <div className={styles.imageBlock}>
-            <Image
-              src={`http://localhost:8000/audio/saved/${currentSongRef.current?.urlId}/thumbnail.jpg`}
-              alt="cover"
-              width={50}
-              height={50}
-              unoptimized
-            />
+            {currentSongRef.current && (
+              <Image
+                src={`http://localhost:8000/audio/saved/${currentSongRef.current?.urlId}/thumbnail.jpg`}
+                alt="cover"
+                width={50}
+                height={50}
+                unoptimized
+              />
+            )}
           </div>
 
           <div className={styles.mainTrack}>
@@ -223,7 +224,7 @@ export function Player() {
             </div>
 
             <div className={styles.inputs}>{inputs}</div>
-            <div className={styles.title}>{currentSongRef.current?.title}</div>
+            <div className={styles.title}>{currentSongRef.current?.title || ""}</div>
           </div>
 
           <div className={styles.sound}>
@@ -247,13 +248,15 @@ export function Player() {
 
           <div className={styles.main}>
             <div className={styles.imageBlock}>
-              <Image
-                src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
-                alt="cover"
-                width={35}
-                height={35}
-                unoptimized
-              />
+              {currentSongRef.current && (
+                <Image
+                  src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
+                  alt="cover"
+                  width={35}
+                  height={35}
+                  unoptimized
+                />
+              )}
               {isPlaying ? (
                 <Pause onClick={() => handlePause(playerRef)} />
               ) : (
@@ -261,7 +264,7 @@ export function Player() {
               )}
             </div>
 
-            <div className={styles.title}>{currentSongRef.current?.title}</div>
+            <div className={styles.title}>{currentSongRef.current?.title || ""}</div>
             <div className={styles.menuContainer}>
               <ThreeDots className={styles.threeDotsMenu} />
             </div>
