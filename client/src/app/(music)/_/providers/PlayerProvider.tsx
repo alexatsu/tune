@@ -3,6 +3,8 @@
 import Hls from "hls.js";
 import { createContext, useContext, useRef } from "react";
 
+import { urls } from "@/shared/utils/consts";
+
 import type { Song } from "../types";
 
 type PlayerContext = {
@@ -12,6 +14,8 @@ type PlayerContext = {
 };
 
 const PlayerContext = createContext<PlayerContext | null>(null);
+const hls = new Hls();
+const { musicService } = urls;
 
 function usePlayerContext() {
   const context = useContext(PlayerContext);
@@ -22,8 +26,6 @@ function usePlayerContext() {
 
   return context;
 }
-
-const hls = new Hls();
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
   const playerRef = useRef<HTMLVideoElement>(null);
@@ -43,7 +45,7 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
     console.log(currentSongRef.current, "here is the current track in load source");
     const { storage, urlId } = currentSongRef.current;
     hls.attachMedia(playerRef.current);
-    hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
+    hls.loadSource(`${musicService}/audio/${storage}/${urlId}/index.m3u8`);
     console.log("loadPlayerSource is finished ");
   };
 

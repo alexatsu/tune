@@ -14,16 +14,14 @@ import { usePlayerContext } from "@/music/_/providers";
 import { Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
+import { urls } from "@/shared/utils/consts";
 import { handleFetch } from "@/shared/utils/functions";
 
 import styles from "./styles.module.scss";
 
 const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
 
-type MusicList = {
-  data: SongsResponse | undefined;
-  session: Session;
-};
+const { client, musicService } = urls;
 
 const formatedDuration = (duration: string) => {
   const [hours, minutes, seconds] = duration.split(":");
@@ -34,6 +32,11 @@ const formatedDuration = (duration: string) => {
       {+seconds < 10 ? "0" + seconds : seconds}
     </span>
   );
+};
+
+type MusicList = {
+  data: SongsResponse | undefined;
+  session: Session;
 };
 
 export function MusicList({ data, session }: MusicList) {
@@ -99,25 +102,25 @@ export function MusicList({ data, session }: MusicList) {
     currentAddedSongRef.current = id;
 
     const addSongDataToDB = await handleFetch<{ message: string }>(
-      "http://localhost:3000/api/songs/add",
+      `${client}/api/songs/add`,
       "POST",
       { url, id, title, duration, session },
     );
 
     const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
-      "http://localhost:8000/save-and-store",
+      `${musicService}/save-and-store`,
       "POST",
       { url, id },
     );
     console.log(saveAndStoreSong, " here is save and store");
 
-    mutate("http://localhost:3000/api/songs/get-all");
+    mutate(`${client}/api/songs/get-all`);
     setIsAddingSong(false);
     currentAddedSongRef.current = "";
 
     if (!currentSongRef.current) {
       const getFirstSong = async (): Promise<SongsResponse> => {
-        const res = await fetch("http://localhost:3000/api/songs/get-all", {
+        const res = await fetch(`${client}/api/songs/get-all`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ session }),
@@ -155,12 +158,12 @@ export function MusicList({ data, session }: MusicList) {
 
   const deleteFromMyMusic = async (songId: Song["urlId"]) => {
     const addSongDataToDB = await handleFetch<{ message: string }>(
-      "http://localhost:3000/api/songs/delete",
+      `${client}/api/songs/delete`,
       "POST",
       { songId, session },
     );
 
-    mutate("http://localhost:3000/api/songs/get-all");
+    mutate(`${client}/api/songs/get-all`);
   };
 
   const menuProps = (song: Song) => {
@@ -207,7 +210,7 @@ export function MusicList({ data, session }: MusicList) {
                     src={
                       pathname === "/search"
                         ? song.cover
-                        : `http://localhost:8000/audio/saved/${song.urlId}/thumbnail.jpg`
+                        : `${musicService}/audio/saved/${song.urlId}/thumbnail.jpg`
                     }
                     alt={song.title}
                     width={40}
@@ -326,7 +329,7 @@ function SongPreview({ song }: { song: Song }) {
 
       <audio
         controls
-        src={`http://localhost:8000/stream?url=${song.url}`}
+        src={`${musicService}/stream?url=${song.url}`}
         preload={"metadata"}
         ref={audioRef}
         style={{ display: "none" }}

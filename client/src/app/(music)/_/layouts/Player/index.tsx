@@ -11,6 +11,7 @@ import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
 import { usePlayerContext } from "@/music/_/providers";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
+import { urls } from "@/shared/utils/consts";
 
 import styles from "./styles.module.scss";
 
@@ -19,6 +20,7 @@ import styles from "./styles.module.scss";
 // - error handling
 
 const hls = new Hls();
+const { musicService } = urls;
 const { Unmuted, Muted, Play, Pause, PreviousTrack, NextTrack, ThreeDots } = playerIcons;
 
 const convertStringDurationToNumber = (duration: string | undefined) => {
@@ -56,12 +58,7 @@ export function Player() {
       console.log(currentSongRef.current, "current track");
       setCurrentSong(songs[0]);
 
-      const { storage, urlId } = currentSongRef.current || {};
-      if (playerRef.current && currentSongRef.current) {
-        // hls.attachMedia(playerRef.current);
-        // hls.loadSource(`http://localhost:8000/audio/${storage}/${urlId}/index.m3u8`);
-        loadPlayerSource();
-      }
+      loadPlayerSource();
 
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         console.log("video and hls.js are now bound together !");
@@ -203,7 +200,7 @@ export function Player() {
           <div className={styles.imageBlock}>
             {currentSongRef.current && (
               <Image
-                src={`http://localhost:8000/audio/saved/${currentSongRef.current?.urlId}/thumbnail.jpg`}
+                src={`${musicService}/audio/saved/${currentSongRef.current?.urlId}/thumbnail.jpg`}
                 alt="cover"
                 width={50}
                 height={50}
@@ -250,7 +247,7 @@ export function Player() {
             <div className={styles.imageBlock}>
               {currentSongRef.current && (
                 <Image
-                  src={`http://localhost:8000/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
+                  src={`${musicService}/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
                   alt="cover"
                   width={35}
                   height={35}

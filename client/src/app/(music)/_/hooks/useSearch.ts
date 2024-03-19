@@ -2,13 +2,17 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import useSWR from "swr";
 
+import { urls } from "@/shared/utils/consts";
+
 import { SongsResponse } from "../types";
+
+const { client } = urls;
 
 export function useSearch() {
   const [query, setQuery] = useState("");
   const [startSearch, setStartSearch] = useState(false);
   const session = useSession();
-  const url = `http://localhost:3000/api/songs/search?query=${query}`;
+  const url = `${client}/api/songs/search?query=${query}`;
 
   const fetchAllMusic = async () => {
     const response = await fetch(url, {
