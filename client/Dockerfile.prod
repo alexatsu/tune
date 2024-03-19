@@ -33,7 +33,7 @@ RUN echo "DATABASE_URL=$DATABASE_URL" >> .env.local
 
 RUN pnpm run build;
 
-WORKDIR /app/client/
+WORKDIR /app
 
 ENV HOSTNAME "0.0.0.0"
 CMD ["sh","migrate-prod.sh"] 
