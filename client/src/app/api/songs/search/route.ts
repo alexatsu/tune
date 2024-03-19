@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ user: null, message: "Session is required" }, { status: 404 });
   }
 
-  const res = await fetch(`http://music-service:8000/search?query=${query}`, {
+  const res = await fetch(`${process.env.MUSIC_SERVICE_CONTAINER}/search?query=${query}`, {
     headers: { "Content-Type": "application/json" },
   });
 
