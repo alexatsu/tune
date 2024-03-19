@@ -56,7 +56,9 @@ export function Player() {
       console.log(currentSongRef.current, "current track");
       setCurrentSong(songs[0]);
 
-      loadPlayerSource();
+      if (playerRef && currentSongRef.current) {
+        loadPlayerSource();
+      }
 
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         console.log("video and hls.js are now bound together !");
