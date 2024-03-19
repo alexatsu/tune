@@ -6,7 +6,9 @@ import { Song } from "@/app/(music)/_/types";
 
 export async function POST(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
+  console.log(searchParams, "here is the searchParams");
   const query = searchParams.get("query");
+  console.log(query, "here is the query");
   const { session }: { session: Session } = await request.json();
 
   if (!session) {
