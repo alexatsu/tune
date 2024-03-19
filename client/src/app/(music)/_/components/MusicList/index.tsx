@@ -99,7 +99,7 @@ export function MusicList({ data, session }: MusicList) {
     currentAddedSongRef.current = id;
 
     const addSongDataToDB = await handleFetch<{ message: string }>(
-      `http://localhost:3000/api/songs/add`,
+      `${process.env.NEXTAUTH_URL}/api/songs/add`,
       "POST",
       { url, id, title, duration, session },
     );
@@ -111,13 +111,13 @@ export function MusicList({ data, session }: MusicList) {
     );
     console.log(saveAndStoreSong, " here is save and store");
 
-    mutate(`http://localhost:3000/api/songs/get-all`);
+    mutate(`${process.env.NEXTAUTH_URL}/api/songs/get-all`);
     setIsAddingSong(false);
     currentAddedSongRef.current = "";
 
     if (!currentSongRef.current) {
       const getFirstSong = async (): Promise<SongsResponse> => {
-        const res = await fetch(`http://localhost:3000/api/songs/get-all`, {
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/songs/get-all`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ session }),
@@ -155,12 +155,12 @@ export function MusicList({ data, session }: MusicList) {
 
   const deleteFromMyMusic = async (songId: Song["urlId"]) => {
     const addSongDataToDB = await handleFetch<{ message: string }>(
-      `http://localhost:3000/api/songs/delete`,
+      `${process.env.NEXTAUTH_URL}/api/songs/delete`,
       "POST",
       { songId, session },
     );
 
-    mutate(`http://localhost:3000/api/songs/get-all`);
+    mutate(`${process.env.NEXTAUTH_URL}/api/songs/get-all`);
   };
 
   const menuProps = (song: Song) => {
