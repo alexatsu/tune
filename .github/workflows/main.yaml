@@ -9,8 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         # db
+      - name: create tune network
+        run: docker network create -d bridge tune
       - name: run db
-        run: docker run -d --name db -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" -v db:/var/lib/postgresql/data -p 5432:5432 --network=host postgres:16-alpine
+        run: docker run -d --name db -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" -v db:/var/lib/postgresql/data -p 5432:5432 --network=tune postgres:16-alpine
 
       # client
       - name: stop client container
@@ -26,7 +28,7 @@ jobs:
         continue-on-error: true
 
       - name: build client
-        run: docker build -t tune-client-production -f ./client/Dockerfile.prod --build-arg GOOGLE_ID="${{ secrets.GOOGLE_ID }}" --build-arg GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} --build-arg GOOGLE_ID=${{ secrets.GOOGLE_ID }} --build-arg OAUTH_GITHUB_ID=${{ secrets.OAUTH_GITHUB_ID }} --build-arg OAUTH_GITHUB_SECRET=${{ secrets.OAUTH_GITHUB_SECRET }} --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} .
+        run: docker build -t tune-client-production -f ./client/Dockerfile.prod --network=tune --build-arg GOOGLE_ID="${{ secrets.GOOGLE_ID }}" --build-arg GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} --build-arg GOOGLE_ID=${{ secrets.GOOGLE_ID }} --build-arg OAUTH_GITHUB_ID=${{ secrets.OAUTH_GITHUB_ID }} --build-arg OAUTH_GITHUB_SECRET=${{ secrets.OAUTH_GITHUB_SECRET }} --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} .
 
       - name: run client
         run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production
@@ -48,4 +50,4 @@ jobs:
         run: docker build -t tune-ms-production -f ./music-service/Dockerfile.prod .
 
       - name: run music-service
-        run: docker run -it -d --name tune-ms -p 8000:8000 -v audio:/app/src/audio tune-ms-production 
+        run: docker run -it -d --name tune-ms -p 8000:8000 -v audio:/app/src/audio --network=tune tune-ms-production 
