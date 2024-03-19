@@ -12,7 +12,8 @@ jobs:
         # network
       - name: create tune network
         run: docker network create tune
-
+        continue-on-error: true
+        
         # db
       - name: run db
         run: docker run -d --name db -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" -v db:/var/lib/postgresql/data -p 5432:5432 postgres:16-alpine
