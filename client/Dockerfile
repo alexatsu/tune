@@ -13,6 +13,5 @@ COPY ./migrate.sh ./migrate.sh
 
 
 ENV HOSTNAME "0.0.0.0"
-# CMD ["pnpm","run","start"]
 
 CMD ["sh","migrate.sh"] 
