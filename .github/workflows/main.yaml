@@ -35,9 +35,7 @@ jobs:
         continue-on-error: true
 
       - name: build client
-        run: docker build \
-          -t tune-client-production \
-          -f ./client/Dockerfile.prod \
+        run: docker build -t tune-client-production -f ./client/Dockerfile.prod \
           --build-arg GOOGLE_ID="${{ secrets.GOOGLE_ID }}" \
           --build-arg GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} \
           --build-arg GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
