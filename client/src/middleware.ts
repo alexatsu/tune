@@ -4,6 +4,7 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "https://tuneaudio.fun",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Credentials": "true",
 };
 
 export function middleware(request: NextRequest) {
