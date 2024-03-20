@@ -20,8 +20,8 @@ export const authOptions: AuthOptions = {
   },
   providers: [
     GithubProvider({
-      clientId: process.env.OAUTH_GITHUB_ID ?? "",
-      clientSecret: process.env.OAUTH_GITHUB_SECRET ?? "",
+      clientId: process.env.GH_ID ?? "",
+      clientSecret: process.env.GH_SECRET ?? "",
       allowDangerousEmailAccountLinking: true,
     }),
     GoogleProvider({
