@@ -107,7 +107,7 @@ export function MusicList({ data, session }: MusicList) {
     });
 
     const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
-      `${process.env.CLIENT_ORIGIN}/save-and-store`,
+      `http://localhost:3000/save-and-store`,
       "POST",
       {
         url,
