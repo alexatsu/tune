@@ -24,7 +24,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = (await getServerSession(authOptions)) as Session;
-
+  console.log(process.env.MS_ORIGIN, "here is the ms origin");
+  console.log(process.env.CLIENT_ORIGIN, "here is the client origin");
   return (
     <html lang="en">
       <body className={`${quicksand.className} ${qwitcher.variable}`}>
