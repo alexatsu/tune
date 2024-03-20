@@ -106,14 +106,10 @@ export function MusicList({ data, session }: MusicList) {
       session,
     });
 
-    const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(
-      `http://localhost:3000/save-and-store`,
-      "POST",
-      {
-        url,
-        id,
-      },
-    );
+    const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(`/save-and-store`, "POST", {
+      url,
+      id,
+    });
     console.log(saveAndStoreSong, " here is save and store");
 
     mutate(`/api/songs/get-all`);
@@ -211,7 +207,7 @@ export function MusicList({ data, session }: MusicList) {
                     src={
                       pathname === "/search"
                         ? song.cover
-                        : `${process.env.MS_ORIGIN}/audio/saved/${song.urlId}/thumbnail.jpg`
+                        : `/audio/saved/${song.urlId}/thumbnail.jpg`
                     }
                     alt={song.title}
                     width={40}
@@ -330,7 +326,7 @@ function SongPreview({ song }: { song: Song }) {
 
       <audio
         controls
-        src={`${process.env.MS_ORIGIN}/stream?url=${song.url}`}
+        src={`/stream?url=${song.url}`}
         preload={"metadata"}
         ref={audioRef}
         style={{ display: "none" }}
