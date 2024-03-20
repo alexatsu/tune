@@ -21,7 +21,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "https://tuneaudio.fun/save-and-store",
+        source: "/save-and-store",
         destination: "https://ms.tuneaudio.fun/save-and-store",
       },
       {
