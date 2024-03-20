@@ -211,7 +211,7 @@ export function MusicList({ data, session }: MusicList) {
                     src={
                       pathname === "/search"
                         ? song.cover
-                        : `audio/saved/${song.urlId}/thumbnail.jpg`
+                        : `http://localhost:8000/audio/saved/${song.urlId}/thumbnail.jpg`
                     }
                     alt={song.title}
                     width={40}
