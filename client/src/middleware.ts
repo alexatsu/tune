@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://tuneaudio.fun",
+  "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN || "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Credentials": "true",

@@ -9,6 +9,7 @@ uvicorn = {extras = ["standard"], version = "*"}
 requests = "*"
 pydantic = "*"
 yt-dlp = "*"
+python-dotenv = "*"
 
 [scripts]
 dev = "python downloadAudio.py"

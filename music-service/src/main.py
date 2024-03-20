@@ -1,16 +1,19 @@
 import uvicorn
+import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-
+from dotenv import load_dotenv
 from routes import search
 
 app = FastAPI()
 
+load_dotenv()
+ms_origin = os.getenv("MS_ORIGIN", "*")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://tuneaudio.fun"],
+    allow_origins=[ms_origin],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
