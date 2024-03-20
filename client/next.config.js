@@ -22,19 +22,19 @@ const nextConfig = {
     return [
       {
         source: "/save-and-store",
-        destination: "https://ms.tuneaudio.fun/save-and-store",
+        destination: "http://ms.tuneaudio.fun/save-and-store",
       },
       {
         source: "/audio",
-        destination: "https://ms.tuneaudio.fun/audio",
+        destination: "http://ms.tuneaudio.fun/audio",
       },
       {
         source: "/audio/saved/:id/thumbnail.jpg",
-        destination: "https://ms.tuneaudio.fun/audio/saved/:id/thumbnail.jpg",
+        destination: "http://ms.tuneaudio.fun/audio/saved/:id/thumbnail.jpg",
       },
       {
         source: "/stream",
-        destination: "https://ms.tuneaudio.fun/stream",
+        destination: "http://ms.tuneaudio.fun/stream",
       },
     ];
   },
