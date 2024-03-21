@@ -1,0 +1,27 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.AlbumList {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  .Album {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    width: 250px;
+    height: 250px;
+    border-radius: 20px;
+    background: #FAA0A0;
+    padding: 20px;
+    .content {
+      color: $text;
+      .title {
+
+      }
+      .description {
+
+      }
+    }
+  }
+}

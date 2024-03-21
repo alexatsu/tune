@@ -1,9 +1,5 @@
-import Link from "next/link";
+import { AlbumList } from "@/music/_/components";
 
 export default function Page() {
-  return (
-    <div>
-      albums go to <Link href={"/music"}>Music</Link>
-    </div>
-  );
+  return <AlbumList />;
 }
