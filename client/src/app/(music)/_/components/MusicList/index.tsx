@@ -326,7 +326,7 @@ function SongPreview({ song }: { song: Song }) {
 
       <audio
         controls
-        src={`/stream?url=${song.url}`}
+        src={`${process.env.MUSIC_SERVICE_CONTAINER}/stream?url=${song.url}`}
         preload={"metadata"}
         ref={audioRef}
         style={{ display: "none" }}
