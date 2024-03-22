@@ -20,16 +20,6 @@ jobs:
 
       # - name: connect db to tune network
       #   run: docker network connect tune db
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        name: install deps
-        run: npm i
-      - name: Install pnpm
-        run: npm i -g pnpm
-      - name: deploy migrations
-        run: pnpx prisma migrate deploy
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       # client
       - name: stop client container
