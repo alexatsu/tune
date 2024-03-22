@@ -20,7 +20,6 @@ RUN pnpm install
 
 COPY ./client/prisma ./prisma
 RUN pnpx prisma generate
-RUN pnpx prisma migrate deploy
 RUN echo "DATABASE_URL"
 
 # general env for next.js
