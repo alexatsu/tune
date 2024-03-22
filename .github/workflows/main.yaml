@@ -9,18 +9,16 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-      - name: Setup Node
-        uses: actions/setup-node@v3
       - name: cd into client
         run: cd client
-      - name: Install dependencies
-        run: npm install
+      - name: Install pnpm
+        run: npm install -g pnpm
       - name: Apply all pending migrations to the database
-        run: npx prisma migrate deploy
+        run: pnpx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
-      - uses: actions/checkout@v3
+      - name: cd back 
+        run: cd ..
         # network
       - name: create tune network
         run: docker network create tune
