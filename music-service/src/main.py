@@ -19,7 +19,6 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 
-app.mount("/audio", StaticFiles(directory="audio"), name="audio")
 app.include_router(search.router)
 
 @app.get("/")

@@ -16,11 +16,11 @@ jobs:
         continue-on-error: true
 
         # db
-      - name: run db
-        run: docker run -d --name db -v db:/var/lib/postgresql/data -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres postgres:16-alpine
+      # - name: run db
+      #   run: docker run -d --name db -v db:/var/lib/postgresql/data -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres postgres:16-alpine
 
-      - name: connect db to tune network
-        run: docker network connect tune db
+      # - name: connect db to tune network
+      #   run: docker network connect tune db
 
       # client
       - name: stop client container
