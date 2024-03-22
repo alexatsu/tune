@@ -39,25 +39,26 @@ type MusicList = {
 export function MusicList({ data, session }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
-  const { loadPlayerSource, currentSongRef, playerRef } = usePlayerContext();
-  const { isPlaying, setIsPlaying, currentSong, setCurrentSong, handlePause } = usePlayerStore();
+  const { currentSongRef, playerRef } = usePlayerContext();
+  const { isPlaying, setIsPlaying, currentSong, setCurrentSong, handlePause, loadPlayerSource } =
+    usePlayerStore();
   const [isAddingSong, setIsAddingSong] = useState(false);
 
   const currentAddedSongRef = useRef("");
   const { data: userSongs } = useSongs(session);
   const { searchMutate } = useSearch();
 
-  const handlePlayById = (song: Song) => {
+  const handlePlayById = async (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
       playerRef.current?.play();
       setIsPlaying(true);
+      console.log(song, "here is the song");
       return;
     }
 
     currentSongRef.current = song;
     setCurrentSong(song);
-    loadPlayerSource();
-    playerRef.current?.play();
+    loadPlayerSource(playerRef, song);
     setIsPlaying(true);
   };
 
@@ -83,18 +84,8 @@ export function MusicList({ data, session }: MusicList) {
   };
 
   const addSongToMyMusic = async (song: Song) => {
-    const { url, id, title, duration } = song;
-    type SaveAndStoreProps = {
-      message: string;
-      metadata: {
-        url: string;
-        id: string;
-        title: string;
-        duration: string;
-      };
-      error: string;
-    };
-    console.log(id, "here is the id");
+    console.log("adding song to my music", song);
+    const { url, id, title, duration, cover } = song;
     setIsAddingSong(true);
     currentAddedSongRef.current = id;
 
@@ -103,14 +94,9 @@ export function MusicList({ data, session }: MusicList) {
       id,
       title,
       duration,
+      cover,
       session,
     });
-
-    const saveAndStoreSong = await handleFetch<SaveAndStoreProps>(`/save-and-store`, "POST", {
-      url,
-      id,
-    });
-    console.log(saveAndStoreSong, " here is save and store");
 
     mutate(`/api/songs/get-all`);
     setIsAddingSong(false);
@@ -129,7 +115,7 @@ export function MusicList({ data, session }: MusicList) {
       };
 
       currentSongRef.current = (await getFirstSong()).songs[0] as Song;
-      loadPlayerSource();
+      loadPlayerSource(playerRef, currentSongRef.current);
     }
   };
 
@@ -204,11 +190,7 @@ export function MusicList({ data, session }: MusicList) {
                 <div className={styles.imageBlock}>
                   {pathname !== "/search" && renderPlayButton(song)}
                   <Image
-                    src={
-                      pathname === "/search"
-                        ? song.cover
-                        : `/audio/saved/${song.urlId}/thumbnail.jpg`
-                    }
+                    src={song.cover}
                     alt={song.title}
                     width={40}
                     height={40}
@@ -326,7 +308,7 @@ function SongPreview({ song }: { song: Song }) {
 
       <audio
         controls
-        src={`${process.env.MUSIC_SERVICE_CONTAINER}/stream?url=${song.url}`}
+        src={`/api/songs/stream?url=${song.url}`}
         preload={"metadata"}
         ref={audioRef}
         style={{ display: "none" }}

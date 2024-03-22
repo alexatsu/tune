@@ -6,7 +6,6 @@ type Song = {
   urlId: string;
   addedAt: Date;
   userId: string;
-  storage: string;
   cover: string;
 };
 

@@ -35,7 +35,7 @@ jobs:
         continue-on-error: true
 
       - name: build client
-        run: docker build -t tune-client-production -f ./client/Dockerfile.prod --build-arg GOOGLE_ID="${{ secrets.GOOGLE_ID }}" --build-arg GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} --build-arg GH_ID=${{ secrets.GH_ID }} --build-arg GH_SECRET=${{ secrets.GH_SECRET }} --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} --build-arg CLIENT_API_URL=${{ secrets.CLIENT_API_URL }} --build-arg MUSIC_SERVICE_CONTAINER=${{ secrets.MUSIC_SERVICE_CONTAINER }} --build-arg MS_ORIGIN=${{ secrets.MS_ORIGIN }} --build-arg CLIENT_ORIGIN=${{ secrets.CLIENT_ORIGIN }} .
+        run: docker build -t tune-client-production -f ./client/Dockerfile.prod --build-arg GOOGLE_ID="${{ secrets.GOOGLE_ID }}" --build-arg GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} --build-arg GH_ID=${{ secrets.GH_ID }} --build-arg GH_SECRET=${{ secrets.GH_SECRET }} --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} --build-arg MUSIC_SERVICE_CONTAINER=${{ secrets.MUSIC_SERVICE_CONTAINER }} .
 
       - name: run client
         run: docker run -it -d --name tune-c -p 3000:3000 tune-client-production
@@ -60,7 +60,7 @@ jobs:
         run: docker build -t tune-ms-production -f ./music-service/Dockerfile.prod .
 
       - name: run music-service
-        run: docker run -it -d --name tune-ms -p 8000:8000 -v audio:/app/src/audio tune-ms-production
+        run: docker run -it -d --name tune-ms -p 8000:8000 tune-ms-production
 
       - name: connect music-service to tune network
         run: docker network connect tune tune-ms

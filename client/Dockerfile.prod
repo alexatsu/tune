@@ -8,8 +8,7 @@ ARG NEXTAUTH_URL
 ARG NEXTAUTH_SECRET
 ARG DATABASE_URL
 ARG MUSIC_SERVICE_CONTAINER
-ARG MS_ORIGIN
-ARG CLIENT_ORIGIN
+
 WORKDIR /app
 
 COPY ./client/package.json ./
@@ -34,8 +33,6 @@ RUN echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env.local
 RUN echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env.local
 RUN echo "DATABASE_URL=$DATABASE_URL" >> .env.local
 RUN echo "MUSIC_SERVICE_CONTAINER=$MUSIC_SERVICE_CONTAINER" >> .env.local
-RUN echo "MS_ORIGIN=$MS_ORIGIN" >> .env.local
-RUN echo "CLIENT_ORIGIN=$CLIENT_ORIGIN" >> .env.local
 
 # env for prisma migrations
 RUN touch .env 

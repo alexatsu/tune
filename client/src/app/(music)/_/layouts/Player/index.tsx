@@ -1,6 +1,5 @@
 "use client";
 
-import Hls from "hls.js";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -18,7 +17,6 @@ import styles from "./styles.module.scss";
 // - loading states
 // - error handling
 
-const hls = new Hls();
 const { Unmuted, Muted, Play, Pause, PreviousTrack, NextTrack, ThreeDots } = playerIcons;
 
 const convertStringDurationToNumber = (duration: string | undefined) => {
@@ -30,8 +28,9 @@ const convertStringDurationToNumber = (duration: string | undefined) => {
 
 export function Player() {
   const { data: session } = useSession();
-  const { playerRef, currentSongRef, loadPlayerSource } = usePlayerContext();
-  const { isPlaying, handlePause, handlePlay, setCurrentSong, setIsPlaying } = usePlayerStore();
+  const { playerRef, currentSongRef } = usePlayerContext();
+  const { isPlaying, handlePause, handlePlay, setCurrentSong, setIsPlaying, loadPlayerSource } =
+    usePlayerStore();
   const { error, isLoading, songs } = useSongs(session);
 
   const isMobile = useMobile(576);
@@ -56,27 +55,12 @@ export function Player() {
       console.log(currentSongRef.current, "current track");
       setCurrentSong(songs[0]);
 
-      if (playerRef && currentSongRef.current) {
-        loadPlayerSource();
-      }
-
-      hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-        console.log("video and hls.js are now bound together !");
-      });
-
-      hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        console.log("manifest loaded, found " + data.levels.length + " quality level");
-      });
-
-      return () => {
-        hls.destroy();
-        setIsPlaying(false);
-      };
+      return () => setIsPlaying(false);
     }
-  }, [currentSongRef, playerRef, songs, setCurrentSong, loadPlayerSource, setIsPlaying]);
+  }, [currentSongRef, songs, setCurrentSong, setIsPlaying]);
 
   const handleNextTrack = useCallback(() => {
-    if (currentSongRef.current === null) {
+    if (!currentSongRef.current) {
       console.log("no current next track");
       return;
     }
@@ -91,31 +75,32 @@ export function Player() {
     if (trackIndex === songs.length - 1) {
       currentSongRef.current = songs[0];
       setCurrentSong(songs[0]);
+      loadPlayerSource(playerRef, songs[0]);
     }
 
     if (trackIndex < songs.length - 1) {
       currentSongRef.current = songs[trackIndex + 1];
       setCurrentSong(songs[trackIndex + 1]);
+      loadPlayerSource(playerRef, songs[trackIndex + 1]);
     }
 
     setSeek(0);
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
-    loadPlayerSource();
     handlePlay(playerRef);
   }, [
     currentSongRef,
     duration,
     handlePlay,
-    loadPlayerSource,
     playerRef,
     setCurrentSong,
     setSeek,
     songs,
     trackSeekRef,
+    loadPlayerSource,
   ]);
 
   const handlePreviousTrack = () => {
-    if (currentSongRef.current === null) {
+    if (!currentSongRef.current) {
       console.log("no current previous track");
       return;
     }
@@ -129,16 +114,17 @@ export function Player() {
     if (trackIndex === 0) {
       currentSongRef.current = songs[songs.length - 1];
       setCurrentSong(songs[songs.length - 1]);
+      loadPlayerSource(playerRef, songs[songs.length - 1]);
     }
 
     if (trackIndex > 0) {
       currentSongRef.current = songs[trackIndex - 1];
       setCurrentSong(songs[trackIndex - 1]);
+      loadPlayerSource(playerRef, songs[trackIndex - 1]);
     }
 
     setSeek(0);
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
-    loadPlayerSource();
     handlePlay(playerRef);
   };
 
@@ -162,7 +148,6 @@ export function Player() {
     }
   }, [playerRef, volumeRef]);
 
-  ///
   useEffect(() => {
     if (playerRef.current && volumeRef.current && !isMobile) {
       updateProgressBar(volumeRef, `${playerRef.current?.volume * 100}`);
@@ -193,6 +178,8 @@ export function Player() {
 
   if (!session) redirect("/signin");
 
+  if (isLoading) return <p>Loading...</p>;
+
   return (
     <>
       {!isMobile ? (
@@ -200,7 +187,7 @@ export function Player() {
           <div className={styles.imageBlock}>
             {currentSongRef.current && (
               <Image
-                src={`/audio/saved/${currentSongRef.current?.urlId}/thumbnail.jpg`}
+                src={currentSongRef.current?.cover || ""}
                 alt="cover"
                 width={50}
                 height={50}
@@ -247,7 +234,7 @@ export function Player() {
             <div className={styles.imageBlock}>
               {currentSongRef.current && (
                 <Image
-                  src={`/audio/saved/${currentSongRef?.current?.urlId}/thumbnail.jpg`}
+                  src={currentSongRef.current?.cover || ""}
                   alt="cover"
                   width={35}
                   height={35}
@@ -268,15 +255,15 @@ export function Player() {
           </div>
         </div>
       )}
-
-      <video
-        style={{ display: "none" }}
-        ref={playerRef}
-        controls
-        width={320}
-        height={240}
-        id="video"
-      ></video>
+      {currentSongRef.current && (
+        <audio
+          controls
+          src={`/api/songs/stream?url=${currentSongRef.current?.url}`}
+          preload={"metadata"}
+          ref={playerRef}
+          style={{ display: "none" }}
+        />
+      )}
     </>
   );
 }

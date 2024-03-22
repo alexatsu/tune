@@ -1,5 +1,7 @@
 FROM python:3.12.2-slim AS builder
+
 RUN apt-get update && apt-get install -y ffmpeg
+
 WORKDIR /app
 
 RUN pip install --upgrade pip
@@ -16,6 +18,5 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 RUN pip install uvicorn
 
 WORKDIR /app/src
-RUN mkdir -p audio/saved
 
 CMD ["uvicorn", "main:app", "--host=0.0.0.0" , "--reload" , "--port", "8000"]

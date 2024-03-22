@@ -8,12 +8,13 @@ type Props = {
   url: string;
   id: string;
   title: string;
+  cover: string;
   duration: string;
 };
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { session, url, id, title, duration }: Props = body;
+  const { session, url, id, title, duration, cover }: Props = body;
 
   if (!session) {
     return NextResponse.json({ user: null, message: "Session is required" }, { status: 404 });
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
       duration,
       url,
       urlId: id,
-      storage: "saved",
+      cover: cover,
       addedAt: new Date(),
       userId: findUser.id,
     },
