@@ -11,11 +11,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Node
         uses: actions/setup-node@v3
-        name: cd into client
+      - name: cd into client
         run: cd client
       - name: Install dependencies
         run: npm install
-        name: Apply all pending migrations to the database
+      - name: Apply all pending migrations to the database
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
