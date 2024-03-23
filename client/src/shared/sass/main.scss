@@ -30,6 +30,7 @@
 body {
   background: url("../../../public/images/bg.avif") lightgray 50% / cover no-repeat;
   background-color: $bg;
+  object-fit: cover;
   font-size: $default;
   height: 100dvh;
 }
