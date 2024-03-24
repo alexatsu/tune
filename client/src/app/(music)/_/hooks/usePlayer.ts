@@ -12,29 +12,29 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
   const trackSeekRef = useRef<HTMLInputElement>(null);
   const [seek, setSeek] = useState<number>(0);
 
-  const handleBuffering = useCallback(() => {
-    if (playerRef.current) {
-      const buffered = playerRef.current.buffered;
+  // const handleBuffering = useCallback(() => {
+  //   if (playerRef.current) {
+  //     const buffered = playerRef.current.buffered;
 
-      if (buffered.length > 0) {
-        setBufferedTime(buffered.end(buffered.length - 1));
-      }
-    }
-  }, [playerRef]);
+  //     if (buffered.length > 0) {
+  //       setBufferedTime(buffered.end(buffered.length - 1));
+  //     }
+  //   }
+  // }, [playerRef]);
 
-  useEffect(() => {
-    const player = playerRef.current;
-    if (player) {
-      player.addEventListener("progress", handleBuffering);
-      updateProgressBar(bufferRef, `${(bufferedTime / player.duration) * 100}`);
-    }
+  // useEffect(() => {
+  //   const player = playerRef.current;
+  //   if (player) {
+  //     player.addEventListener("progress", handleBuffering);
+  //     updateProgressBar(bufferRef, `${(bufferedTime / player.duration) * 100}`);
+  //   }
 
-    return () => {
-      if (player) {
-        player.removeEventListener("progress", handleBuffering);
-      }
-    };
-  }, [bufferedTime, handleBuffering, playerRef]);
+  //   return () => {
+  //     if (player) {
+  //       player.removeEventListener("progress", handleBuffering);
+  //     }
+  //   };
+  // }, [bufferedTime, handleBuffering, playerRef]);
 
   const handleSeekTrack = (event: React.ChangeEvent<HTMLInputElement>) => {
     const seekTime = Number(event.target.value);
@@ -76,14 +76,14 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
   };
 
   const handleMute = () => {
-    if (playerRef.current) {
+    if (playerRef.current && volumeRef.current) {
       playerRef.current.muted = !playerRef.current.muted;
       setVolume((prev) => ({ ...prev, muted: !volume.muted }));
 
       if (playerRef.current.muted) {
         updateProgressBar(volumeRef, `${0}`);
       } else {
-        updateProgressBar(volumeRef, `${playerRef.current.volume * 100}`);
+        updateProgressBar(volumeRef, `${volume.value * 100}`);
       }
     }
   };
@@ -95,7 +95,7 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
   }, [volumeRef]);
 
   return {
-    handleBuffering,
+    // handleBuffering,
     handleSeekTrack,
     handleVolumeChange,
     handleMute,
@@ -107,5 +107,6 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
     trackSeekRef,
     setSeek,
     seek,
+    setVolume,
   };
 }

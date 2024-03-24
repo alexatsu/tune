@@ -47,6 +47,7 @@ export function Player() {
     seek,
     setSeek,
     handleSeekTrack,
+    setVolume,
   } = usePlayer(playerRef);
 
   useEffect(() => {
@@ -54,10 +55,12 @@ export function Player() {
       currentSongRef.current = songs[0];
       console.log(currentSongRef.current, "current track");
       setCurrentSong(songs[0]);
-
+      setVolume({ value: 0.3, muted: false });
+      const initialVolume = 0.3;
+      updateProgressBar(volumeRef, `${initialVolume * 100}`);
       return () => setIsPlaying(false);
     }
-  }, [currentSongRef, songs, setCurrentSong, setIsPlaying]);
+  }, [currentSongRef, songs, setCurrentSong, setIsPlaying, setVolume, volumeRef]);
 
   const handleNextTrack = useCallback(() => {
     if (!currentSongRef.current) {
@@ -138,21 +141,10 @@ export function Player() {
   }, [handleNextTrack, playerRef]);
 
   useEffect(() => {
-    const initialVolume = 0.3;
-
-    if (playerRef.current && volumeRef.current) {
-      playerRef.current.volume = initialVolume;
-
-      volumeRef.current.value = `${initialVolume * 100}`;
-      updateProgressBar(volumeRef, `${playerRef.current?.volume * 100}`);
-    }
-  }, [playerRef, volumeRef]);
-
-  useEffect(() => {
     if (playerRef.current && volumeRef.current && !isMobile) {
-      updateProgressBar(volumeRef, `${playerRef.current?.volume * 100}`);
+      updateProgressBar(volumeRef, `${volume.value * 100}`);
     }
-  }, [playerRef, isMobile, volumeRef]);
+  }, [playerRef, isMobile, volumeRef, volume.value]);
 
   const inputs = (
     <>
@@ -177,8 +169,6 @@ export function Player() {
   );
 
   if (!session) redirect("/signin");
-
-  if (isLoading) return <p>Loading...</p>;
 
   return (
     <>
