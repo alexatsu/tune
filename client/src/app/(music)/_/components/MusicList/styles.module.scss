@@ -169,7 +169,7 @@
         background-color: $widget-bg;
         user-select: none;
         cursor: default;
-        
+
         & path {
           fill: $grey;
         }
@@ -305,8 +305,6 @@
   }
 }
 
-
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -316,11 +314,15 @@
   }
 }
 
-
 .musicListMenuProps {
-  color: #FAA0A0;
+  color: $text;
   text-align: center;
   cursor: pointer;
   padding: 0.5rem;
   width: 100%;
+}
+
+.deleteSong {
+  @extend .musicListMenuProps;
+  color: #faa0a0;
 }

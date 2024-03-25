@@ -162,18 +162,18 @@ export function MusicList({ data, session }: MusicList) {
   const menuProps = (song: Song) => {
     const list = (className: string) => [
       {
-        node: pathname !== "/search" && (
-          <li className={className} onClick={() => deleteFromMyMusic(song.id)}>
-            x from music
-          </li>
-        ),
-      },
-      {
         node: (
           <li className={className}>
             <Link href={song.url} target="_blank">
               source video
             </Link>
+          </li>
+        ),
+      },
+      {
+        node: pathname !== "/search" && (
+          <li className={styles.deleteSong} onClick={() => deleteFromMyMusic(song.id)}>
+            x from music
           </li>
         ),
       },
