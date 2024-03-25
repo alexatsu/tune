@@ -29,7 +29,7 @@ const convertStringDurationToNumber = (duration: string | undefined) => {
 export function Player() {
   const { data: session } = useSession();
   const { playerRef, currentSongRef } = usePlayerContext();
-  const { isPlaying, handlePause, handlePlay, setCurrentSong, setIsPlaying, loadPlayerSource } =
+  const { isPlaying, setCurrentSong, handlePlay, handlePause, setIsPlaying, loadPlayerSource } =
     usePlayerStore();
   const { error, isLoading, songs } = useSongs(session);
 
@@ -53,14 +53,19 @@ export function Player() {
   useEffect(() => {
     if (songs) {
       currentSongRef.current = songs[0];
-      console.log(currentSongRef.current, "current track");
       setCurrentSong(songs[0]);
-      setVolume({ value: 0.3, muted: false });
+
       const initialVolume = 0.3;
+
+      if (playerRef.current) {
+        playerRef.current.volume = initialVolume;
+      }
+
+      setVolume({ value: initialVolume, muted: false });
       updateProgressBar(volumeRef, `${initialVolume * 100}`);
       return () => setIsPlaying(false);
     }
-  }, [currentSongRef, songs, setCurrentSong, setIsPlaying, setVolume, volumeRef]);
+  }, [currentSongRef, songs, setCurrentSong, setIsPlaying, setVolume, volumeRef, playerRef]);
 
   const handleNextTrack = useCallback(() => {
     if (!currentSongRef.current) {
@@ -72,24 +77,23 @@ export function Player() {
       console.log("no source to handle next track");
       return;
     }
-
     const trackIndex = songs.indexOf(currentSongRef.current);
 
     if (trackIndex === songs.length - 1) {
       currentSongRef.current = songs[0];
-      setCurrentSong(songs[0]);
       loadPlayerSource(playerRef, songs[0]);
+      setCurrentSong(songs[0]);
     }
 
     if (trackIndex < songs.length - 1) {
       currentSongRef.current = songs[trackIndex + 1];
-      setCurrentSong(songs[trackIndex + 1]);
       loadPlayerSource(playerRef, songs[trackIndex + 1]);
+      setCurrentSong(songs[trackIndex + 1]);
     }
 
+    handlePlay(playerRef);
     setSeek(0);
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
-    handlePlay(playerRef);
   }, [
     currentSongRef,
     duration,
@@ -116,19 +120,19 @@ export function Player() {
 
     if (trackIndex === 0) {
       currentSongRef.current = songs[songs.length - 1];
-      setCurrentSong(songs[songs.length - 1]);
       loadPlayerSource(playerRef, songs[songs.length - 1]);
+      setCurrentSong(songs[songs.length - 1]);
     }
 
     if (trackIndex > 0) {
       currentSongRef.current = songs[trackIndex - 1];
-      setCurrentSong(songs[trackIndex - 1]);
       loadPlayerSource(playerRef, songs[trackIndex - 1]);
+      setCurrentSong(songs[trackIndex - 1]);
     }
 
+    handlePlay(playerRef);
     setSeek(0);
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
-    handlePlay(playerRef);
   };
 
   useEffect(() => {
@@ -245,15 +249,16 @@ export function Player() {
           </div>
         </div>
       )}
-      {currentSongRef.current && (
-        <audio
-          controls
-          src={`/api/songs/stream?url=${currentSongRef.current?.url}`}
-          preload={"metadata"}
-          ref={playerRef}
-          style={{ display: "none" }}
-        />
-      )}
+      <audio
+        controls
+        src={
+          currentSongRef.current?.url ? `/api/songs/stream?url=${currentSongRef.current?.url}` : ""
+        }
+        preload={"metadata"}
+        ref={playerRef}
+        onLoadedData={() => console.log("Audio loaded successfully")}
+        style={{ display: "none" }}
+      />
     </>
   );
 }

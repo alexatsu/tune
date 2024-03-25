@@ -40,8 +40,16 @@ export function MusicList({ data, session }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
   const { currentSongRef, playerRef } = usePlayerContext();
-  const { isPlaying, setIsPlaying, currentSong, setCurrentSong, handlePause, loadPlayerSource } =
-    usePlayerStore();
+  const {
+    isPlaying,
+    setIsPlaying,
+    handlePlay,
+    currentSong,
+    setCurrentSong,
+    handlePause,
+    loadPlayerSource,
+  } = usePlayerStore();
+
   const [isAddingSong, setIsAddingSong] = useState(false);
 
   const currentAddedSongRef = useRef("");
@@ -50,15 +58,15 @@ export function MusicList({ data, session }: MusicList) {
 
   const handlePlayById = async (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
-      playerRef.current?.play();
+      handlePlay(playerRef);
       setIsPlaying(true);
-      console.log(song, "here is the song");
       return;
     }
 
     currentSongRef.current = song;
     setCurrentSong(song);
-    loadPlayerSource(playerRef, song);
+    loadPlayerSource(playerRef, currentSongRef.current);
+    handlePlay(playerRef);
     setIsPlaying(true);
   };
 
@@ -98,8 +106,6 @@ export function MusicList({ data, session }: MusicList) {
       session,
     });
 
-    mutate(`/api/songs/get-all`);
-    setIsAddingSong(false);
     currentAddedSongRef.current = "";
 
     if (!currentSongRef.current) {
@@ -114,9 +120,13 @@ export function MusicList({ data, session }: MusicList) {
         return data;
       };
 
-      currentSongRef.current = (await getFirstSong()).songs[0] as Song;
+      const firstSong = (await getFirstSong()).songs[0] as Song;
+      currentSongRef.current = firstSong;
+      setCurrentSong(firstSong);
       loadPlayerSource(playerRef, currentSongRef.current);
+      mutate(`/api/songs/get-all`);
     }
+    setIsAddingSong(false);
   };
 
   const renderAddButton = (song: Song & { isAdded?: boolean }) => {

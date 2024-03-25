@@ -1,6 +1,5 @@
 import { RefObject } from "react";
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 
 import { Song } from "@/app/(music)/_/types";
 
@@ -14,47 +13,55 @@ type PlayerStore = {
   loadPlayerSource: (playerRef: RefObject<HTMLAudioElement>, song: Song) => void;
 };
 
-const usePlayerStore = create<PlayerStore>()(
-  immer((set) => ({
-    isPlaying: false,
-    setIsPlaying: (value) =>
-      set((state) => {
-        state.isPlaying = value;
-      }),
+const usePlayerStore = create<PlayerStore>((set) => ({
+  isPlaying: false,
+  setIsPlaying: (value) => set({ isPlaying: value }),
 
-    currentSong: undefined,
-    setCurrentSong: (value) =>
-      set((state) => {
-        state.currentSong = value;
-      }),
-    handlePlay: (playerRef) =>
-      set((state) => {
-        if (!state.isPlaying && playerRef.current?.paused) {
-          // this if is workaround, because audio.play() is async
-          playerRef.current?.play();
-          state.isPlaying = true;
-        }
-      }),
-    handlePause: (playerRef) =>
-      set((state) => {
-        if (state.isPlaying && !playerRef.current?.paused) {
-          // this if is workaround, because audio.play() is async
-          playerRef.current?.pause();
-          state.isPlaying = false;
-        }
-      }),
-    loadPlayerSource: (playerRef, song) =>
-      set((state) => {
-        if (playerRef.current) {
-          playerRef.current.src = song.url;
-          playerRef.current.load();
-          playerRef.current.addEventListener("canplay", () => {
-            playerRef.current?.play();
-            playerRef.current?.removeEventListener("canplay", () => {});
-          });
-        }
-      }),
-  })),
-);
+  currentSong: undefined,
+  setCurrentSong: (value) => set({ currentSong: value }),
+
+  handlePlay: (playerRef) => {
+    set((state) => {
+      const player = playerRef.current;
+
+      if (player && player.readyState >= 2) {
+        player.play();
+        return { isPlaying: true };
+      } else {
+        const canPlayHandler = async () => {
+          await player?.play();
+          set({ isPlaying: true });
+        };
+
+        player?.addEventListener("canplay", canPlayHandler);
+
+        return {
+          isPlaying: state.isPlaying,
+          removeCanPlayListener: () => player?.removeEventListener("canplay", canPlayHandler),
+        };
+      }
+    });
+  },
+
+  handlePause: (playerRef) => {
+    set((state) => {
+      if (state.isPlaying && !playerRef.current?.paused) {
+        playerRef.current?.pause();
+        return { isPlaying: false };
+      }
+      return state;
+    });
+  },
+
+  loadPlayerSource: (playerRef, song) => {
+    set((state) => {
+      if (playerRef.current) {
+        playerRef.current.src = song.url;
+        playerRef.current.load();
+      }
+      return state;
+    });
+  },
+}));
 
 export { usePlayerStore };

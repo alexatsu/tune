@@ -5,6 +5,12 @@
 docker image rm $(docker image ls -f 'dangling=true' -q)
 ```
 
+# Volumes
+- Delete hanging volumes
+```
+docker volume rm $(docker volume ls -f 'dangling=true' -q)
+```
+
 # Docker hub
 - pushing images to hub
   

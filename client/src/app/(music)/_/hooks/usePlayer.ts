@@ -12,29 +12,28 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
   const trackSeekRef = useRef<HTMLInputElement>(null);
   const [seek, setSeek] = useState<number>(0);
 
-  // const handleBuffering = useCallback(() => {
-  //   if (playerRef.current) {
-  //     const buffered = playerRef.current.buffered;
+  const handleBuffering = useCallback(() => {
+    if (playerRef.current) {
+      const buffered = playerRef.current.buffered;
+      if (buffered.length > 0) {
+        setBufferedTime(buffered.end(buffered.length - 1));
+      }
+    }
+  }, [playerRef]);
 
-  //     if (buffered.length > 0) {
-  //       setBufferedTime(buffered.end(buffered.length - 1));
-  //     }
-  //   }
-  // }, [playerRef]);
+  useEffect(() => {
+    const player = playerRef.current;
+    if (player) {
+      player.addEventListener("progress", handleBuffering);
+      updateProgressBar(bufferRef, `${(bufferedTime / player.duration) * 100}`);
+    }
 
-  // useEffect(() => {
-  //   const player = playerRef.current;
-  //   if (player) {
-  //     player.addEventListener("progress", handleBuffering);
-  //     updateProgressBar(bufferRef, `${(bufferedTime / player.duration) * 100}`);
-  //   }
-
-  //   return () => {
-  //     if (player) {
-  //       player.removeEventListener("progress", handleBuffering);
-  //     }
-  //   };
-  // }, [bufferedTime, handleBuffering, playerRef]);
+    return () => {
+      if (player) {
+        player.removeEventListener("progress", handleBuffering);
+      }
+    };
+  }, [bufferedTime, handleBuffering, playerRef]);
 
   const handleSeekTrack = (event: React.ChangeEvent<HTMLInputElement>) => {
     const seekTime = Number(event.target.value);
@@ -91,11 +90,16 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
   useEffect(() => {
     const initialVolume = 0.3;
 
+    if (playerRef.current) {
+      playerRef.current.volume = initialVolume;
+    }
+
+    setVolume({ value: initialVolume, muted: false });
+
     updateProgressBar(volumeRef, `${initialVolume * 100}`);
-  }, [volumeRef]);
+  }, [volumeRef, setVolume, playerRef]);
 
   return {
-    // handleBuffering,
     handleSeekTrack,
     handleVolumeChange,
     handleMute,

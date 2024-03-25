@@ -19,7 +19,6 @@ services:
     #   - db
     restart: always
 
-
   # containers can communicate with each other via container name and inner port
   # if normaly you should do 3000:3000, for containers you need only second port
   # because docker create network automatically
@@ -31,7 +30,7 @@ services:
       # hostport:containerport
       - 5432:5432
     environment:
-    # test if i need these variables
+      # test if i need these variables
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
@@ -39,7 +38,6 @@ services:
       - db:/var/lib/postgresql/data
     image: postgres:16-alpine
     restart: always
-
 
   music-service:
     container_name: music-service
@@ -50,11 +48,7 @@ services:
       - 8000:8000
     volumes:
       - ./music-service:/app
-      - audio:/app/src/audio
     restart: always
-
 
 volumes:
   db:
-  audio:
-
