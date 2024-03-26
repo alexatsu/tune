@@ -1,11 +1,11 @@
-@import "@/sass/abstracts/colors.scss";
+@import "@/sass/abstracts/colors";
 
 .musicListContainer {
   overflow: auto;
   width: 100%;
   height: calc(100dvh - 125px);
 
-  @media screen and (max-width: 425px) {
+  @media screen and (width <= 425px) {
     height: calc(100dvh - 140px);
   }
 }
@@ -16,10 +16,6 @@
   height: 90%;
   overflow-y: auto;
   padding: 0.5rem 0;
-
-  &::-webkit-scrollbar {
-    width: 2em;
-  }
 
   &::-webkit-scrollbar-track {
     background: transparent;
@@ -49,17 +45,17 @@
     padding: 0.6rem 1.4rem;
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
 
-    @media screen and (max-width: 576px) {
+    @media screen and (width <= 576px) {
       padding: 0.5rem;
       font-size: 0.9rem;
     }
-    @media screen and (max-width: 425px) {
+
+    @media screen and (width <= 425px) {
       padding: 0.4rem;
       font-size: 0.8rem;
     }
@@ -101,9 +97,12 @@
 
         & > img {
           -o-object-fit: cover;
-          object-fit: cover;
+             object-fit: cover;
           border-radius: 5px;
-          user-select: none;
+          -webkit-user-select: none;
+             -moz-user-select: none;
+              -ms-user-select: none;
+                  user-select: none;
         }
       }
 
@@ -144,15 +143,16 @@
         width: 18px;
         height: 18px;
         -webkit-animation: spin 2s linear infinite;
-        animation: spin 2s linear infinite;
+                animation: spin 2s linear infinite;
       }
 
       @-webkit-keyframes spin {
         0% {
-          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
         }
+
         100% {
-          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
         }
       }
 
@@ -160,6 +160,17 @@
         0% {
           transform: rotate(0deg);
         }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
         100% {
           transform: rotate(360deg);
         }
@@ -167,7 +178,10 @@
 
       .added {
         background-color: $widget-bg;
-        user-select: none;
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
         cursor: default;
 
         & path {
@@ -180,21 +194,23 @@
 
 %inputContainer {
   -webkit-appearance: none;
-  appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   background: transparent;
   border-radius: 10px;
 }
 
 %runTrack {
   height: 5px;
-  background: rgba(255, 255, 255, 0.104);
+  background: rgb(255 255 255 / 10.4%);
   border-radius: 16px;
 }
 
 %thumb {
   -webkit-appearance: none;
-  appearance: none;
-  background-color: #000000;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: #000;
   border-radius: 50%;
 }
 
@@ -206,7 +222,7 @@
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
   margin-bottom: 10px;
-  padding: 0rem 5%;
+  padding: 0 5%;
   margin-top: -1px;
 
   .trackBlock {
@@ -232,18 +248,21 @@
 
       .trackSeek {
         @extend %inputContainer;
+
         position: absolute;
         cursor: pointer;
         width: 100%;
         height: 5px;
         outline: none;
         z-index: 1;
+
         &::-webkit-slider-runnable-track {
           @extend %runTrack;
         }
 
         &::-webkit-slider-thumb {
           @extend %thumb;
+
           margin-top: -1px;
           height: 0;
           width: 0;
@@ -252,7 +271,8 @@
 
       .buffer {
         -webkit-appearance: none;
-        appearance: none;
+           -moz-appearance: none;
+                appearance: none;
         background: transparent;
         border-radius: 10px;
         width: 100%;
@@ -261,13 +281,13 @@
 
         &::-webkit-slider-runnable-track {
           height: 5px;
-          background: rgba(255, 255, 255, 0.104);
+          background: rgb(255 255 255 / 10.4%);
           border-radius: 16px;
         }
 
         &::-webkit-slider-thumb {
           -webkit-appearance: none;
-          appearance: none;
+                  appearance: none;
         }
       }
     }
@@ -280,12 +300,13 @@
     justify-content: center;
     gap: 5px;
 
-    @media screen and (max-width: 576px) {
+    @media screen and (width <= 576px) {
       width: 30%;
     }
 
     .volume {
       @extend %inputContainer;
+
       cursor: pointer;
       width: 100%;
       height: 5px;
@@ -297,6 +318,7 @@
 
       &::-webkit-slider-thumb {
         @extend %thumb;
+
         margin-top: -2px;
         height: 0;
         width: 0;
@@ -305,10 +327,21 @@
   }
 }
 
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -324,5 +357,6 @@
 
 .deleteSong {
   @extend .musicListMenuProps;
+
   color: #faa0a0;
 }

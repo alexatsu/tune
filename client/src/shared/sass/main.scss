@@ -5,18 +5,14 @@
   --bg: #121313;
   --bg-alt: #1c1c1c;
   --bg-alt-hover: #2c2c2c;
-
   --widget-bg: #1a1e1f;
-
   --text: #ececec;
-  --dark-text: #111111;
-
+  --dark-text: #111;
   --accent: #76efff;
   --accent-darker: #63d8e8;
   --accent-fade: #76efff3d;
-
-  --grey: rgb(78, 78, 78);
-  --white-fade: rgba(255, 255, 255, 0.103);
+  --grey: rgb(78 78 78);
+  --white-fade: rgb(255 255 255 / 10.3%);
 }
 
 * {
@@ -38,7 +34,7 @@ body {
 body::before {
   content: "";
   position: absolute;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.33) 0%, rgba(0, 0, 0, 0.71) 100%);
+  background: linear-gradient(180deg, rgb(0 0 0 / 33%) 0%, rgb(0 0 0 / 71%) 100%);
   top: 0;
   left: 0;
   width: 100%;
@@ -49,6 +45,7 @@ body::before {
 
 body[data-property="background"] {
   background-color: transparent;
+
   /* Remove blur effect */
   filter: none;
 }

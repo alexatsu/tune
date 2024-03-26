@@ -3,7 +3,8 @@
 @use "@/sass/mixins/button.module.scss" as *;
 
 .signIn {
-  @include button();
+  @include button;
+
   padding: 0.7rem 1.5rem;
   background-color: $bg-alt;
   color: $text;

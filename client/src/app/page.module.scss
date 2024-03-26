@@ -10,11 +10,11 @@
   padding: 5rem 2rem;
   height: calc(100vh - 100px);
 
-  @media screen and (max-width: 768px) {
+  @media screen and (width <= 768px) {
     padding: 3rem 1rem;
   }
 
-  @media screen and (max-width: 425px) {
+  @media screen and (width <= 425px) {
     padding: 1rem 0.5rem;
   }
 }
@@ -37,7 +37,7 @@
     height: auto;
     user-select: none;
 
-    @media screen and (max-width: 768px) {
+    @media screen and (width <= 768px) {
       max-width: 90%;
     }
   }
@@ -50,7 +50,6 @@
 .find {
   color: $text;
   height: auto;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,7 +81,8 @@
 }
 
 .connect {
-  @include button();
+  @include button;
+
   background-color: $accent;
   color: $dark-text;
 
@@ -90,8 +90,10 @@
     background-color: $accent-darker;
   }
 }
+
 .connected {
-  @include button();
+  @include button;
+
   background-color: $accent;
   color: $dark-text;
 
@@ -99,7 +101,7 @@
     background-color: $accent-darker;
   }
 
-  @media screen and (max-width: 425px) {
+  @media screen and (width <= 425px) {
     padding: 0.5rem;
   }
 }

@@ -13,18 +13,20 @@
     user-select: none;
     max-width: 200px;
     display: none;
-    background-color: rgb(50, 50, 50);
+    background-color: rgb(50 50 50);
   }
 
   .ulOpen {
     @extend .ul;
+
     background-color: $bg-alt;
     padding: 0.5rem 1rem;
     border-radius: 10px;
     display: block;
+
     // top: 35px; //to open at the top
     // bottom: calc(100% + 10px); //to open at the bottom
-    right: 0px;
+    right: 0;
     z-index: 1;
     color: $text;
     animation: fadeIn 0.15s ease;
@@ -45,9 +47,10 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateY(0);
   }
 }
 
