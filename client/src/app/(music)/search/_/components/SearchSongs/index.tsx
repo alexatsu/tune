@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef } from "react";
 
+import { Skeleton } from "@/app/(music)/_/components/Skeleton";
 import { MusicList } from "@/music/_/components";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { useSearch } from "@/music/_/hooks";
@@ -52,11 +53,7 @@ function SearchSongs() {
       </form>
 
       {error && !isLoading ? <div style={{ color: "white" }}>{error.message}</div> : ""}
-      {isLoading ? (
-        <div style={{ color: "white" }}>Loading...</div>
-      ) : (
-        <MusicList data={data || undefined} session={session!} />
-      )}
+      {isLoading ? <Skeleton /> : <MusicList data={data || undefined} session={session!} />}
     </>
   );
 }

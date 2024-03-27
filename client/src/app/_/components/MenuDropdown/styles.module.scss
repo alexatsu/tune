@@ -12,33 +12,37 @@
     right: 0;
     user-select: none;
     max-width: 200px;
-    display: none;
-    background-color: rgb(50 50 50);
-  }
-
-  .ulOpen {
-    @extend .ul;
-
     background-color: $bg-alt;
     padding: 0.5rem 1rem;
     border-radius: 10px;
-    display: block;
-
-    // top: 35px; //to open at the top
-    // bottom: calc(100% + 10px); //to open at the bottom
-    right: 0;
     z-index: 1;
+    animation: fadeOut 0.15s ease;
+    opacity: 0;
+    display: none;
+  }
+
+  .ulOpen {
+    position: absolute;
     color: $text;
+    list-style: none;
+    right: 0;
+    user-select: none;
+    max-width: 200px;
+    background-color: $bg-alt;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    z-index: 1;
     animation: fadeIn 0.15s ease;
+    opacity: 1;
+  }
 
-    & a {
-      text-decoration: none;
-      color: inherit;
-    }
+  & a {
+    text-decoration: none;
+    color: $text;
+  }
 
-    & li {
-      white-space: nowrap;
-    }
+  & li {
+    white-space: nowrap;
   }
 }
 
@@ -54,4 +58,18 @@
   }
 }
 
-
+@keyframes fadeOut {
+  0% {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  99% {
+    display: block;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    display: none;
+  }
+}

@@ -1,0 +1,24 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.settingsMain {
+  padding: 2rem 15%;
+  color: $text;
+
+  .text {
+    background-color: $widget-bg;
+    padding: 2rem;
+    border-radius: 1rem;
+    
+    h1 {
+      margin-bottom: 2rem;
+    }
+
+    a {
+      text-decoration: none;
+      color: $accent;
+      &:visited {
+        color: $accent;
+      }
+    }
+  }
+}

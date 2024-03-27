@@ -1,0 +1,28 @@
+@use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/mixins/skeletonAnimation.module.scss" as *;
+
+.skeletonContainer {
+  width: 100%;
+  padding: 0.5rem 0;
+}
+
+.skeleton {
+  background-color: $widget-bg;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 1rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+
+  @include skeletonAnimation();
+
+  .skeletonImgPlaceholder {
+    width: 40px;
+    height: 40px;
+  }
+}

@@ -8,11 +8,7 @@
   align-items: center;
   padding: 0 15%;
 
-  @media screen and (width <=1024px){
-    padding: 0 5%;
-  }
-
-  @media screen and (width <= 768px){
+  @media screen and (width <=1024px) {
     padding: 0 1rem;
   }
 }

@@ -179,7 +179,9 @@ export function Player() {
       {!isMobile ? (
         <div className={styles.playerContainer}>
           <div className={styles.imageBlock}>
-            {currentSongRef.current && (
+            {isLoading ? (
+              <div className={styles.skeletonImage} />
+            ) : currentSongRef.current ? (
               <Image
                 src={currentSongRef.current?.cover || ""}
                 alt="cover"
@@ -187,6 +189,8 @@ export function Player() {
                 height={50}
                 unoptimized
               />
+            ) : (
+              <div className={styles.imagePlaceholder} />
             )}
           </div>
 
@@ -202,7 +206,13 @@ export function Player() {
             </div>
 
             <div className={styles.inputs}>{inputs}</div>
-            <div className={styles.title}>{currentSongRef.current?.title || ""}</div>
+            {isLoading ? (
+              <div className={styles.skeletonTitle}>Loading</div>
+            ) : (
+              <div className={styles.title}>
+                {currentSongRef.current?.title || "No song selected"}
+              </div>
+            )}
           </div>
 
           <div className={styles.sound}>
@@ -211,6 +221,7 @@ export function Player() {
             ) : (
               <Unmuted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
             )}
+
             <input
               className={styles.volume}
               ref={volumeRef}
@@ -235,6 +246,7 @@ export function Player() {
                   unoptimized
                 />
               )}
+
               {isPlaying ? (
                 <Pause onClick={() => handlePause(playerRef)} />
               ) : (

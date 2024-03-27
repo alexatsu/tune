@@ -11,6 +11,7 @@ const MusicList = dynamic(() => import("@/music/_/components").then((mod) => mod
 
 import Link from "next/link";
 
+import { Skeleton } from "../_/components/Skeleton";
 import styles from "./styles.module.scss";
 
 export default function Page() {
@@ -19,14 +20,17 @@ export default function Page() {
 
   if (!session) redirect("/signin");
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!songs) return <div>could not get any songs</div>;
+  const musicList = isLoading ? (
+    <Skeleton />
+  ) : (
+    <MusicList data={data || undefined} session={session} />
+  );
 
-  return songs.length < 1 ? (
+  return songs && songs.length < 1 ? (
     <div className={styles.errorMessageContainer}>
       <p>No songs were added, look for them in</p> <Link href={"/search"}>Search</Link>
     </div>
   ) : (
-    <MusicList data={data || undefined} session={session} />
+    musicList
   );
 }

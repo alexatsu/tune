@@ -1,0 +1,25 @@
+@mixin skeletonAnimation() {
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(#1a1e1f, 0.3) 30%,
+      rgba(#76efff8e, 0.1) 50%,
+      rgba(#1a1e1f, 0.3) 70%
+    );
+    border-radius: 0.5rem;
+    animation: skeleton 2s infinite;
+  }
+
+  @keyframes skeleton {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
