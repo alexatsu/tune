@@ -45,7 +45,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Songs       Song[]
+  Songs         Song[]
+  Albums        Album[]
 }
 
 model Song {
@@ -56,9 +57,23 @@ model Song {
   url      String
   urlId    String
   addedAt  DateTime
-  storage String
-  User   User   @relation(fields: [userId], references: [id])
-  userId String
+  storage  String
+  User     User     @relation(fields: [userId], references: [id])
+  userId   String
+  Album    Album?   @relation(fields: [albumId], references: [id])
+  albumId  String?
+}
+
+model Album {
+  id String @id @default(cuid())
+
+  title       String
+  description String
+  cover       String?
+  gradient    String
+  User        User    @relation(fields: [userId], references: [id])
+  userId      String
+  Songs       Song[]
 }
 
 model VerificationToken {
