@@ -12,8 +12,6 @@ export async function POST(req: NextRequest) {
 
   const userEmail = session?.user?.email || "";
 
-  console.log(session, "SOME DATA FROM MARK ELAN");
-
   if (!userEmail) {
     return NextResponse.json({ songs: [], message: "Email is required" }, { status: 400 });
   }
