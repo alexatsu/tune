@@ -127,6 +127,7 @@ export function MusicList({ data, session }: MusicList) {
       mutate(`/api/songs/get-all`);
     }
     setIsAddingSong(false);
+    mutate(`/api/songs/get-all`);
   };
 
   const renderAddButton = (song: Song & { isAdded?: boolean }) => {
