@@ -5,7 +5,9 @@
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "prettier/prettier": [
-      "error", {}
+      "error", {
+        "endOfLine": "auto"
+      }
     ]
   }
 }
