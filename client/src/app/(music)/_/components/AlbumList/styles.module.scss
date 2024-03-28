@@ -2,26 +2,49 @@
 
 .AlbumList {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  font-size: 16px;
+  gap: 10px;
   width: 100%;
-  .Album {
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    width: 250px;
-    height: 250px;
-    border-radius: 20px;
-    background: #FAA0A0;
-    padding: 20px;
-    .content {
-      color: $text;
-      .title {
+  height: calc(100dvh - 175px);
+  overflow-y: auto;
+  padding: 0 10px 0 0;
 
-      }
-      .description {
+  &::-webkit-scrollbar {
+    width: 2em;
+  }
 
-      }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $accent;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+}
+
+
+@media screen and (max-width: 1024px) {
+  //justify-content: space-around;
+}
+
+@media screen and (max-width: 768px) {
+}
+
+@media screen and (max-width: 576px) {
+  .AlbumList {
+    .Album {
+      max-width: inherit;
+      width: 100%;
+      flex-basis: 100%;
     }
   }
 }
