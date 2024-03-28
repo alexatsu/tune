@@ -1,0 +1,25 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.AlbumHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  .Cover {
+    width: 255px;
+    height: 271px;
+    background: #FAA0A0;
+    border-radius: 35px;
+  }
+  .Content {
+    margin-top: 36px;
+    margin-left: 60px;
+    .Title {
+      font-size: 35px;
+      font-weight: bold;
+      color: $text;
+    }
+    .Description {
+      color: $text;
+    }
+  }
+}
