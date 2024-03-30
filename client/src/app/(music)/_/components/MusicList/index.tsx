@@ -92,7 +92,6 @@ export function MusicList({ data, session }: MusicList) {
   };
 
   const addSongToMyMusic = async (song: Song) => {
-    console.log("adding song to my music", song);
     const { url, id, title, duration, cover } = song;
     setIsAddingSong(true);
     currentAddedSongRef.current = id;
@@ -245,14 +244,6 @@ function SongPreview({ song }: { song: Song }) {
     handleSeekTrack,
   } = usePlayer(audioRef);
   const [isSongPreviewPlaying, setIsSongPreviewPlaying] = useState(false);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current?.addEventListener("loadedmetadata", () => {
-        console.log("loaded metadata");
-      });
-    }
-  }, []);
 
   const previewPlay = () => {
     audioRef.current?.play();

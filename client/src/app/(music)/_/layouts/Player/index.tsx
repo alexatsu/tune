@@ -69,12 +69,10 @@ export function Player() {
 
   const handleNextTrack = useCallback(() => {
     if (!currentSongRef.current) {
-      console.log("no current next track");
       return;
     }
 
     if (!songs) {
-      console.log("no source to handle next track");
       return;
     }
     const trackIndex = songs.indexOf(currentSongRef.current);
@@ -108,12 +106,10 @@ export function Player() {
 
   const handlePreviousTrack = () => {
     if (!currentSongRef.current) {
-      console.log("no current previous track");
       return;
     }
 
     if (!songs) {
-      console.log("no source to handle previous track");
       return;
     }
     const trackIndex = songs.indexOf(currentSongRef.current);
@@ -268,7 +264,6 @@ export function Player() {
         }
         preload={"metadata"}
         ref={playerRef}
-        onLoadedData={() => console.log("Audio loaded successfully")}
         style={{ display: "none" }}
       />
     </>
