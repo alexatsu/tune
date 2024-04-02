@@ -1,0 +1,118 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.AddAlbum {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 213px;
+  width: 20vw;
+  min-width: 200px;
+  max-height: 234px;
+  height: 20vh;
+  min-height: 200px;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 5px;
+  overflow: hidden;
+
+  flex-grow: 0;
+  flex-basis: 24%;
+  flex-shrink: 1;
+
+  cursor: pointer;
+
+  .btn {
+    position: relative;
+    display: inline-block;
+    background: #141718;
+    width: 123px;
+    height: 123px;
+    font-size: 45px;
+    color: #00EDFF;
+    border-radius: 10px;
+    border: 1px solid #05F0FF;
+    cursor: pointer;
+
+    &:before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      content: '';
+      display: inline-block;
+      width: 50px;
+      height: 1px;
+      background: #00EDFF;
+    }
+
+    &:after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      content: '';
+      display: inline-block;
+      width: 1px;
+      height: 50px;
+      background: #00EDFF;
+    }
+  }
+
+  .Modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: .3s;
+    z-index: 1;
+
+    &.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .Content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: $bg;
+      min-width: 350px;
+      min-height: 200px;
+      border-radius: 20px;
+      cursor: default;
+
+      .input {
+        background: inherit;
+        padding: 5px 10px;
+        color: $text;
+        border: none;
+        border-bottom: 1px solid #05F0FF;
+        font-size: 18px;
+        margin-bottom: 15px;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .submitButton {
+        background: inherit;
+        padding: 12px 20px;
+        border: 1px solid #05F0FF;
+        color: $text;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+    }
+  }
+}
