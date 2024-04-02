@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function page() {
+export default function page() {
   return (
     <div>
       chill go to <Link href={"/music"}>Music</Link>

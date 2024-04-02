@@ -30,6 +30,14 @@ jobs:
       - name: connect db to tune network
         run: docker network connect tune db
 
+      # db migrations
+      
+      - name: apply prisma migrations
+        run: npx prisma migrate deploy
+        working-directory: ./client
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_MIGRATIONS_URL }}
+
       # client
       - name: stop client container
         run: docker stop tune-c

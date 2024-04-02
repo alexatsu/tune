@@ -20,7 +20,7 @@ RUN pnpm install
 
 COPY ./client/prisma ./prisma
 RUN pnpx prisma generate
-RUN echo "DATABASE_URL"
+
 
 # general env for next.js
 RUN touch .env.local
@@ -42,4 +42,4 @@ RUN pnpm run build;
 WORKDIR /app
 
 ENV HOSTNAME "0.0.0.0"
-CMD ["sh","migrate-prod.sh"] 
+CMD ["pnpm","run", "start"] 
