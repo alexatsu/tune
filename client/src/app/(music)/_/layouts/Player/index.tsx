@@ -145,7 +145,7 @@ export function Player() {
     }
   }, [playerRef, isMobile, volumeRef, volume.value]);
 
-  const handleRetry = (playerRef: RefObject<HTMLAudioElement | HTMLVideoElement>) => {
+  const handleRetry = (playerRef: RefObject<HTMLVideoElement>) => {
     const RETRY_LIMIT = 3;
     const initialRetryDelay = 1000;
     let retryCount = 0;
@@ -156,12 +156,13 @@ export function Player() {
         setTimeout(() => {
           if (currentSongRef.current) {
             loadPlayerSource(playerRef, currentSongRef.current);
+            handlePlay(playerRef);
+
             console.log(
               "Connection re-established. Reattempting connection in " + retryDelay + "ms...",
             );
             retryCount++;
             retryDelay *= 2;
-            retryConnection();
           } else {
             console.log("currentSongRef.current is undefined");
           }
