@@ -150,7 +150,6 @@ export function Player() {
     const initialRetryDelay = 1000;
     let retryCount = 0;
     let retryDelay = initialRetryDelay;
-    console.log("Retrying connection...");
 
     const retryConnection = () => {
       if (retryCount < RETRY_LIMIT) {
@@ -162,6 +161,7 @@ export function Player() {
             );
             retryCount++;
             retryDelay *= 2;
+            retryConnection();
           } else {
             console.log("currentSongRef.current is undefined");
           }
@@ -290,7 +290,7 @@ export function Player() {
         src={
           currentSongRef.current?.url ? `/api/songs/stream?url=${currentSongRef.current?.url}` : ""
         }
-        preload={"metadata"}
+        preload={"auto"}
         ref={playerRef}
         style={{ display: "none" }}
         onError={(e) => {
