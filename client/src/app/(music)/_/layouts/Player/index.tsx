@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect, useState } from "react";
 
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
@@ -12,6 +12,9 @@ import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
 
 import styles from "./styles.module.scss";
+
+// TODO:
+// - error handling
 
 const { Unmuted, Muted, Play, Pause, PreviousTrack, NextTrack, ThreeDots } = playerIcons;
 
@@ -142,6 +145,35 @@ export function Player() {
     }
   }, [playerRef, isMobile, volumeRef, volume.value]);
 
+  const handleRetry = (playerRef: RefObject<HTMLAudioElement | HTMLVideoElement>) => {
+    const RETRY_LIMIT = 3;
+    const initialRetryDelay = 1000;
+    let retryCount = 0;
+    let retryDelay = initialRetryDelay;
+    console.log("Retrying connection...");
+
+    const retryConnection = () => {
+      if (retryCount < RETRY_LIMIT) {
+        setTimeout(() => {
+          if (currentSongRef.current) {
+            loadPlayerSource(playerRef, currentSongRef.current);
+            console.log(
+              "Connection re-established. Reattempting connection in " + retryDelay + "ms...",
+            );
+            retryCount++;
+            retryDelay *= 2;
+          } else {
+            console.log("currentSongRef.current is undefined");
+          }
+        }, retryDelay);
+      } else {
+        console.error("Maximum retry limit reached. Unable to play the song.");
+      }
+    };
+
+    retryConnection();
+  };
+
   const inputs = (
     <>
       <input
@@ -261,6 +293,10 @@ export function Player() {
         preload={"metadata"}
         ref={playerRef}
         style={{ display: "none" }}
+        onError={(e) => {
+          console.log("audio error is triggered", e);
+          handleRetry(playerRef);
+        }}
       />
     </>
   );
