@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+const list = [{ title: "New card", cover: "something" }];
+
 export default function page() {
   return (
     <div>

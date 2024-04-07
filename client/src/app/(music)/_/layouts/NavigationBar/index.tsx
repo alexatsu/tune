@@ -8,7 +8,7 @@ import { useMobile } from "@/music/_/hooks";
 
 import styles from "./styles.module.scss";
 
-const { Music, Search, Albums } = navigationIcons;
+const { Music, Search, Albums, Chill } = navigationIcons;
 
 const list = [
   {
@@ -22,6 +22,10 @@ const list = [
   {
     path: "/albums",
     icon: <Albums />,
+  },
+  {
+    path: "/chill",
+    icon: <Chill />,
   },
 ];
 
