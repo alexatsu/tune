@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.get("/search")
-def search(query: str = ""):
+async def search(query: str = ""):
     return search_songs(query)
 
 # @router.post("/listen-temporal")

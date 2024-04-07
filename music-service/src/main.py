@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from routes import search
+from routes import search, chill
 
 app = FastAPI()
 
@@ -20,6 +20,8 @@ app.add_middleware(
 )
 
 app.include_router(search.router)
+app.include_router(chill.router)
+
 
 @app.get("/")
 async def root():

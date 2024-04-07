@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SiClyp } from "react-icons/si";
 
 import { navigationIcons } from "@/music/_/components/icons/navigation";
 import { useMobile } from "@/music/_/hooks";
@@ -25,7 +26,7 @@ const list = [
   },
   {
     path: "/chill",
-    icon: <Chill />,
+    icon: <SiClyp color="#515253" size={22} />,
   },
 ];
 
