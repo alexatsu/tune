@@ -5,17 +5,13 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 
+import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
-import { usePlayerContext } from "@/music/_/providers";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
 
 import styles from "./styles.module.scss";
-
-// TODO:
-// - loading states
-// - error handling
 
 const { Unmuted, Muted, Play, Pause, PreviousTrack, NextTrack, ThreeDots } = playerIcons;
 

@@ -8,7 +8,7 @@ import { Header } from "@/app/_/layouts";
 import { SessionProvider } from "@/app/_/providers";
 import { authOptions } from "@/shared/utils/functions";
 
-import { PlayerProvider } from "./(music)/_/providers";
+import { PlayerProvider } from "./_/providers";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });
 const qwitcher = Qwitcher_Grypen({

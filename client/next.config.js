@@ -8,6 +8,15 @@ const path = require("path");
 const nextConfig = {
   // output: "standalone",
   reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+        port: "",
+      },
+    ],
+  },
 };
 module.exports = nextConfig;
 // module.exports = withBundleAnalyzer(nextConfig)
