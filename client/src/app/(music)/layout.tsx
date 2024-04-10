@@ -7,17 +7,13 @@ import styles from "./layout.module.scss";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <ChillStreamerProvider>
-        <main className={styles.container}>
-          <DesktopNavigationBar />
-          {children}
-        </main>
-        {/* <Player /> */}
-
-        <PlayerOrChillWrapper />
-        <MobileNavigationbar />
-      </ChillStreamerProvider>
-    </>
+    <ChillStreamerProvider>
+      <main className={styles.container}>
+        <DesktopNavigationBar />
+        {children}
+      </main>
+      <PlayerOrChillWrapper />
+      <MobileNavigationbar />
+    </ChillStreamerProvider>
   );
 }

@@ -1,6 +1,7 @@
+import { useChillStreamerContext } from "@/music/_/providers";
 import { useChillStore } from "@/shared/store";
 
-import { useChillStreamerContext } from "../../providers";
+import styles from "./styles.module.scss";
 
 export function ChillStreamer() {
   const { currentId } = useChillStore();
