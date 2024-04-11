@@ -1,6 +1,7 @@
 "use client";
 import { Session } from "next-auth";
-import React, { useRef, useState } from "react";
+import React, { FormEvent, useRef, useState } from "react";
+import { useSWRConfig } from "swr";
 
 import { Album } from "@/music/_/types";
 import { handleFetch } from "@/shared/utils/functions";
@@ -15,7 +16,10 @@ export function CreateAlbumModal({ session }: Props) {
   const title = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLInputElement>(null);
   const [visible, setVisible] = useState(false);
+  const { mutate } = useSWRConfig();
+
   const modalClasses: string[] = [styles.Modal];
+
   function getRandomColorInRange(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
@@ -29,8 +33,9 @@ export function CreateAlbumModal({ session }: Props) {
       `rgba(${color2()}, ${color2()}, ${color2()},0.8)`,
     ];
   }
-  const createAlbum = async () => {
+  const createAlbum = async (event: FormEvent<HTMLButtonElement>) => {
     if (description.current && title.current) {
+      event.preventDefault();
       if (!description.current.value || !title.current.value) return alert("Заполните все поля");
       const newAlbum: Album = {
         description: description.current.value,
@@ -47,6 +52,7 @@ export function CreateAlbumModal({ session }: Props) {
       );
       setVisible(false);
       console.log(response);
+      await mutate("/api/albums/get-all");
     }
   };
 
@@ -63,9 +69,9 @@ export function CreateAlbumModal({ session }: Props) {
     >
       <button className={styles.btn} onClick={() => setVisible(true)}></button>
       <div className={modalClasses.join(" ")} onClick={() => setVisible(false)}>
-        <div
+        <form
           className={styles.Content}
-          onClick={(event: React.MouseEvent<HTMLDivElement>) => event.stopPropagation()}
+          onClick={(event: React.MouseEvent<HTMLFormElement>) => event.stopPropagation()}
         >
           <input
             type="text"
@@ -83,10 +89,10 @@ export function CreateAlbumModal({ session }: Props) {
             required
             placeholder="Description"
           />
-          <button className={styles.submitButton} onClick={createAlbum}>
+          <button type="submit" className={styles.submitButton} onClick={createAlbum}>
             Click
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -26,9 +26,13 @@ export function AlbumList() {
     return response.json();
   };
 
-  const { data, isLoading, error } = useSWR<AlbumsResponse>(`/api/albums/get-all`, fetchAllAlbums, {
-    revalidateOnFocus: false,
-  });
+  const { data, isLoading, error, mutate } = useSWR<AlbumsResponse>(
+    `/api/albums/get-all`,
+    fetchAllAlbums,
+    {
+      revalidateOnFocus: false,
+    },
+  );
 
   const albums = data?.albums;
 
