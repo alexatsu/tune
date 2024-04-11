@@ -15,22 +15,28 @@ export function usePlayer(playerRef: RefObject<HTMLAudioElement> | RefObject<HTM
   const handleBuffering = useCallback(() => {
     if (playerRef.current) {
       const buffered = playerRef.current.buffered;
+      let bufferedTime = 0;
       if (buffered.length > 0) {
-        setBufferedTime(buffered.end(buffered.length - 1));
+        const lastRange = buffered.length - 1;
+        bufferedTime = buffered.end(lastRange);
       }
+      setBufferedTime(bufferedTime);
     }
   }, [playerRef]);
 
   useEffect(() => {
+    let interval: ReturnType<typeof setTimeout>;
     const player = playerRef.current;
     if (player) {
       player.addEventListener("progress", handleBuffering);
+      interval = setInterval(() => handleBuffering(), 1000);
       updateProgressBar(bufferRef, `${(bufferedTime / player.duration) * 100}`);
     }
 
     return () => {
       if (player) {
         player.removeEventListener("progress", handleBuffering);
+        clearInterval(interval);
       }
     };
   }, [bufferedTime, handleBuffering, playerRef]);

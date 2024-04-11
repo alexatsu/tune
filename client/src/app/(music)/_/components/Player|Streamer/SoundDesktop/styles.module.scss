@@ -1,0 +1,65 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+%inputContainer {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  border-radius: 10px;
+}
+
+%runTrack {
+  height: 5px;
+  background: rgb(255 255 255 / 10.4%);
+  border-radius: 16px;
+}
+
+%thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #000;
+  border-radius: 50%;
+  border: 2px solid $accent;
+}
+
+.soundDesktop {
+  width: 15%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  .volume {
+    @extend %inputContainer;
+
+    cursor: pointer;
+    width: 100%;
+    height: 5px;
+    outline: none;
+
+    &::-webkit-slider-runnable-track {
+      @extend %runTrack;
+    }
+
+    &::-webkit-slider-thumb {
+      @extend %thumb;
+
+      border: 1px solid $accent;
+      margin-top: -3px;
+      height: 11px;
+      width: 11px;
+    }
+
+    &::-moz-range-thumb {
+      appearance: none;
+      background-color: #000;
+      border-radius: 50%;
+      border: 1px solid $accent;
+      height: 10px;
+      width: 10px;
+      
+    }
+  }
+}

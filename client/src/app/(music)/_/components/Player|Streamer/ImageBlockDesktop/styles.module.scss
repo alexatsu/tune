@@ -1,0 +1,39 @@
+@use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/mixins/skeletonAnimation.module.scss" as *;
+
+.imageBlockDesktop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  gap: 1rem;
+
+  & img {
+    -o-object-fit: cover;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    box-shadow: 0 6px 20px 5px black;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .skeletonImage {
+    user-select: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 0.5rem;
+    position: relative;
+    background-color: $widget-bg;
+    overflow: hidden;
+    @include skeletonAnimation();
+  }
+
+  .imagePlaceholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 0.5rem;
+    background-color: $widget-bg;
+  }
+}

@@ -3,9 +3,16 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { RefObject, useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect } from "react";
 
 import { playerIcons } from "@/music/_/components/icons/player";
+import {
+  ImageBlockDesktop,
+  MainTrackDesktop,
+  PlayerContainerDesktop,
+  SoundDesktop,
+  TitleDesktop,
+} from "@/music/_/components/Player|Streamer";
 import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
 import { usePlayerContext } from "@/music/_/providers";
 import { updateProgressBar } from "@/music/_/utils/functions";
@@ -13,10 +20,7 @@ import { usePlayerStore } from "@/shared/store";
 
 import styles from "./styles.module.scss";
 
-// TODO:
-// - error handling
-
-const { Unmuted, Muted, Play, Pause, PreviousTrack, NextTrack, ThreeDots } = playerIcons;
+const { Play, Pause, PreviousTrack, NextTrack, ThreeDots } = playerIcons;
 
 const convertStringDurationToNumber = (duration: string | undefined) => {
   if (!duration) return 0;
@@ -62,6 +66,7 @@ export function Player() {
 
       setVolume({ value: initialVolume, muted: false });
       updateProgressBar(volumeRef, `${initialVolume * 100}`);
+
       return () => setIsPlaying(false);
     }
   }, [currentSongRef, songs, setCurrentSong, setIsPlaying, setVolume, volumeRef, playerRef]);
@@ -140,10 +145,22 @@ export function Player() {
   }, [handleNextTrack, playerRef]);
 
   useEffect(() => {
-    if (playerRef.current && volumeRef.current && !isMobile) {
+    if (isMobile || !isMobile) {
       updateProgressBar(volumeRef, `${volume.value * 100}`);
+      updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
+      updateProgressBar(bufferRef, `${(bufferedTime / duration) * 100}`);
     }
-  }, [playerRef, isMobile, volumeRef, volume.value]);
+  }, [
+    playerRef,
+    isMobile,
+    volumeRef,
+    volume.value,
+    seek,
+    duration,
+    bufferRef,
+    bufferedTime,
+    trackSeekRef,
+  ]);
 
   const handleRetry = (playerRef: RefObject<HTMLVideoElement>) => {
     const RETRY_LIMIT = 3;
@@ -202,66 +219,36 @@ export function Player() {
   return (
     <>
       {!isMobile ? (
-        <div className={styles.playerContainer}>
-          <div className={styles.imageBlock}>
-            {isLoading ? (
-              <div className={styles.skeletonImage} />
-            ) : currentSongRef.current ? (
-              <Image
-                src={currentSongRef.current?.cover || ""}
-                alt="cover"
-                width={50}
-                height={50}
-                unoptimized
-              />
-            ) : (
-              <div className={styles.imagePlaceholder} />
-            )}
-          </div>
+        <PlayerContainerDesktop>
+          <ImageBlockDesktop isLoading={isLoading} currentSongRef={currentSongRef} />
 
-          <div className={styles.mainTrack}>
-            <div className={styles.buttons}>
+          <MainTrackDesktop>
+            <div className={styles.buttonsDesktop}>
               <PreviousTrack onClick={handlePreviousTrack} />
-              {isPlaying ? (
-                <Pause onClick={() => handlePause(playerRef)} />
-              ) : (
-                <Play onClick={() => handlePlay(playerRef)} />
-              )}
+              {isPlaying && <Pause onClick={() => handlePause(playerRef)} />}
+              {!isPlaying && <Play onClick={() => handlePlay(playerRef)} />}
+
               <NextTrack onClick={handleNextTrack} />
             </div>
 
-            <div className={styles.inputs}>{inputs}</div>
-            {isLoading ? (
-              <div className={styles.skeletonTitle}>Loading</div>
-            ) : (
-              <div className={styles.title}>
-                {currentSongRef.current?.title || "No song selected"}
-              </div>
-            )}
-          </div>
+            <div className={styles.inputsDesktop}>{inputs}</div>
 
-          <div className={styles.sound}>
-            {volume.muted ? (
-              <Muted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
-            ) : (
-              <Unmuted role={"button"} style={{ cursor: "pointer" }} onClick={handleMute} />
-            )}
+            <TitleDesktop isLoading={isLoading} currentSongRef={currentSongRef} />
+          </MainTrackDesktop>
 
-            <input
-              className={styles.volume}
-              ref={volumeRef}
-              type="range"
-              value={volume.muted ? 0 : volume.value * 100}
-              onChange={handleVolumeChange}
-            />
-          </div>
-        </div>
+          <SoundDesktop
+            volume={volume}
+            handleMute={handleMute}
+            handleVolumeChange={handleVolumeChange}
+            volumeRef={volumeRef}
+          />
+        </PlayerContainerDesktop>
       ) : (
         <div className={styles.mobilePlayerContainer}>
-          <div className={styles.inputs}>{inputs}</div>
+          <div className={styles.inputsMobile}>{inputs}</div>
 
-          <div className={styles.main}>
-            <div className={styles.imageBlock}>
+          <div className={styles.mainTrackMobile}>
+            <div className={styles.imageBlockMobile}>
               {currentSongRef.current && (
                 <Image
                   src={currentSongRef.current?.cover || ""}
@@ -272,11 +259,8 @@ export function Player() {
                 />
               )}
 
-              {isPlaying ? (
-                <Pause onClick={() => handlePause(playerRef)} />
-              ) : (
-                <Play onClick={() => handlePlay(playerRef)} />
-              )}
+              {isPlaying && <Pause onClick={() => handlePause(playerRef)} />}
+              {!isPlaying && <Play onClick={() => handlePlay(playerRef)} />}
             </div>
 
             <div className={styles.title}>{currentSongRef.current?.title || ""}</div>
@@ -286,6 +270,7 @@ export function Player() {
           </div>
         </div>
       )}
+
       <audio
         controls
         src={
