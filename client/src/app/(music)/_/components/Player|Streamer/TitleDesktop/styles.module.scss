@@ -1,0 +1,30 @@
+@use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/mixins/skeletonAnimation.module.scss" as *;
+
+.titleDesktop {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* number of lines to show */
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  text-align: center;
+}
+
+.skeletonTitleDesktop {
+  width: 100%;
+  display: inline;
+  position: relative;
+  background-color: $widget-bg;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  color: transparent;
+  max-height: 1rem;
+
+  @include skeletonAnimation();
+}

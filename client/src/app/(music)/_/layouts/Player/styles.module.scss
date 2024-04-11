@@ -11,7 +11,7 @@
 
 %runTrack {
   height: 5px;
-  background: rgb(255 255 255 / 10.4%);
+  background: rgba(255, 255, 255, 0.104);
   border-radius: 16px;
 }
 
@@ -24,195 +24,86 @@
   border: 2px solid $accent;
 }
 
-.playerContainer {
+.inputsDesktop {
   width: 100%;
-  position: fixed;
-  bottom: 0;
-  color: $text;
-  height: 15%;
-  min-height: 100px;
+  position: relative;
+  height: 5px;
+  padding: 1rem;
   display: flex;
-  justify-content: space-between;
-  flex: 1 1 0px;
-  padding: 0 15%;
+  justify-content: center;
 
-  @media screen and (width <= 1024px) {
-    padding: 0 1rem;
-  }
+  .trackSeek {
+    @extend %inputContainer;
 
-  &::before {
-    content: "";
     position: absolute;
-    background: linear-gradient(180deg, rgb(46 46 46 / 33%) 0%, rgb(0 0 0 / 71%) 100%);
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    -webkit-backdrop-filter: blur(5.5px);
-    backdrop-filter: blur(5.5px);
+    cursor: pointer;
+    width: 70%;
+    height: 5px;
+    outline: none;
+
+    &::-webkit-slider-runnable-track {
+      @extend %runTrack;
+    }
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-color: #000;
+      border-radius: 50%;
+      border: 2px solid $accent;
+      margin-top: -5px;
+      height: 15px;
+      width: 15px;
+    }
+
+    &::-moz-range-thumb {
+      background-color: #000;
+      border-radius: 50%;
+      border: 2px solid $accent;
+    }
+  }
+
+  .buffer {
+    @extend %inputContainer;
+
+    width: 70%;
+    position: absolute;
     z-index: -1;
-  }
+    opacity: 0.3;
+    height: 5px;
 
-  .imageBlock {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 20%;
-    gap: 1rem;
-
-    & img {
-      -o-object-fit: cover;
-      object-fit: cover;
-      border-radius: 0.5rem;
-      box-shadow: 0 6px 20px 5px black;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    .skeletonImage {
-      user-select: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 0.5rem;
-      position: relative;
-      background-color: $widget-bg;
-      overflow: hidden;
-      @include skeletonAnimation();
-    }
-
-    .imagePlaceholder {
-      width: 50px;
-      height: 50px;
-      border-radius: 0.5rem;
-      background-color: $widget-bg;
-    }
-  }
-
-  .mainTrack {
-    width: 60%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-
-    .inputs {
-      width: 100%;
-      position: relative;
+    &::-webkit-slider-runnable-track {
       height: 5px;
-      padding: 1rem;
-      display: flex;
-      justify-content: center;
-
-      .trackSeek {
-        @extend %inputContainer;
-
-        position: absolute;
-        cursor: pointer;
-        width: 70%;
-        height: 5px;
-        outline: none;
-
-        &::-webkit-slider-runnable-track {
-          @extend %runTrack;
-        }
-
-        &::-webkit-slider-thumb {
-          @extend %thumb;
-
-          margin-top: -5px;
-          height: 15px;
-          width: 15px;
-        }
-      }
-
-      .buffer {
-        @extend %inputContainer;
-
-        width: 70%;
-        position: absolute;
-        z-index: -1;
-        opacity: 0.3;
-
-        &::-webkit-slider-runnable-track {
-          @extend %runTrack;
-        }
-
-        &::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-        }
-      }
+      background: rgba(255, 255, 255, 0.104);
+      border-radius: 16px;
     }
 
-    .buttons {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      cursor: pointer;
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    .title {
-      width: 100%;
-      justify-content: center;
-      align-items: center;
-      font-weight: 600;
-      font-size: 0.8rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 1; /* number of lines to show */
-      line-clamp: 1;
-      -webkit-box-orient: vertical;
-      text-align: center;
-    }
-
-    .skeletonTitle {
-      width: 100%;
-      display: inline;
-      position: relative;
-      background-color: $widget-bg;
-      overflow: hidden;
-      border-radius: 0.5rem;
-      color: transparent;
-      max-height: 1rem;
-
-      @include skeletonAnimation();
-    }
-  }
-
-  .sound {
-    width: 15%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-
-    .volume {
-      @extend %inputContainer;
-
-      cursor: pointer;
-      width: 100%;
+    &::-moz-range-track {
       height: 5px;
-      outline: none;
+      background: rgba(255, 255, 255, 0.104);
+      border-radius: 16px;
+    }
 
-      &::-webkit-slider-runnable-track {
-        @extend %runTrack;
-      }
-
-      &::-webkit-slider-thumb {
-        @extend %thumb;
-
-        border: 1px solid $accent;
-        margin-top: -2px;
-        height: 10px;
-        width: 10px;
-      }
+    &::-moz-range-thumb {
+      -moz-appearance: none;
+      appearance: none;
+      opacity: 0;
     }
   }
+}
+
+.buttonsDesktop {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  cursor: pointer;
 }
 
 .mobilePlayerContainer {
@@ -222,7 +113,7 @@
   color: $text;
   height: 50px;
 
-  .inputs {
+  .inputsMobile {
     width: 100%;
     position: relative;
     height: 5px;
@@ -243,8 +134,17 @@
       }
 
       &::-webkit-slider-thumb {
-        @extend %thumb;
+        -webkit-appearance: none;
+        appearance: none;
 
+        background-color: transparent;
+        border: none;
+        height: 1px;
+        width: 1px;
+      }
+
+      &::-moz-range-thumb {
+        @extend %thumb;
         background-color: transparent;
         border: none;
         height: 1px;
@@ -259,7 +159,7 @@
       position: absolute;
       z-index: -1;
       opacity: 0.3;
-
+      height: 5px;
       &::-webkit-slider-runnable-track {
         @extend %runTrack;
       }
@@ -268,17 +168,23 @@
         -webkit-appearance: none;
         appearance: none;
       }
+
+      &::-moz-range-thumb {
+        -moz-appearance: none;
+        appearance: none;
+        opacity: 0;
+      }
     }
   }
 
-  .main {
+  .mainTrackMobile {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     height: 100%;
     flex: 1 1 0;
 
-    .imageBlock {
+    .imageBlockMobile {
       position: relative;
       width: 15%;
 
