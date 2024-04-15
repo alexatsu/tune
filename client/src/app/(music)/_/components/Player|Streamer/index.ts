@@ -1,5 +1,6 @@
 export { ImageBlockDesktop } from "./ImageBlockDesktop";
-export { MainTrackDesktop } from "./MainTrackDesktop";
-export { PlayerContainerDesktop } from "./PlayerContainerDesktop";
+export { MainTrack } from "./MainTrack";
+export { PlayerContainer } from "./PlayerContainer";
 export { SoundDesktop } from "./SoundDesktop";
+export { SoundMobile } from "./SoundMobile";
 export { TitleDesktop } from "./TitleDesktop";
