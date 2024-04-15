@@ -9,7 +9,7 @@ import { useSWRConfig } from "swr";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { playerIcons } from "@/music/_/components/icons/player";
-import { usePlayer, useSearch, useSongs } from "@/music/_/hooks";
+import { usePlayer, useSongs } from "@/music/_/hooks";
 import { usePlayerContext } from "@/music/_/providers";
 import { Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
@@ -54,7 +54,6 @@ export function MusicList({ data, session }: MusicList) {
 
   const currentAddedSongRef = useRef("");
   const { data: userSongs } = useSongs(session);
-  const { searchMutate } = useSearch();
 
   const handlePlayById = async (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
@@ -143,7 +142,6 @@ export function MusicList({ data, session }: MusicList) {
           key={song.id}
           onClick={async () => {
             await addSongToMyMusic(song);
-            searchMutate();
           }}
         />
       );
