@@ -37,7 +37,9 @@ export function MenuDropdown({ props, Icon }: Props) {
     }
   };
 
-  const closeDropdown = () => setIsOpen(false);
+  const closeDropdown = () => {
+    setIsOpen(false);
+  };
 
   return (
     <div className={styles.container}>

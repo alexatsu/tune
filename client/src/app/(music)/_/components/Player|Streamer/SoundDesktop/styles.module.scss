@@ -1,0 +1,15 @@
+@use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/components/VolumeTrack.module.scss" as *;
+
+.soundDesktop {
+  width: 15%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  .volume {
+    @include VolumeTrack();
+  }
+}

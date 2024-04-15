@@ -1,0 +1,16 @@
+@use "@/sass/components/VolumeTrack.module.scss" as *;
+
+.soundMobileContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  font-size: 0.8rem;
+
+  .volumeMobileTrack {
+    @include VolumeTrack();
+  }
+}

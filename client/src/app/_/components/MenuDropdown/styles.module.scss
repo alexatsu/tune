@@ -16,9 +16,11 @@
     padding: 0.5rem 1rem;
     border-radius: 10px;
     z-index: 1;
-    animation: fadeOut 0.15s ease;
     opacity: 0;
-    display: none;
+    visibility: hidden;
+    transition: all 0.15s ease;
+    transform: translateY(-10px);
+    // display: none;
   }
 
   .ulOpen {
@@ -32,8 +34,10 @@
     padding: 0.5rem 1rem;
     border-radius: 10px;
     z-index: 1;
-    animation: fadeIn 0.15s ease;
     opacity: 1;
+    visibility: visible;
+    transition: all 0.15s ease;
+    transform: translateY(0);
   }
 
   & a {
@@ -43,33 +47,5 @@
 
   & li {
     white-space: nowrap;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOut {
-  0% {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  99% {
-    display: block;
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    display: none;
   }
 }
