@@ -179,9 +179,7 @@ export function Player() {
             loadPlayerSource(playerRef, currentSongRef.current);
             handlePlay(playerRef);
 
-            console.log(
-              "Connection re-established. Reattempting connection in " + retryDelay + "ms...",
-            );
+            console.log("Connection re-established. Connection in " + retryDelay + "ms...");
             retryCount++;
             retryDelay *= 2;
           } else {
