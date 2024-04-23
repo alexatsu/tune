@@ -1,24 +1,10 @@
-import { ChillStreamResponse } from "@/shared/utils/types";
-
-import { ChillCard } from "./_/components/ChillCard";
+import { ChillList } from "./_/components";
 import styles from "./styles.module.scss";
 
-async function getStreams() {
-  const res = await fetch("http://localhost:3000/api/chill/stream");
-
-  return res.json();
-}
-
-export default async function page() {
-  const data = (await getStreams()) as ChillStreamResponse;
-
+export default function page() {
   return (
-    <div className={styles.chillMainContainer}>
-      <div className={styles.chillBlock}>
-        {data.streams.map(({ id, title, cover, url }) => {
-          return <ChillCard key={id} title={title} id={id} cover={cover} url={url} />;
-        })}
-      </div>
+    <div className={styles.chillPageContainer}>
+      <ChillList />
     </div>
   );
 }

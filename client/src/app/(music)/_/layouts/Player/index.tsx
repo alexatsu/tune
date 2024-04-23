@@ -224,7 +224,7 @@ export function Player() {
     <>
       {!isMobile ? (
         <PlayerContainer className={styles.desktopPlayerContainer}>
-          <ImageBlockDesktop isLoading={isLoading} currentSongRef={currentSongRef} />
+          <ImageBlockDesktop isLoading={isLoading} currentPlayRef={currentSongRef} />
 
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
@@ -237,7 +237,7 @@ export function Player() {
 
             <div className={styles.inputsDesktop}>{inputs}</div>
 
-            <TitleDesktop isLoading={isLoading} currentSongRef={currentSongRef} />
+            <TitleDesktop isLoading={isLoading} currentPlayRef={currentSongRef} />
           </MainTrack>
 
           <SoundDesktop

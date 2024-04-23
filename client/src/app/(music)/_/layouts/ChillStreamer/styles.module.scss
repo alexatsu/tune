@@ -1,0 +1,30 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.desktopChillStreamerContainer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  color: $text;
+  height: 15%;
+  min-height: 100px;
+  display: flex;
+  justify-content: space-between;
+  flex: 1 1 0px;
+  padding: 0 15%;
+
+  .mainTrackDesktop {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.buttonsDesktop {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  cursor: pointer;
+}

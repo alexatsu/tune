@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-import { ChillStreamer } from "@/app/(music)/chill/_/layouts";
+import { ChillStreamer } from "@/app/(music)/_/layouts";
 
 import { Player } from "../../layouts";
 

@@ -7,3 +7,4 @@ router = APIRouter()
 @router.get("/chill/extract")
 async def extract_chill_streams():
     return ext_chill()
+
