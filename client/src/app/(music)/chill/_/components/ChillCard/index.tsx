@@ -2,20 +2,18 @@
 
 import Image from "next/image";
 
-import { playerIcons } from "@/app/(music)/_/components/icons/player";
 import { useChillStreamerContext } from "@/app/(music)/_/providers";
 import { useChillStore } from "@/shared/store";
 import { ChillStreams } from "@/shared/utils/types";
 
 import styles from "./styles.module.scss";
 
-const { Play, Pause } = playerIcons;
-
 export function ChillCard({ title, id, cover, url }: ChillStreams) {
-  const { chillRef, currentStreamRef } = useChillStreamerContext();
-  const { currentId, setCurrentId, isStreaming, setIsStreaming, handlePause } = useChillStore();
+  const { chillRef, currentStreamRef, volumeRef } = useChillStreamerContext();
+  const { currentId, setCurrentId, isStreaming, setIsStreaming, handlePause, volume, setVolume } =
+    useChillStore();
 
-  const handlePlayById = (newId: string) => {
+  const handlePlayById = (newId: string, volume: number) => {
     setIsStreaming(true);
     setCurrentId(newId);
 
@@ -29,7 +27,7 @@ export function ChillCard({ title, id, cover, url }: ChillStreams) {
       };
       setTimeout(() => {
         chillRef.current?.contentWindow?.postMessage(
-          `{"event":"command","func":"setVolume","args":["30"]}`,
+          `{"event":"command","func":"setVolume","args":["${volume}"]}`,
           "*",
         );
         chillRef.current?.contentWindow?.postMessage(
@@ -37,25 +35,38 @@ export function ChillCard({ title, id, cover, url }: ChillStreams) {
           "*",
         );
       }, 1000);
+
+      setVolume(volumeRef, volume / 100);
     }
   };
 
-  return (
-    <>
-      <div className={styles.chillCardContainer}>
-        <div className={styles.titleBlock}>
-          <div className={styles.streamButtons}>
-            {isStreaming && currentId === id ? (
-              <Pause onClick={() => handlePause(chillRef)} />
-            ) : (
-              <Play onClick={() => handlePlayById(id)} />
-            )}
-          </div>
-          <span className={styles.title}>{title}</span>
-        </div>
+  const togglePlay = () => {
+    if (isStreaming && currentId === id) {
+      handlePause(chillRef);
+    } else {
+      handlePlayById(id, volume.value * 100);
+    }
+  };
 
-        <Image src={cover} alt="cover" width="250" height="200" className={styles.chillImage} />
+  const getCardClassName = () => {
+    if (!isStreaming) {
+      return styles.chillCardContainerNoStream;
+    }
+
+    if (isStreaming && currentId === id) {
+      return styles.chillCardContainer;
+    }
+
+    return styles.chillCardContainerNotPlaying;
+  };
+
+  return (
+    <div className={getCardClassName()} onClick={togglePlay}>
+      <div className={styles.titleBlock}>
+        <span className={styles.title}>{title}</span>
       </div>
-    </>
+
+      <Image src={cover} alt="cover" width="250" height="200" className={styles.chillImage} />
+    </div>
   );
 }

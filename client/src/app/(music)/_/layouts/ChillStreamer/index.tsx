@@ -2,77 +2,139 @@
 
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-
-import { playerIcons } from "@/app/(music)/_/components/icons/player";
+import Image from "next/image";
+import { playerIcons } from "@/music/_/components/icons/player";
 import {
   ImageBlockDesktop,
   MainTrack,
   PlayerContainer,
+  SoundDesktop,
+  SoundMobile,
   TitleDesktop,
-} from "@/app/(music)/_/components/Player|Streamer";
-import { useChillStreamerContext } from "@/app/(music)/_/providers";
-import type { StreamResponse } from "@/app/(music)/chill/_/types";
+} from "@/music/_/components/Player|Streamer";
+import { useChillStreamerContext } from "@/music/_/providers";
+import type { StreamResponse } from "@/music/chill/_/types";
 import { useChillStore } from "@/shared/store";
 
 import styles from "./styles.module.scss";
+import { updateProgressBar } from "@/music/_/utils/functions";
+import { useMobile } from "@/music/_/hooks";
 
-const { Pause, Play } = playerIcons;
+const { Pause, Play, Unmuted: SoundIcon } = playerIcons;
 
 export function ChillStreamer() {
   const {
     currentId,
-    setCurrentId,
     isStreaming,
-    handleLoad,
+    setIsStreaming,
     handlePause,
     handlePlay,
-    toggleMute,
+    volume,
+    setVolume,
     handleVolume,
+    toggleMute,
   } = useChillStore();
-  const { chillRef, currentStreamRef } = useChillStreamerContext();
+  const { chillRef, currentStreamRef, volumeRef } = useChillStreamerContext();
+  const isMobile = useMobile(576);
+  const [soundMobileOpen, setSoundMobileOpen] = useState(false);
+  const url = `/api/chill/stream`;
 
   const fetchAllStreams = async () => {
-    const response = await fetch(`/api/chill/stream`);
+    const response = await fetch(url);
 
     return response.json();
   };
 
-  const { data, error, isLoading, mutate } = useSWR<StreamResponse>(
-    `/api/songs/get-all`,
-    fetchAllStreams,
-    { revalidateOnFocus: false },
-  );
+  const { data, error, isLoading } = useSWR<StreamResponse>(url, fetchAllStreams, {
+    revalidateOnFocus: false,
+  });
+
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    updateProgressBar(volumeRef, `${value}`);
+
+    if (chillRef.current) {
+      handleVolume(chillRef, +value);
+      setVolume(volumeRef, +value / 100);
+    }
+  };
 
   useEffect(() => {
-    if (data && chillRef.current) {
-      setCurrentId(data.streams[0].id);
-      handleLoad(chillRef);
-      currentStreamRef.current = {
-        id: data.streams[0].id,
-        url: `https://www.youtube.com/embed/${data.streams[0].id}?enablejsapi=1&html5=1`,
-        cover: data.streams[0].cover,
-        title: data.streams[0].title,
-      };
+    const initialVolume = 0.3;
+    const initialVolumePercentage = initialVolume * 100;
+    if (data && volumeRef.current) {
+      setVolume(volumeRef, initialVolume);
+      updateProgressBar(volumeRef, `${initialVolumePercentage}`);
     }
-  }, [data, setCurrentId, chillRef, handleLoad, currentStreamRef]);
+
+    return () => setIsStreaming(false);
+  }, [volumeRef, setVolume, data]);
+
+  useEffect(() => {
+    if ((isMobile && soundMobileOpen) || !isMobile) {
+      updateProgressBar(volumeRef, `${volume.value * 100}`);
+    }
+  }, [isMobile, volumeRef, volume.value, soundMobileOpen]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
-      <PlayerContainer className={styles.desktopChillStreamerContainer}>
-        <ImageBlockDesktop isLoading={isLoading} currentPlayRef={currentStreamRef} />
+      {!isMobile ? (
+        <PlayerContainer className={styles.desktopChillStreamerContainer}>
+          <ImageBlockDesktop isLoading={isLoading} currentPlayRef={currentStreamRef} />
 
-        <MainTrack className={styles.mainTrackDesktop}>
-          <div className={styles.buttonsDesktop}>
-            {isStreaming && <Pause onClick={() => handlePause(chillRef)} />}
-            {!isStreaming && <Play onClick={() => handlePlay(chillRef)} />}
-          </div>
+          <MainTrack className={styles.mainTrackDesktop}>
+            <div className={styles.buttonsDesktop}>
+              {isStreaming && <Pause onClick={() => handlePause(chillRef)} />}
+              {!isStreaming && <Play onClick={() => handlePlay(chillRef, volume.value * 100)} />}
+            </div>
 
-          <TitleDesktop isLoading={isLoading} currentPlayRef={currentStreamRef} />
-        </MainTrack>
-        <button onClick={() => toggleMute(chillRef)}>Mute</button>
-        <button onClick={() => handleVolume(chillRef, 30)}>Set 30%</button>
-        <button onClick={() => handleVolume(chillRef, 100)}>Set 100%</button>
-      </PlayerContainer>
+            <TitleDesktop isLoading={isLoading} currentPlayRef={currentStreamRef} />
+          </MainTrack>
+          <SoundDesktop
+            volume={volume}
+            volumeRef={volumeRef}
+            handleMute={() => toggleMute(chillRef, volumeRef)}
+            handleVolumeChange={handleVolumeChange}
+          />
+        </PlayerContainer>
+      ) : (
+        <PlayerContainer className={styles.mobileChillStreamerContainer}>
+          {soundMobileOpen ? (
+            <SoundMobile
+              volume={volume}
+              handleVolumeChange={handleVolumeChange}
+              volumeRef={volumeRef}
+              setSoundMobileOpen={setSoundMobileOpen}
+            />
+          ) : (
+            <MainTrack className={styles.mainTrackMobile}>
+              <div className={styles.imageBlockMobile}>
+                {currentStreamRef.current && (
+                  <Image
+                    src={currentStreamRef.current?.cover || ""}
+                    alt="cover"
+                    width={35}
+                    height={35}
+                    unoptimized
+                  />
+                )}
+
+                {isStreaming && <Pause onClick={() => handlePause(chillRef)} />}
+                {!isStreaming && <Play onClick={() => handlePlay(chillRef, volume.value * 100)} />}
+              </div>
+
+              <div className={styles.title}>{currentStreamRef.current?.title || ""}</div>
+              <div className={styles.soundMobile}>
+                <SoundIcon onClick={() => setSoundMobileOpen(true)} />
+              </div>
+            </MainTrack>
+          )}
+        </PlayerContainer>
+      )}
 
       <iframe
         src={`https://www.youtube.com/embed/${currentId}?enablejsapi=1&html5=1`}

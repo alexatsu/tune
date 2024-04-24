@@ -1,8 +1,8 @@
 import { ChillStreamResponse } from "@/shared/utils/types";
+import cron from "node-cron";
+import fs from "fs";
 
-const cron = require("node-cron");
-
-export let extractResult: null | ChillStreamResponse = null;
+export const filePath = "./src/app/api/chill/stream/chill-stream-info.json";
 
 export async function extractStreamInfo() {
   const response = await fetch(`${process.env.MUSIC_SERVICE_CONTAINER}/chill/extract`, {
@@ -11,7 +11,12 @@ export async function extractStreamInfo() {
 
   const data = (await response.json()) as ChillStreamResponse;
 
-  extractResult = data;
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data));
+  } catch (error) {
+    console.error("Error writing to JSON file:", error);
+  }
+  return data;
 }
 
 cron.schedule("0 0 * * *", async () => {

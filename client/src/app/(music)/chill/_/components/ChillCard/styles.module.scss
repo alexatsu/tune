@@ -1,6 +1,7 @@
 @use "@/sass/abstracts/colors.scss" as *;
 
-.chillCardContainer {
+.chillCardContainer,
+.chillCardContainerNoStream {
   width: 250px;
   height: 200px;
   background: rgb(224, 224, 224);
@@ -8,6 +9,8 @@
   display: flex;
   align-items: flex-end;
   position: relative;
+  transition: 0.15s all ease-out;
+  cursor: pointer;
 
   .chillImage {
     width: 100%;
@@ -49,4 +52,17 @@
       -webkit-box-orient: vertical;
     }
   }
+}
+
+.chillCardContainerNoStream:hover {
+  filter: brightness(90%);
+
+  .titleBlock .streamButtons > svg {
+    opacity: 1;
+  }
+}
+
+.chillCardContainerNotPlaying {
+  @extend .chillCardContainerNoStream;
+  filter: brightness(60%);
 }

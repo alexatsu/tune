@@ -5,6 +5,7 @@ import { createContext, useContext, useRef } from "react";
 type ChillStreamerProps = {
   chillRef: React.RefObject<HTMLIFrameElement>;
   currentStreamRef: React.MutableRefObject<Stream | null>;
+  volumeRef: React.RefObject<HTMLInputElement>;
 };
 
 type Stream = {
@@ -29,9 +30,11 @@ function useChillStreamerContext() {
 function ChillStreamerProvider({ children }: { children: React.ReactNode }) {
   const chillRef = useRef<HTMLIFrameElement>(null);
   const currentStreamRef = useRef<Stream | null>(null);
+  const volumeRef = useRef<HTMLInputElement>(null);
   const values: ChillStreamerProps = {
     chillRef,
     currentStreamRef,
+    volumeRef,
   };
 
   return <ChillStreamerContext.Provider value={values}>{children}</ChillStreamerContext.Provider>;

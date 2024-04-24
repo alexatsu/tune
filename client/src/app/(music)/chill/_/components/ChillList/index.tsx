@@ -15,7 +15,7 @@ export function ChillList() {
   };
 
   const { data, error, isLoading, mutate } = useSWR<StreamResponse>(
-    `/api/songs/get-all`,
+    `/api/chill/stream`,
     fetchAllStreams,
     { revalidateOnFocus: false },
   );
