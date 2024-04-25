@@ -100,7 +100,13 @@ function SearchSongs() {
           </button>
         </div>
       )}
-      {isLoading ? <Skeleton /> : <MusicList data={data || undefined} session={session!} />}
+      {isLoading ? (
+        <div className={styles.musicListSkeletonContainer}>
+          <Skeleton className={styles.musicListSkeleton} />
+        </div>
+      ) : (
+        <MusicList data={data || undefined} session={session!} />
+      )}
     </>
   );
 }
