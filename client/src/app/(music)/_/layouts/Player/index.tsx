@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { RefObject, useCallback, useEffect, useState } from "react";
 
+import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
 import {
   ImageBlockDesktop,
@@ -15,7 +16,6 @@ import {
   TitleDesktop,
 } from "@/music/_/components/Player|Streamer";
 import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
-import { usePlayerContext } from "@/music/_/providers";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
 
@@ -222,7 +222,7 @@ export function Player() {
     <>
       {!isMobile ? (
         <PlayerContainer className={styles.desktopPlayerContainer}>
-          <ImageBlockDesktop isLoading={isLoading} currentSongRef={currentSongRef} />
+          <ImageBlockDesktop isLoading={isLoading} currentPlayRef={currentSongRef} />
 
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
@@ -235,7 +235,7 @@ export function Player() {
 
             <div className={styles.inputsDesktop}>{inputs}</div>
 
-            <TitleDesktop isLoading={isLoading} currentSongRef={currentSongRef} />
+            <TitleDesktop isLoading={isLoading} currentPlayRef={currentSongRef} />
           </MainTrack>
 
           <SoundDesktop

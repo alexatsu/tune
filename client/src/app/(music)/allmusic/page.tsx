@@ -21,9 +21,11 @@ export default function Page() {
   if (!session) redirect("/signin");
 
   const musicList = isLoading ? (
-    <Skeleton />
+    <div className={styles.musicListSkeletonContainer}>
+      <Skeleton className={styles.musicListSkeleton} />
+    </div>
   ) : (
-    <MusicList data={data || undefined} session={session} />
+    <MusicList data={data || undefined} session={session!} />
   );
 
   return songs && songs.length < 1 ? (

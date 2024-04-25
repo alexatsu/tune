@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SiClyp } from "react-icons/si";
 
 import { navigationIcons } from "@/music/_/components/icons/navigation";
 import { useMobile } from "@/music/_/hooks";
 
 import styles from "./styles.module.scss";
 
-const { Music, Search, Albums } = navigationIcons;
+const { Music, Search, Albums, Chill } = navigationIcons;
 
 const list = [
   {
@@ -22,6 +23,10 @@ const list = [
   {
     path: "/albums",
     icon: <Albums />,
+  },
+  {
+    path: "/chill",
+    icon: <SiClyp color="#515253" size={22} />,
   },
 ];
 

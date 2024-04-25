@@ -8,9 +8,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
+import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { usePlayer, useSongs } from "@/music/_/hooks";
-import { usePlayerContext } from "@/music/_/providers";
 import { Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";

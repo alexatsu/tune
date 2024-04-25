@@ -1,1 +1,1 @@
-export { PlayerProvider, usePlayerContext } from "./PlayerProvider";
+export { ChillStreamerProvider, useChillStreamerContext } from "./ChillStreamerProvider";

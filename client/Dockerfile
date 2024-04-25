@@ -5,7 +5,7 @@ WORKDIR /app
 COPY ./package.json ./
 COPY ./pnpm-lock.yaml ./
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 
 COPY ./prisma ./prisma

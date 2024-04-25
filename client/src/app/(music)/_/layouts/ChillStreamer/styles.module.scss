@@ -1,0 +1,195 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.desktopChillStreamerContainer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  color: $text;
+  height: 15%;
+  min-height: 100px;
+  display: flex;
+  justify-content: space-between;
+  flex: 1 1 0px;
+  padding: 0 15%;
+
+  @media screen and (width <= 1024px) {
+    padding: 0 1rem;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    background: linear-gradient(180deg, rgb(46 46 46 / 33%) 0%, rgb(0 0 0 / 71%) 100%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-backdrop-filter: blur(5.5px);
+    backdrop-filter: blur(5.5px);
+    z-index: -1;
+  }
+
+  .mainTrackDesktop {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.buttonsDesktop {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  cursor: pointer;
+}
+
+%inputContainer {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  border-radius: 10px;
+}
+
+%runTrack {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.104);
+  border-radius: 16px;
+}
+
+%thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #000;
+  border-radius: 50%;
+  border: 2px solid $accent;
+}
+
+.mobileChillStreamerContainer {
+  position: fixed;
+  bottom: 50px;
+  width: 100%;
+  color: $text;
+  height: 50px;
+
+  .inputsMobile {
+    width: 100%;
+    position: relative;
+    height: 5px;
+    display: flex;
+    justify-content: center;
+
+    .trackSeek {
+      @extend %inputContainer;
+
+      position: absolute;
+      cursor: pointer;
+      width: 100%;
+      height: 5px;
+      outline: none;
+
+      &::-webkit-slider-runnable-track {
+        @extend %runTrack;
+      }
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+
+        background-color: transparent;
+        border: none;
+        height: 1px;
+        width: 1px;
+      }
+
+      &::-moz-range-thumb {
+        @extend %thumb;
+        background-color: transparent;
+        border: none;
+        height: 1px;
+        width: 1px;
+      }
+    }
+
+    .buffer {
+      @extend %inputContainer;
+
+      width: 100%;
+      position: absolute;
+      z-index: -1;
+      opacity: 0.3;
+      height: 5px;
+      &::-webkit-slider-runnable-track {
+        @extend %runTrack;
+      }
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      &::-moz-range-thumb {
+        -moz-appearance: none;
+        appearance: none;
+        opacity: 0;
+      }
+    }
+  }
+
+  .mainTrackMobile {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    flex: 1 1 0;
+
+    .imageBlockMobile {
+      position: relative;
+      width: 15%;
+
+      & img {
+        -o-object-fit: cover;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 20px 5px black;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      & svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+      }
+    }
+
+    .title {
+      font-weight: 500;
+      font-size: 0.8rem;
+      width: 70%;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .soundMobile {
+      width: 15%;
+      display: flex;
+      justify-content: center;
+      color: $text;
+    }
+  }
+}

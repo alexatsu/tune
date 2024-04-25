@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useRef } from "react";
 
-import type { Song } from "../types";
+import type { Song } from "../../(music)/_/types";
 
 type PlayerContext = {
   playerRef: React.RefObject<HTMLVideoElement>;

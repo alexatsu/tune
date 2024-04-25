@@ -1,13 +1,11 @@
-import styles from "./styles.module.scss";
-
-export function Skeleton() {
+export function Skeleton({ className }: { className?: string }) {
   return (
-    <div className={styles.skeletonContainer}>
+    <>
       {[...Array(5).keys()].map((_, index) => (
-        <div key={index} className={styles.skeleton}>
-          <div className={styles.skeletonImgPlaceholder} />
+        <div key={index} className={className}>
+          <div style={{ width: "40px", height: "40px" }} />
         </div>
       ))}
-    </div>
+    </>
   );
 }
