@@ -76,10 +76,6 @@ export function ChillStreamer() {
     }
   }, [isMobile, volumeRef, volume.value, soundMobileOpen]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
       {!isMobile ? (

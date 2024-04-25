@@ -6,6 +6,7 @@ import type { StreamResponse } from "@/app/(music)/chill/_/types";
 
 import { ChillCard } from "../ChillCard";
 import styles from "./styles.module.scss";
+import { Skeleton } from "@/app/(music)/_/components/Skeleton";
 
 export function ChillList() {
   const fetchAllStreams = async () => {
@@ -22,9 +23,13 @@ export function ChillList() {
 
   return (
     <div className={styles.chillBlock}>
-      {data?.streams?.map(({ id, title, cover, url }) => {
-        return <ChillCard title={title} id={id} cover={cover} url={url} key={id} />;
-      })}
+      {isLoading ? (
+        <Skeleton className={styles.chillListSkeleton} />
+      ) : (
+        data?.streams?.map(({ id, title, cover, url }) => {
+          return <ChillCard title={title} id={id} cover={cover} url={url} key={id} />;
+        })
+      )}
     </div>
   );
 }

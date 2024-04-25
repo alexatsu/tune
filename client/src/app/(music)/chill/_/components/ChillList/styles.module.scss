@@ -1,4 +1,6 @@
 @use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/mixins/skeletonAnimation.module.scss" as *;
+
 .chillBlock {
   padding: 0.5rem 0;
   display: flex;
@@ -24,4 +26,19 @@
   &::-webkit-scrollbar {
     width: 4px;
   }
+}
+
+.chillListSkeleton {
+  width: 250px;
+  height: 200px;
+  background: $widget-bg;
+  border-radius: 10px;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  transition: 0.15s all ease-out;
+  overflow: hidden;
+  cursor: pointer;
+
+  @include skeletonAnimation();
 }
