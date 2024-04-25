@@ -20,10 +20,10 @@ const list = [
     path: "/search",
     icon: <Search />,
   },
-  {
-    path: "/albums",
-    icon: <Albums />,
-  },
+  // {
+  //   path: "/albums",
+  //   icon: <Albums />,
+  // },
   {
     path: "/chill",
     icon: <SiClyp color="#515253" size={22} />,
