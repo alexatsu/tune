@@ -12,6 +12,7 @@ COPY Pipfile .
 COPY Pipfile.lock .
 
 RUN pipenv install
+RUN pipenv install --pre yt-dlp
 
 WORKDIR /app/src
 

@@ -12,6 +12,7 @@ COPY ./music-service/Pipfile ./Pipfile
 COPY ./music-service/Pipfile.lock ./Pipfile.lock
 
 RUN pipenv install
+RUN pipenv install --pre yt-dlp
 RUN pipenv requirements > requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
