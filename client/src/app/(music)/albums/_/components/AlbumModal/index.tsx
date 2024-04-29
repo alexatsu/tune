@@ -1,18 +1,13 @@
 "use client";
+import { handleFetch } from "@/shared/utils/functions";
+import { Album } from "@prisma/client";
 import { Session } from "next-auth";
-import React, { FormEvent, useRef, useState } from "react";
+import { useRef, useState, FormEvent } from "react";
 import { useSWRConfig } from "swr";
 
-import { Album } from "@/music/_/types";
-import { handleFetch } from "@/shared/utils/functions";
+import styles from "./styles.module.scss";
 
-import styles from "./style.module.scss";
-
-interface Props {
-  session: Session;
-}
-
-export function CreateAlbumModal({ session }: Props) {
+export function AlbumModal({ session }: { session: Session }) {
   const title = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLInputElement>(null);
   const [visible, setVisible] = useState(false);
@@ -36,20 +31,26 @@ export function CreateAlbumModal({ session }: Props) {
   const createAlbum = async (event: FormEvent<HTMLButtonElement>) => {
     if (description.current && title.current) {
       event.preventDefault();
-      if (!description.current.value || !title.current.value) return alert("Заполните все поля");
-      const newAlbum: Album = {
+
+      if (!description.current.value || !title.current.value) {
+        return alert("Fill in all fields");
+      }
+
+      const newAlbum = {
         description: description.current.value,
         title: title.current.value,
         gradient: `linear-gradient(215deg, ${generateRandomTwoColorGradient()[1]} 30%, ${generateRandomTwoColorGradient()[0]} 60%)`,
-      };
+      } as Album;
+
       const response = await handleFetch(
-        "/api/albums/add",
+        "/api/albums/create",
         "POST",
         { ...newAlbum, session: session },
         {
           "Content-Type": "application/json",
         },
       );
+
       setVisible(false);
       console.log(response);
       await mutate("/api/albums/get-all");
@@ -61,12 +62,7 @@ export function CreateAlbumModal({ session }: Props) {
   }
 
   return (
-    <div
-      className={styles.AddAlbum}
-      style={{
-        background: `linear-gradient(180deg, rgba(26,30,31,1) 0%, rgba(15,18,19,1) 100%)`,
-      }}
-    >
+    <div className={styles.createAlbumModalContainer}>
       <button className={styles.btn} onClick={() => setVisible(true)}></button>
       <div className={modalClasses.join(" ")} onClick={() => setVisible(false)}>
         <form

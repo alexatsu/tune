@@ -333,6 +333,11 @@
   cursor: pointer;
   padding: 0.5rem;
   width: 100%;
+  transition: background-color 0.15s linear;
+
+  &:hover {
+    background-color: $bg-alt-hover;
+  }
 }
 
 .deleteSong {

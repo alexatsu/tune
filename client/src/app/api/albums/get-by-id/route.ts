@@ -25,6 +25,9 @@ export async function POST(req: NextRequest) {
 
   const userAlbum = await db.album.findUnique({
     where: { id: id },
+    include: {
+      Songs: true,
+    }
   });
 
   await db.$disconnect();

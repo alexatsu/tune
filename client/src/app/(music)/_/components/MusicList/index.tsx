@@ -32,7 +32,7 @@ const formatedDuration = (duration: string) => {
 };
 
 type MusicList = {
-  data: SongsResponse | undefined;
+  data: { songs: Song[]; message: string } | undefined;
   session: Session;
 };
 
@@ -96,7 +96,7 @@ export function MusicList({ data, session }: MusicList) {
     setIsAddingSong(true);
     currentAddedSongRef.current = id;
 
-    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/add`, "POST", {
+    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/create`, "POST", {
       url,
       id,
       title,
@@ -161,6 +161,9 @@ export function MusicList({ data, session }: MusicList) {
 
   const menuProps = (song: Song) => {
     const list = (className: string) => [
+      // {
+      //   node: pathname === "/allmusic" && <li className={className}>add to album</li>,
+      // },
       {
         node: (
           <li className={className}>
@@ -212,6 +215,7 @@ export function MusicList({ data, session }: MusicList) {
               </div>
 
               <div className={styles.rightSection}>
+                <div>add to album</div>
                 {formatedDuration(song.duration)}
                 {pathname === "/search" && renderAddButton(song)}
                 <MenuDropdown

@@ -5,9 +5,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import useSWR from "swr";
 
-import { CreateAlbumModal } from "@/music/_/components";
-import { Album } from "@/music/_/components/Album";
-import { AlbumsResponse } from "@/music/_/types";
+import { AlbumCard, AlbumModal } from "@/music/albums/_/components";
+import type { AlbumsResponse } from "@/music/_/types";
 
 import styles from "./styles.module.scss";
 
@@ -40,9 +39,9 @@ export function AlbumList() {
 
   return (
     <div className={styles.AlbumList}>
-      <CreateAlbumModal session={session} />
-      {albums?.map(({ id, gradient, title, description }: any) => (
-        <Album
+      <AlbumModal session={session} />
+      {albums?.map(({ id, gradient, title, description }) => (
+        <AlbumCard
           key={id}
           gradient={gradient}
           title={title}

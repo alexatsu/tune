@@ -4,9 +4,10 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 
-import { AlbumResponse } from "@/music/_/types";
+import { AlbumIdResponse } from "@/music/_/types";
 
 import styles from "./styles.module.scss";
+import { MusicList } from "../../_/components";
 
 export default function Page({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
@@ -15,7 +16,7 @@ export default function Page({ params }: { params: { id: string } }) {
   if (!session) redirect("/signin");
 
   const fetchAlbum = async () => {
-    const response = await fetch(`/api/albums/get-one`, {
+    const response = await fetch(`/api/albums/get-by-id`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ session, id }),
@@ -24,14 +25,21 @@ export default function Page({ params }: { params: { id: string } }) {
     return response.json();
   };
 
-  const { data, isLoading, error } = useSWR<AlbumResponse>(`/api/albums/get-one`, fetchAlbum, {
+  const { data, isLoading, error } = useSWR<AlbumIdResponse>(`/api/albums/get-by-id`, fetchAlbum, {
     revalidateOnFocus: false,
   });
 
+  console.log(data, " here is the data from the album[id]");
   const album = data?.album;
 
+  const musicList = {
+    songs: album?.songs || [],
+    message: `success, albumId is ${id}`,
+  };
+  console.log(musicList, " here is the music list");
+
   return (
-    <div>
+    <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
       <div className={styles.AlbumHead}>
         <div className={styles.Cover} style={{ background: album?.gradient }}></div>
         <div className={styles.Content}>
@@ -39,6 +47,8 @@ export default function Page({ params }: { params: { id: string } }) {
           <span className={styles.Description}>{album?.description}</span>
         </div>
       </div>
+
+      <MusicList data={musicList} session={session} />
     </div>
   );
 }

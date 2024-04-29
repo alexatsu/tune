@@ -3,7 +3,7 @@ import React from "react";
 
 import styles from "./styles.module.scss";
 
-interface Props {
+interface AlbumCardProps {
   gradient: string;
   title: string;
   description: string;
@@ -11,7 +11,7 @@ interface Props {
   cover?: string;
 }
 
-export function Album({ cover, description, onClick, title, gradient }: Props) {
+export function AlbumCard({ cover, description, onClick, title, gradient }: AlbumCardProps) {
   return (
     <div className={styles.Album} onClick={onClick}>
       <div className={styles.imageOrRgb}>
@@ -19,8 +19,8 @@ export function Album({ cover, description, onClick, title, gradient }: Props) {
         <div className={styles.rgb} style={{ background: gradient }}></div>
       </div>
       <div className={styles.content}>
-        <h4 className={styles.title}>{title}</h4>
-        <h5 className={styles.description}>{description}</h5>
+        <h2 className={styles.title}>{title}</h2>
+        <p className={styles.description}>{description}</p>
       </div>
     </div>
   );
