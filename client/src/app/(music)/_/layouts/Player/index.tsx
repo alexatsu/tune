@@ -166,34 +166,6 @@ export function Player() {
     soundMobileOpen,
   ]);
 
-  const handleRetry = (playerRef: RefObject<HTMLVideoElement>) => {
-    const RETRY_LIMIT = 3;
-    const initialRetryDelay = 1000;
-    let retryCount = 0;
-    let retryDelay = initialRetryDelay;
-
-    const retryConnection = () => {
-      if (retryCount < RETRY_LIMIT) {
-        setTimeout(() => {
-          if (currentSongRef.current) {
-            loadPlayerSource(playerRef, currentSongRef.current);
-            handlePlay(playerRef);
-
-            console.log("Connection re-established. Connection in " + retryDelay + "ms...");
-            retryCount++;
-            retryDelay *= 2;
-          } else {
-            console.log("currentSongRef.current is undefined");
-          }
-        }, retryDelay);
-      } else {
-        console.error("Maximum retry limit reached. Unable to play the song.");
-      }
-    };
-
-    retryConnection();
-  };
-
   const inputs = (
     <>
       <input
@@ -290,10 +262,6 @@ export function Player() {
         preload={"auto"}
         ref={playerRef}
         style={{ display: "none" }}
-        onError={(e) => {
-          console.log("audio error is triggered", e);
-          handleRetry(playerRef);
-        }}
       />
     </>
   );
