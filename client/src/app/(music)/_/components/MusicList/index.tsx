@@ -9,7 +9,7 @@ import { useSWRConfig } from "swr";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { playerIcons } from "@/music/_/components/icons/player";
-import { usePlayer, useSearch, useSongs } from "@/music/_/hooks";
+import { useAlbums, usePlayer, useSearch, useSongs } from "@/music/_/hooks";
 import { usePlayerContext } from "@/music/_/providers";
 import { Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
@@ -51,10 +51,13 @@ export function MusicList({ data, session }: MusicList) {
   } = usePlayerStore();
 
   const [isAddingSong, setIsAddingSong] = useState(false);
-
   const currentAddedSongRef = useRef("");
   const { data: userSongs } = useSongs(session);
+
   const { searchMutate } = useSearch();
+
+  const [handleSongInAlbum, setHandleSongInAlbum] = useState(false);
+  const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
 
   const handlePlayById = async (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
@@ -161,9 +164,20 @@ export function MusicList({ data, session }: MusicList) {
 
   const menuProps = (song: Song) => {
     const list = (className: string) => [
-      // {
-      //   node: pathname === "/allmusic" && <li className={className}>add to album</li>,
-      // },
+      {
+        node: pathname === "/allmusic" && (
+          <li className={className}>
+            test
+          </li>
+        ),
+      },
+      {
+        node: pathname === "/allmusic" && (
+          <li className={className} onClick={() => setHandleSongInAlbum(true)}>
+            add to album
+          </li>
+        ),
+      },
       {
         node: (
           <li className={className}>
@@ -193,6 +207,32 @@ export function MusicList({ data, session }: MusicList) {
     return result;
   };
 
+  const albumsProps = () => {
+    const list = (className: string) => [
+      {
+        node: (
+          <li className={className} onClick={() => setHandleSongInAlbum(false)}>
+            back
+          </li>
+        ),
+      },
+    ];
+
+    const result = (
+      <>
+        {[
+          ...list(styles.musicListMenuProps).map(({ node }) => node),
+          albums?.albums.map((album) => (
+            <React.Fragment key={crypto.randomUUID()}>
+              <li className={styles.musicListMenuProps}>{album.title}</li>
+            </React.Fragment>
+          )),
+        ]}
+      </>
+    );
+
+    return result;
+  };
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
@@ -215,11 +255,10 @@ export function MusicList({ data, session }: MusicList) {
               </div>
 
               <div className={styles.rightSection}>
-                <div>add to album</div>
                 {formatedDuration(song.duration)}
                 {pathname === "/search" && renderAddButton(song)}
                 <MenuDropdown
-                  props={menuProps(song)}
+                  props={handleSongInAlbum ? albumsProps() : menuProps(song)}
                   Icon={<ThreeDots className={styles.threeDotsMenu} />}
                 />
               </div>

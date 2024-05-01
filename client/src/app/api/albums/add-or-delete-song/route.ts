@@ -8,7 +8,7 @@ type AddSongToAlbumProps = {
   songId: string;
 };
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   const body = await req.json();
   const { session, albumId, songId }: AddSongToAlbumProps = body;
   console.log(session, albumId, songId, " here is the payload");
