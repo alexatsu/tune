@@ -8,8 +8,8 @@ type PlayerStore = {
   setIsPlaying: (value: boolean) => void;
   currentSong: Song | undefined;
   setCurrentSong: (value: Song | undefined) => void;
-  handlePlay: (playerRef: RefObject<HTMLVideoElement>) => void;
-  handlePause: (playerRef: RefObject<HTMLVideoElement>) => void;
+  handlePlay: (playerRef: RefObject<HTMLAudioElement>) => void;
+  handlePause: (playerRef: RefObject<HTMLAudioElement>) => void;
   loadPlayerSource: (playerRef: RefObject<HTMLAudioElement>, song: Song) => void;
 };
 
@@ -56,7 +56,7 @@ const usePlayerStore = create<PlayerStore>((set) => ({
   loadPlayerSource: (playerRef, song) => {
     set((state) => {
       if (playerRef.current) {
-        playerRef.current.src = song.url;
+        playerRef.current.src = `/api/songs/stream?url=${song.url}`;
         playerRef.current.load();
       }
       return state;

@@ -1,11 +1,11 @@
 "use client";
 
-import { createContext, useContext, useRef } from "react";
+import { RefObject, createContext, useContext, useRef } from "react";
 
 import type { Song } from "../../(music)/_/types";
 
 type PlayerContext = {
-  playerRef: React.RefObject<HTMLVideoElement>;
+  playerRef: RefObject<HTMLAudioElement>;
   currentSongRef: React.MutableRefObject<Song | null>;
 };
 
@@ -22,7 +22,7 @@ function usePlayerContext() {
 }
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const playerRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef(new Audio())
   const currentSongRef = useRef<Song | null>(null);
 
   const values: PlayerContext = {

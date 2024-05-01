@@ -13,7 +13,7 @@ export function ChillCard({ title, id, cover, url }: ChillStreams) {
   const { currentId, setCurrentId, isStreaming, setIsStreaming, handlePause, volume, setVolume } =
     useChillStore();
 
-  const handlePlayById = (newId: string, volume: number) => {
+  const handleStreamById = (newId: string, volume: number) => {
     setIsStreaming(true);
     setCurrentId(newId);
 
@@ -44,7 +44,7 @@ export function ChillCard({ title, id, cover, url }: ChillStreams) {
     if (isStreaming && currentId === id) {
       handlePause(chillRef);
     } else {
-      handlePlayById(id, volume.value * 100);
+      handleStreamById(id, volume.value * 100);
     }
   };
 

@@ -64,6 +64,11 @@ export function Player() {
       const initialVolume = 0.3;
 
       if (playerRef.current) {
+        playerRef.current.src = currentSongRef.current?.url
+          ? `/api/songs/stream?url=${currentSongRef.current?.url}`
+          : "";
+        playerRef.current.preload = "auto";
+        playerRef.current.style.display = "none";
         playerRef.current.volume = initialVolume;
       }
 
@@ -188,6 +193,7 @@ export function Player() {
     </>
   );
 
+  console.log(currentSongRef.current, playerRef.current);
   if (!session) redirect("/signin");
 
   return (
@@ -254,15 +260,14 @@ export function Player() {
         </PlayerContainer>
       )}
 
-      <audio
-        controls
+      {/* <audio
         src={
           currentSongRef.current?.url ? `/api/songs/stream?url=${currentSongRef.current?.url}` : ""
         }
         preload={"auto"}
-        ref={playerRef}
         style={{ display: "none" }}
-      />
+        ref={playerRef}
+      /> */}
     </>
   );
 }
