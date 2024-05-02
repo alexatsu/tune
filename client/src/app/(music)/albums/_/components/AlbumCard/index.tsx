@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React from "react";
 
 import styles from "./styles.module.scss";
@@ -15,7 +16,7 @@ export function AlbumCard({ cover, description, onClick, title, gradient }: Albu
   return (
     <div className={styles.Album} onClick={onClick}>
       <div className={styles.imageOrRgb}>
-        <img src={cover} alt="" />
+        <Image src={cover || ""} alt="" />
         <div className={styles.rgb} style={{ background: gradient }}></div>
       </div>
       <div className={styles.content}>

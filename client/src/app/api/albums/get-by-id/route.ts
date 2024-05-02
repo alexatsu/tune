@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     where: { id: id },
     include: {
       Songs: true,
-    }
+    },
   });
 
   await db.$disconnect();

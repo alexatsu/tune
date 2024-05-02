@@ -56,9 +56,6 @@ export function MusicList({ data, session }: MusicList) {
 
   const { searchMutate } = useSearch();
 
-  const [handleSongInAlbum, setHandleSongInAlbum] = useState(false);
-  const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
-
   const handlePlayById = async (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
       handlePlay(playerRef);
@@ -154,7 +151,7 @@ export function MusicList({ data, session }: MusicList) {
   };
 
   const deleteFromMyMusic = async (songId: Song["urlId"]) => {
-    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/delete`, "POST", {
+    await handleFetch<{ message: string }>(`/api/songs/delete`, "POST", {
       songId,
       session,
     });
@@ -162,22 +159,40 @@ export function MusicList({ data, session }: MusicList) {
     mutate(`/api/songs/get-all`);
   };
 
-  const menuProps = (song: Song) => {
+  const [isSongInTheAlbum, setIsSongInTheAlbum] = useState(false);
+  const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
+  const [isMusicListDropdownOpen, setIsMusicListDropdownOpen] = useState<boolean[]>(
+    new Array(data?.songs.length).fill(false),
+  );
+
+  const handleMusicListDropdownToggle = (index: number) => {
+    setIsMusicListDropdownOpen((prevIsOpen) => {
+      const newIsOpen = [...prevIsOpen];
+      newIsOpen[index] = !newIsOpen[index];
+      return newIsOpen;
+    });
+  };
+
+  const handleSongInAlbumAccordion = (event: React.MouseEvent<HTMLLIElement>) => {
+    event.stopPropagation();
+    setIsSongInTheAlbum(!isSongInTheAlbum);
+  };
+
+  const dropdownMenuProps = (song: Song) => {
     const list = (className: string) => [
       {
         node: pathname === "/allmusic" && (
-          <li className={className}>
-            test
-          </li>
+          <>
+            <li className={className} onClick={(e) => handleSongInAlbumAccordion(e)}>
+              add to album
+            </li>
+            {isSongInTheAlbum && (
+              <>{albums?.albums.map((album) => <li key={album.id}>{album.title}</li>)}</>
+            )}
+          </>
         ),
       },
-      {
-        node: pathname === "/allmusic" && (
-          <li className={className} onClick={() => setHandleSongInAlbum(true)}>
-            add to album
-          </li>
-        ),
-      },
+
       {
         node: (
           <li className={className}>
@@ -207,36 +222,10 @@ export function MusicList({ data, session }: MusicList) {
     return result;
   };
 
-  const albumsProps = () => {
-    const list = (className: string) => [
-      {
-        node: (
-          <li className={className} onClick={() => setHandleSongInAlbum(false)}>
-            back
-          </li>
-        ),
-      },
-    ];
-
-    const result = (
-      <>
-        {[
-          ...list(styles.musicListMenuProps).map(({ node }) => node),
-          albums?.albums.map((album) => (
-            <React.Fragment key={crypto.randomUUID()}>
-              <li className={styles.musicListMenuProps}>{album.title}</li>
-            </React.Fragment>
-          )),
-        ]}
-      </>
-    );
-
-    return result;
-  };
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
-        {data?.songs.map((song) => (
+        {data?.songs.map((song, index) => (
           <div className={styles.liWrapper} key={song.id}>
             <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
@@ -258,8 +247,10 @@ export function MusicList({ data, session }: MusicList) {
                 {formatedDuration(song.duration)}
                 {pathname === "/search" && renderAddButton(song)}
                 <MenuDropdown
-                  props={handleSongInAlbum ? albumsProps() : menuProps(song)}
+                  props={dropdownMenuProps(song)}
                   Icon={<ThreeDots className={styles.threeDotsMenu} />}
+                  isOpen={isMusicListDropdownOpen[index]}
+                  setIsOpen={() => handleMusicListDropdownToggle(index)}
                 />
               </div>
             </li>

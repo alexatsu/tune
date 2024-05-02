@@ -1,9 +1,10 @@
 "use client";
-import { handleFetch } from "@/shared/utils/functions";
 import { Album } from "@prisma/client";
 import { Session } from "next-auth";
-import { useRef, useState, FormEvent } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
+
+import { handleFetch } from "@/shared/utils/functions";
 
 import styles from "./styles.module.scss";
 

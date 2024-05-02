@@ -1,5 +1,6 @@
-import { Session } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { Session } from "next-auth";
+
 import { db } from "../../_/services";
 
 type AddSongToAlbumProps = {

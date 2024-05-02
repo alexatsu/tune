@@ -5,8 +5,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import useSWR from "swr";
 
-import { AlbumCard, AlbumModal } from "@/music/albums/_/components";
 import type { AlbumsResponse } from "@/music/_/types";
+import { AlbumCard, AlbumModal } from "@/music/albums/_/components";
 
 import styles from "./styles.module.scss";
 

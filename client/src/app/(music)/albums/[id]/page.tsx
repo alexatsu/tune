@@ -6,8 +6,8 @@ import useSWR from "swr";
 
 import { AlbumIdResponse } from "@/music/_/types";
 
-import styles from "./styles.module.scss";
 import { MusicList } from "../../_/components";
+import styles from "./styles.module.scss";
 
 export default function Page({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
@@ -39,7 +39,7 @@ export default function Page({ params }: { params: { id: string } }) {
   console.log(musicList, " here is the music list");
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div className={styles.AlbumHead}>
         <div className={styles.Cover} style={{ background: album?.gradient }}></div>
         <div className={styles.Content}>

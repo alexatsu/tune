@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
-import { AlbumsResponse } from "../types";
 import useSWR from "swr";
+
+import { AlbumsResponse } from "../types";
 
 export function useAlbums() {
   const { data: session } = useSession();
