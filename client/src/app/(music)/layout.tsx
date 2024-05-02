@@ -1,5 +1,5 @@
 import { PlayerOrChillWrapper } from "./_/components/PlayerOrChillWrapper";
-import { DesktopNavigationBar, MobileNavigationbar, Player } from "./_/layouts";
+import { DesktopNavigationBar, MobileNavigationbar } from "./_/layouts";
 import { ChillStreamerProvider } from "./_/providers/ChillStreamerProvider";
 import styles from "./layout.module.scss";
 

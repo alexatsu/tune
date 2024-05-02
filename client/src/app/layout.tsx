@@ -8,7 +8,12 @@ import { Header } from "@/app/_/layouts";
 import { SessionProvider } from "@/app/_/providers";
 import { authOptions } from "@/shared/utils/functions";
 
-import { PlayerProvider } from "./_/providers";
+// import { PlayerProvider } from "./_/providers";
+import dynamic from "next/dynamic";
+
+const PlayerProvider = dynamic(() => import("./_/providers").then((mod) => mod.PlayerProvider), {
+  ssr: false,
+});
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });
 const qwitcher = Qwitcher_Grypen({
