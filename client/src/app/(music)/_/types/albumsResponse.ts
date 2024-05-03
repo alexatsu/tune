@@ -1,5 +1,9 @@
 import { Song } from "./songs";
 
+type AlbumSongs = Song & {
+  songId: string;
+};
+
 type Album = {
   id: string;
   title: string;
@@ -7,7 +11,7 @@ type Album = {
   cover?: string;
   gradient: string;
   userId: string;
-  songs: Song[];
+  albumSongs: AlbumSongs[];
 };
 
 type AlbumsResponse = {
@@ -20,4 +24,4 @@ type AlbumIdResponse = {
   album: Album;
 };
 
-export type { AlbumIdResponse, AlbumsResponse };
+export type { Album, AlbumIdResponse, AlbumSongs, AlbumsResponse };

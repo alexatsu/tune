@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 
-import { AlbumIdResponse } from "@/music/_/types";
+import { Album, AlbumIdResponse } from "@/music/_/types";
 
 import { MusicList } from "../../_/components";
 import styles from "./styles.module.scss";
@@ -12,7 +12,7 @@ import styles from "./styles.module.scss";
 export default function Page({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
   const { id } = params;
-
+  console.log(id, " here is the id");
   if (!session) redirect("/signin");
 
   const fetchAlbum = async () => {
@@ -30,21 +30,20 @@ export default function Page({ params }: { params: { id: string } }) {
   });
 
   console.log(data, " here is the data from the album[id]");
-  const album = data?.album;
+  const musicList = { songs: data?.album?.albumSongs || [], message: `success, albumId is ${id}` };
 
-  const musicList = {
-    songs: album?.songs || [],
-    message: `success, albumId is ${id}`,
-  };
-  console.log(musicList, " here is the music list");
+  if (error) return <div>Error: {error.message}</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div className={styles.AlbumHead}>
-        <div className={styles.Cover} style={{ background: album?.gradient }}></div>
+        <div className={styles.Cover} style={{ background: data?.album?.gradient }}></div>
         <div className={styles.Content}>
-          <h1 className={styles.Title}>{album?.title}</h1>
-          <span className={styles.Description}>{album?.description}</span>
+          <h1 className={styles.Title}>{data?.album?.title}</h1>
+          <span className={styles.Description}>{data?.album?.description}</span>
         </div>
       </div>
 

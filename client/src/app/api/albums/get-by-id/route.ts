@@ -16,17 +16,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ songs: [], message: "Email is required" }, { status: 400 });
   }
 
-  const userAlbums = await db.user.findUnique({
-    where: { email: userEmail },
-    select: {
-      Albums: true,
-    },
-  });
-
   const userAlbum = await db.album.findUnique({
     where: { id: id },
     include: {
-      Songs: true,
+      albumSongs: true,
     },
   });
 

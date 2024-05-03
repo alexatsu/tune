@@ -16,8 +16,11 @@ export function AlbumCard({ cover, description, onClick, title, gradient }: Albu
   return (
     <div className={styles.Album} onClick={onClick}>
       <div className={styles.imageOrRgb}>
-        <Image src={cover || ""} alt="" />
-        <div className={styles.rgb} style={{ background: gradient }}></div>
+        {cover ? (
+          <Image src={cover} alt="" />
+        ) : (
+          <div className={styles.rgb} style={{ background: gradient }}></div>
+        )}
       </div>
       <div className={styles.content}>
         <h2 className={styles.title}>{title}</h2>

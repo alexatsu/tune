@@ -4,21 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { useAlbums, usePlayer, useSearch, useSongs } from "@/music/_/hooks";
 import { usePlayerContext } from "@/music/_/providers";
-import { Song, SongsResponse } from "@/music/_/types";
+import { Album, AlbumSongs, Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
 import { handleFetch } from "@/shared/utils/functions";
 
+import { miscIcons } from "../icons/misc";
 import styles from "./styles.module.scss";
 
 const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
+const { LoadingCircle } = miscIcons;
 
 const formatedDuration = (duration: string) => {
   const [hours, minutes, seconds] = duration.split(":");
@@ -32,11 +34,12 @@ const formatedDuration = (duration: string) => {
 };
 
 type MusicList = {
-  data: { songs: Song[]; message: string } | undefined;
+  data: { songs: Song[] | AlbumSongs[]; message: string };
   session: Session;
 };
 
 export function MusicList({ data, session }: MusicList) {
+  console.log("Music list, here is the data", data);
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
   const { currentSongRef, playerRef } = usePlayerContext();
@@ -50,10 +53,12 @@ export function MusicList({ data, session }: MusicList) {
     loadPlayerSource,
   } = usePlayerStore();
 
+  const { data: userSongs } = useSongs(session);
   const [isAddingSong, setIsAddingSong] = useState(false);
   const currentAddedSongRef = useRef("");
-  const { data: userSongs } = useSongs(session);
-
+  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
+  const [isSongInTheAlbumAccordionOpen, setIsSongInTheAlbumAccordionOpen] = useState(false);
+  const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
   const { searchMutate } = useSearch();
 
   const handlePlayById = async (song: Song) => {
@@ -134,7 +139,7 @@ export function MusicList({ data, session }: MusicList) {
     const isSongInDB = userSongs?.songs.find((userSong) => userSong.urlId === song.id);
 
     if (isAddingSong && ifIsSongID) {
-      return <div className={styles.loader} />;
+      return <LoadingCircle />;
     } else if (isSongInDB) {
       return <Add key={song.id} className={styles.added} />;
     } else {
@@ -159,26 +164,65 @@ export function MusicList({ data, session }: MusicList) {
     mutate(`/api/songs/get-all`);
   };
 
-  const [isSongInTheAlbum, setIsSongInTheAlbum] = useState(false);
-  const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
-  const [isMusicListDropdownOpen, setIsMusicListDropdownOpen] = useState<boolean[]>(
-    new Array(data?.songs.length).fill(false),
+  const handleMusicListDropdownToggle = useCallback(
+    (index: number) => {
+      setOpenDropdownIndex(openDropdownIndex === index ? null : index);
+    },
+    [openDropdownIndex],
   );
+  const addToAlbumContainerRef = useRef<HTMLDivElement>(null);
+  const addToAlbumsRef = useRef<HTMLLIElement>(null);
 
-  const handleMusicListDropdownToggle = (index: number) => {
-    setIsMusicListDropdownOpen((prevIsOpen) => {
-      const newIsOpen = [...prevIsOpen];
-      newIsOpen[index] = !newIsOpen[index];
-      return newIsOpen;
-    });
-  };
+  useEffect(() => {
+    const handleClickOutsideDropdown = (event: MouseEvent) => {
+      console.log((event.target as HTMLLIElement)?.tagName === "LI");
+      if ((event.target as HTMLElement).tagName === "LI") {
+        return;
+      } else {
+        setOpenDropdownIndex(null);
+        setIsSongInTheAlbumAccordionOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutsideDropdown);
+    return () => {
+      document.removeEventListener("click", handleClickOutsideDropdown);
+    };
+  }, [
+    isSongInTheAlbumAccordionOpen,
+    setIsSongInTheAlbumAccordionOpen,
+    openDropdownIndex,
+    handleMusicListDropdownToggle,
+  ]);
 
   const handleSongInAlbumAccordion = (event: React.MouseEvent<HTMLLIElement>) => {
     event.stopPropagation();
-    setIsSongInTheAlbum(!isSongInTheAlbum);
+    setIsSongInTheAlbumAccordionOpen(!isSongInTheAlbumAccordionOpen);
+  };
+
+  const checkIfSongInTheAlbum = (song: Song, album: Album) => {
+    const findSongInAlbum = album.albumSongs.find((albumSong) => albumSong.songId === song.id);
+    if (findSongInAlbum) {
+      return <p>&#10004;</p>;
+    } else {
+      return <p>+</p>;
+    }
+  };
+
+  const addOrRemoveSongInTheAlbum = async (song: Song, album: Album) => {
+    await handleFetch<{ message: string }>(`/api/albums/add-or-delete-song`, "POST", {
+      session,
+      album,
+      song,
+    });
+    albumsMutate();
   };
 
   const dropdownMenuProps = (song: Song) => {
+    const classAddToAlbumContainer = isSongInTheAlbumAccordionOpen
+      ? styles.addToAlbumsContainerVisible
+      : styles.addToAlbumsContainer;
+
     const list = (className: string) => [
       {
         node: pathname === "/allmusic" && (
@@ -186,8 +230,20 @@ export function MusicList({ data, session }: MusicList) {
             <li className={className} onClick={(e) => handleSongInAlbumAccordion(e)}>
               add to album
             </li>
-            {isSongInTheAlbum && (
-              <>{albums?.albums.map((album) => <li key={album.id}>{album.title}</li>)}</>
+            {isSongInTheAlbumAccordionOpen && (
+              <div className={classAddToAlbumContainer} ref={addToAlbumContainerRef}>
+                {albums?.albums.map((album) => (
+                  <li
+                    ref={addToAlbumsRef}
+                    className={styles.addToAlbums}
+                    key={album.id}
+                    onClick={() => addOrRemoveSongInTheAlbum(song, album)}
+                  >
+                    {albumsIsLoading ? <LoadingCircle /> : checkIfSongInTheAlbum(song, album)}
+                    {album.title}
+                  </li>
+                ))}
+              </div>
             )}
           </>
         ),
@@ -225,7 +281,7 @@ export function MusicList({ data, session }: MusicList) {
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
-        {data?.songs.map((song, index) => (
+        {data?.songs?.map((song, index) => (
           <div className={styles.liWrapper} key={song.id}>
             <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
@@ -249,7 +305,7 @@ export function MusicList({ data, session }: MusicList) {
                 <MenuDropdown
                   props={dropdownMenuProps(song)}
                   Icon={<ThreeDots className={styles.threeDotsMenu} />}
-                  isOpen={isMusicListDropdownOpen[index]}
+                  isOpen={openDropdownIndex === index}
                   setIsOpen={() => handleMusicListDropdownToggle(index)}
                 />
               </div>

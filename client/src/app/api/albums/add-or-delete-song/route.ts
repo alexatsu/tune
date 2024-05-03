@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Session } from "next-auth";
 
+import { Album, Song } from "@/app/(music)/_/types";
+
 import { db } from "../../_/services";
 
 type AddSongToAlbumProps = {
   session: Session;
-  albumId: string;
-  songId: string;
+  album: Album;
+  song: Song;
 };
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { session, albumId, songId }: AddSongToAlbumProps = body;
-  console.log(session, albumId, songId, " here is the payload");
-
+  const { session, album, song }: AddSongToAlbumProps = body;
+  console.log(song, "add or delete song");
   if (!session) {
     return NextResponse.json({ user: null, message: "Session is required" }, { status: 404 });
   }
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
     include: {
       Albums: {
         include: {
-          Songs: true,
+          albumSongs: true,
         },
       },
     },
@@ -35,63 +36,39 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ user: null, message: "User not found" }, { status: 404 });
   }
 
-  const findAlbum = findUser?.Albums.find((album) => {
-    return album.id === albumId;
+  const findAlbum = findUser?.Albums.find((userAlbum) => {
+    return userAlbum.id === album.id;
   });
 
-  const checkIfSonginTheAlbum = findAlbum?.Songs.find((song) => {
-    return song.id === songId;
+  const checkIfSonginTheAlbum = findAlbum?.albumSongs.find((albumSong) => {
+    return albumSong.songId === song.id;
   });
-
-  console.log(checkIfSonginTheAlbum, " here is the answer");
-
   if (checkIfSonginTheAlbum) {
-    await db.user.update({
-      where: { email: userEmail },
+    await db.album.update({
+      where: { id: album.id },
       data: {
-        Albums: {
-          update: {
-            where: { id: albumId },
-            data: {
-              Songs: {
-                disconnect: {
-                  id: songId,
-                },
-              },
-            },
+        albumSongs: {
+          delete: {
+            id: checkIfSonginTheAlbum.id,
           },
         },
       },
-      include: {
-        Albums: true,
-      },
     });
-
-    await db.$disconnect();
 
     return NextResponse.json(
       { user: findUser, message: "Song removed from album" },
       { status: 200 },
     );
   } else {
-    await db.user.update({
-      where: { email: userEmail },
+    await db.albumSong.create({
       data: {
-        Albums: {
-          update: {
-            where: { id: albumId },
-            data: {
-              Songs: {
-                connect: {
-                  id: songId,
-                },
-              },
-            },
-          },
-        },
-      },
-      include: {
-        Albums: true,
+        title: song.title,
+        duration: song.duration,
+        url: song.url,
+        urlId: song.urlId,
+        cover: song.cover,
+        song: { connect: { id: song.id } },
+        Album: { connect: { id: album.id } },
       },
     });
   }
