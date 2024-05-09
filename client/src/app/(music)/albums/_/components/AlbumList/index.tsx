@@ -2,10 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession, Session } from "next-auth";
 
-import { AlbumCard } from "@/albums/_/components";
 import { AlbumsResponse } from "@/music/_/types";
 import { authOptions } from "@/shared/utils/functions";
 
+import { AlbumCard } from "../AlbumCard";
 import { CreateAlbumModal } from "./CreateAlbumModal";
 import styles from "./styles.module.scss";
 

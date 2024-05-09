@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback } from "react";
+import { SiClyp } from "react-icons/si";
 
 import { navigationIcons } from "@/music/_/components/icons/navigation";
 import { useAlbums, useMobile } from "@/music/_/hooks";
@@ -37,6 +38,10 @@ const list = (pathname: string, currentAlbum: Album | null) => {
           )}
         </div>
       ),
+    },
+    {
+      path: "/chill",
+      icon: <SiClyp color="#515253" size={22} />,
     },
   ];
 };
