@@ -64,6 +64,12 @@ function SearchSongs() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
+
+  const payload = {
+    songs: data?.songs || [],
+    message: data?.message || "",
+  };
+
   return (
     <>
       <form className={styles.form} onSubmit={handleFormSubmit}>
@@ -105,7 +111,7 @@ function SearchSongs() {
           <Skeleton className={styles.musicListSkeleton} />
         </div>
       ) : (
-        <MusicList data={data || undefined} session={session!} />
+        <MusicList data={payload} session={session!} />
       )}
     </>
   );

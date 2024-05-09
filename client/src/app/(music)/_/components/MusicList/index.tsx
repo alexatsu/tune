@@ -10,8 +10,7 @@ import { useSWRConfig } from "swr";
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
-import { useAlbums, usePlayer, useSearch, useSongs } from "@/music/_/hooks";
-import { usePlayerContext } from "@/music/_/providers";
+import { useAlbums, usePlayer, useSongs } from "@/music/_/hooks";
 import { Album, AlbumSongs, Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
@@ -61,7 +60,6 @@ export function MusicList({ data, session }: MusicList) {
   const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
   const [currentScrollableAlbumId, setCurrentScrollableAlbumId] = useState<string | null>(null);
   const addToAlbumContainerRef = useRef<HTMLDivElement>(null);
-  const { searchMutate } = useSearch();
 
   const handlePlayById = async (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {

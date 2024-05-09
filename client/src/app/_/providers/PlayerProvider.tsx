@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, createContext, useContext, useRef } from "react";
+import { createContext, RefObject, useContext, useRef } from "react";
 
 import type { Song } from "../../(music)/_/types";
 
@@ -22,7 +22,7 @@ function usePlayerContext() {
 }
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const playerRef = useRef(new Audio())
+  const playerRef = useRef(new Audio());
   const currentSongRef = useRef<Song | null>(null);
 
   const values: PlayerContext = {
