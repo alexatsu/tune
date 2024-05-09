@@ -26,6 +26,7 @@
       
       "@/app/*": ["./src/app/*"],
       "@/music/*":["./src/app/(music)/*"],
+      "@/albums/*":["./src/app/(music)/albums/*"],
       "@/api/*": ["./src/app/api/*"]
     }
   },

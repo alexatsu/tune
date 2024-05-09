@@ -11,6 +11,7 @@ type Props = {
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { session, songId }: Props = body;
+
   if (!session) {
     return NextResponse.json({ user: null, message: "Session is required" }, { status: 404 });
   }

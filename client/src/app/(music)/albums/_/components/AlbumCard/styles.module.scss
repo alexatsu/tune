@@ -19,8 +19,12 @@
   flex-grow: 0;
   flex-basis: 24%;
   flex-shrink: 1;
-
+  transition: 0.15s ease all;
   cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
 
   .imageOrRgb {
     .rgb {

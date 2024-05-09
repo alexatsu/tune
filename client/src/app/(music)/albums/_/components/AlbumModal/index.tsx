@@ -1,71 +1,31 @@
 "use client";
-import { Album } from "@prisma/client";
-import { Session } from "next-auth";
-import { FormEvent, useRef, useState } from "react";
-import { useSWRConfig } from "swr";
-
-import { handleFetch } from "@/shared/utils/functions";
+import { FormEvent, RefObject } from "react";
 
 import styles from "./styles.module.scss";
 
-export function AlbumModal({ session }: { session: Session }) {
-  const title = useRef<HTMLInputElement>(null);
-  const description = useRef<HTMLInputElement>(null);
-  const [visible, setVisible] = useState(false);
-  const { mutate } = useSWRConfig();
-
+export function AlbumModal<T extends (event: FormEvent<HTMLButtonElement>) => Promise<void>>({
+  submit,
+  modalVisible,
+  setModalVisible,
+  title,
+  description,
+}: {
+  modalVisible: boolean;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  submit: T;
+  title: RefObject<HTMLInputElement>;
+  description: RefObject<HTMLInputElement>;
+}) {
   const modalClasses: string[] = [styles.Modal];
 
-  function getRandomColorInRange(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  function generateRandomTwoColorGradient() {
-    const color1 = () => getRandomColorInRange(0, 124);
-    const color2 = () => getRandomColorInRange(125, 255);
-
-    return [
-      `rgba(${color1()}, ${color1()}, ${color1()},0.8)`,
-      `rgba(${color2()}, ${color2()}, ${color2()},0.8)`,
-    ];
-  }
-  const createAlbum = async (event: FormEvent<HTMLButtonElement>) => {
-    if (description.current && title.current) {
-      event.preventDefault();
-
-      if (!description.current.value || !title.current.value) {
-        return alert("Fill in all fields");
-      }
-
-      const newAlbum = {
-        description: description.current.value,
-        title: title.current.value,
-        gradient: `linear-gradient(215deg, ${generateRandomTwoColorGradient()[1]} 30%, ${generateRandomTwoColorGradient()[0]} 60%)`,
-      } as Album;
-
-      const response = await handleFetch(
-        "/api/albums/create",
-        "POST",
-        { ...newAlbum, session: session },
-        {
-          "Content-Type": "application/json",
-        },
-      );
-
-      setVisible(false);
-      console.log(response);
-      await mutate("/api/albums/get-all");
-    }
-  };
-
-  if (visible) {
+  if (modalVisible) {
     modalClasses.push(styles.active);
   }
 
   return (
     <div className={styles.createAlbumModalContainer}>
-      <button className={styles.btn} onClick={() => setVisible(true)}></button>
-      <div className={modalClasses.join(" ")} onClick={() => setVisible(false)}>
+      <button className={styles.btn} onClick={() => setModalVisible(true)}></button>
+      <div className={modalClasses.join(" ")} onClick={() => setModalVisible(false)}>
         <form
           className={styles.Content}
           onClick={(event: React.MouseEvent<HTMLFormElement>) => event.stopPropagation()}
@@ -86,7 +46,7 @@ export function AlbumModal({ session }: { session: Session }) {
             required
             placeholder="Description"
           />
-          <button type="submit" className={styles.submitButton} onClick={createAlbum}>
+          <button type="submit" className={styles.submitButton} onClick={(e) => submit(e)}>
             Click
           </button>
         </form>

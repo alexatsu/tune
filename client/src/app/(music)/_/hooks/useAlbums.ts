@@ -3,7 +3,8 @@ import useSWR from "swr";
 
 import { AlbumsResponse } from "../types";
 
-export function useAlbums() {
+export function useAlbums(id = "") {
+  console.log(id, " here is the id in useAlbums hook");
   const { data: session } = useSession();
   const url = `/api/albums/get-all`;
 

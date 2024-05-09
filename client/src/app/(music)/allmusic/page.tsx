@@ -20,10 +20,14 @@ export default function Page() {
 
   if (!session) redirect("/signin");
 
+  const payload = { songs: songs || [], message: "success" };
+
   const musicList = isLoading ? (
     <Skeleton />
   ) : (
-    <MusicList data={data || undefined} session={session} />
+    <div className={styles.allMusicListContainer}>
+      <MusicList data={payload} session={session} />
+    </div>
   );
 
   return songs && songs.length < 1 ? (

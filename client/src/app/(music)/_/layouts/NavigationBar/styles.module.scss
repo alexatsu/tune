@@ -11,7 +11,6 @@
   justify-content: space-evenly;
   align-items: center;
   height: 80px;
-  margin-top: 1rem;
 
   &:has(li:nth-child(2)) {
     height: 120px;
@@ -63,11 +62,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     a svg path {
       transition: 0.15s all linear;
     }
-    
+
     a:hover svg path {
       cursor: pointer;
       fill: $accent-darker;
@@ -77,4 +76,14 @@
   .active svg path {
     fill: $accent;
   }
+}
+
+.currentAlbumBadge {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  right: 0;
+  opacity: 1;
 }

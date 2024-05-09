@@ -60,15 +60,14 @@ model User {
 model Song {
   id String @id @default(cuid())
 
-  title     String
-  duration  String
-  url       String
-  urlId     String
-  addedAt   DateTime
-  cover     String?
-  userId    String
-  User      User        @relation("userSongs", fields: [userId], references: [id])
-  AlbumSong AlbumSong[]
+  title    String
+  duration String
+  url      String
+  urlId    String
+  addedAt  DateTime
+  cover    String?
+  userId   String
+  User     User     @relation("userSongs", fields: [userId], references: [id])
 }
 
 model Album {
@@ -86,12 +85,10 @@ model Album {
 model AlbumSong {
   id       String  @id @default(cuid())
   albumId  String
-  songId   String
   title    String
   duration String
   cover    String?
   url      String
   urlId    String
-  song     Song    @relation(fields: [songId], references: [id])
   Album    Album   @relation("albumSong", fields: [albumId], references: [id])
 }

@@ -25,7 +25,8 @@
 .musicListContainer {
   overflow: auto;
   width: 100%;
-  height: calc(100dvh - 125px);
+  height: 100%;
+  padding: 0.5rem 0;
 
   @media screen and (width <= 425px) {
     height: calc(100dvh - 140px);
@@ -35,9 +36,8 @@
 .musicList {
   list-style: none;
   color: $text;
-  height: 90%;
+  height: 100%;
   overflow-y: auto;
-  padding: 0.5rem 0;
 
   &::-webkit-scrollbar-track {
     background: transparent;

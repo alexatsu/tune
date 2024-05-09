@@ -4,7 +4,7 @@
   margin: 0 auto;
   background-color: $widget-bg;
   border-radius: 15px;
-  width: 80%;
+  // width: 80%;
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -33,4 +33,10 @@
       color: $accent-darker;
     }
   }
+
+}
+
+.allMusicListContainer {
+  height: 95%;
+  width: 100%;
 }

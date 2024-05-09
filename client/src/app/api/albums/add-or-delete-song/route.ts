@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Session } from "next-auth";
 
+import { db } from "@/api/_/services";
 import { Album, Song } from "@/app/(music)/_/types";
-
-import { db } from "../../_/services";
 
 type AddSongToAlbumProps = {
   session: Session;
@@ -41,7 +40,7 @@ export async function POST(req: NextRequest) {
   });
 
   const checkIfSonginTheAlbum = findAlbum?.albumSongs.find((albumSong) => {
-    return albumSong.songId === song.id;
+    return albumSong.urlId === song.urlId;
   });
   if (checkIfSonginTheAlbum) {
     await db.album.update({
@@ -67,7 +66,6 @@ export async function POST(req: NextRequest) {
         url: song.url,
         urlId: song.urlId,
         cover: song.cover,
-        song: { connect: { id: song.id } },
         Album: { connect: { id: album.id } },
       },
     });

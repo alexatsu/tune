@@ -1,53 +1,40 @@
-"use client";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getServerSession, Session } from "next-auth";
 
-import { redirect, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import React from "react";
-import useSWR from "swr";
+import { AlbumCard } from "@/albums/_/components";
+import { AlbumsResponse } from "@/music/_/types";
+import { authOptions } from "@/shared/utils/functions";
 
-import type { AlbumsResponse } from "@/music/_/types";
-import { AlbumCard, AlbumModal } from "@/music/albums/_/components";
-
+import { CreateAlbumModal } from "./CreateAlbumModal";
 import styles from "./styles.module.scss";
 
-export function AlbumList() {
-  const { data: session } = useSession();
+const fetchAllAlbums = async (session: Session) => {
+  const url = `${process.env.NEXTAUTH_URL}/api/albums/get-all`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session }),
+  });
+
+  return response.json();
+};
+
+export async function AlbumList() {
+  const session = await getServerSession(authOptions);
+  const payload = (await fetchAllAlbums(session as Session)) as AlbumsResponse;
 
   if (!session) redirect("/signin");
 
-  const fetchAllAlbums = async () => {
-    const response = await fetch(`/api/albums/get-all`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session }),
-    });
-
-    return response.json();
-  };
-
-  const { data, isLoading, error, mutate } = useSWR<AlbumsResponse>(
-    `/api/albums/get-all`,
-    fetchAllAlbums,
-    {
-      revalidateOnFocus: false,
-    },
-  );
-
-  const albums = data?.albums;
-
-  const { push } = useRouter();
+  const data = payload?.albums;
 
   return (
     <div className={styles.AlbumList}>
-      <AlbumModal session={session} />
-      {albums?.map(({ id, gradient, title, description }) => (
-        <AlbumCard
-          key={id}
-          gradient={gradient}
-          title={title}
-          description={description}
-          onClick={() => push(`albums/${id}`)}
-        />
+      <CreateAlbumModal />
+      {data?.map(({ id, gradient, title, description }) => (
+        <Link key={id} href={`/albums/${id}`} style={{ textDecoration: "none" }}>
+          <AlbumCard key={id} gradient={gradient} title={title} description={description} />
+        </Link>
       ))}
     </div>
   );
