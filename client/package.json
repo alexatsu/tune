@@ -1,6 +1,6 @@
 {
   "name": "tune",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -26,7 +26,7 @@
     "@types/node-cron": "^3.0.11",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
-    "eslint": "^9.1.1",
+    "eslint": "^8.57.0",
     "eslint-config-next": "14.2.2",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
