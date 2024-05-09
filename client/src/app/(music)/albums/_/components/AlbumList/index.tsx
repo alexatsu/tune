@@ -10,6 +10,7 @@ import { CreateAlbumModal } from "./CreateAlbumModal";
 import styles from "./styles.module.scss";
 
 const fetchAllAlbums = async (session: Session) => {
+  console.log(`${process.env.NEXTAUTH_URL}/api/albums/get-all`, "here is the next auth url");
   const url = `${process.env.NEXTAUTH_URL}/api/albums/get-all`;
   const response = await fetch(url, {
     method: "POST",
