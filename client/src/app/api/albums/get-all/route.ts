@@ -19,7 +19,11 @@ export async function POST(req: NextRequest) {
   const userAlbums = await db.user.findUnique({
     where: { email: userEmail },
     select: {
-      Albums: true,
+      Albums: {
+        include: {
+          albumSongs: true,
+        },
+      },
     },
   });
 

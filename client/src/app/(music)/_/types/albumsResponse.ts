@@ -1,10 +1,17 @@
+import { Song } from "./songs";
+
+type AlbumSongs = Song & {
+  songId: string;
+};
+
 type Album = {
-  id?: string;
+  id: string;
   title: string;
   description: string;
   cover?: string;
   gradient: string;
-  userId?: string;
+  userId: string;
+  albumSongs: AlbumSongs[];
 };
 
 type AlbumsResponse = {
@@ -12,9 +19,9 @@ type AlbumsResponse = {
   albums: Album[];
 };
 
-type AlbumResponse = {
+type AlbumIdResponse = {
   message: string;
   album: Album;
 };
 
-export type { Album, AlbumResponse, AlbumsResponse };
+export type { Album, AlbumIdResponse, AlbumSongs, AlbumsResponse };

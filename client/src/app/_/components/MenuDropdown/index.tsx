@@ -1,20 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import React from "react";
 
 import styles from "./styles.module.scss";
 
-type Props = { props: JSX.Element; Icon: React.ReactNode };
+type Props = {
+  props: JSX.Element;
+  Icon: React.ReactNode;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+};
 
-export function MenuDropdown({ props, Icon }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export function MenuDropdown({ props, Icon, isOpen, setIsOpen }: Props) {
   const dropdownRef = useRef<HTMLUListElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen && !dropdownRef.current?.contains(event.target as Node)) {
+      if (
+        isOpen &&
+        !dropdownRef.current?.contains(event.target as Node) &&
+        !menuRef.current?.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -22,10 +30,10 @@ export function MenuDropdown({ props, Icon }: Props) {
     document.addEventListener("click", handleClickOutside);
 
     return () => document.removeEventListener("click", handleClickOutside);
-  }, [isOpen]);
+  }, [isOpen, setIsOpen]);
 
   const toggleDropdown = () => {
-    setIsOpen((prevState) => !prevState);
+    setIsOpen(!isOpen);
 
     const { top } = menuRef.current?.getBoundingClientRect() as DOMRect;
     const viewHeight = window.innerHeight;
@@ -37,10 +45,6 @@ export function MenuDropdown({ props, Icon }: Props) {
     }
   };
 
-  const closeDropdown = () => {
-    setIsOpen(false);
-  };
-
   return (
     <div className={styles.container}>
       <div onClick={toggleDropdown}>
@@ -48,7 +52,7 @@ export function MenuDropdown({ props, Icon }: Props) {
       </div>
 
       <ul className={isOpen ? styles.ulOpen : styles.ul} ref={dropdownRef}>
-        <div onClick={closeDropdown}>{props}</div>
+        {props}
       </ul>
     </div>
   );

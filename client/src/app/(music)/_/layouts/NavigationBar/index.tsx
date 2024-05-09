@@ -2,43 +2,66 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SiClyp } from "react-icons/si";
+import { useCallback } from "react";
 
 import { navigationIcons } from "@/music/_/components/icons/navigation";
-import { useMobile } from "@/music/_/hooks";
+import { useAlbums, useMobile } from "@/music/_/hooks";
 
+import { Album } from "../../types";
 import styles from "./styles.module.scss";
 
 const { Music, Search, Albums, Chill } = navigationIcons;
 
-const list = [
-  {
-    path: "/allmusic",
-    icon: <Music />,
-  },
-  {
-    path: "/search",
-    icon: <Search />,
-  },
-  // {
-  //   path: "/albums",
-  //   icon: <Albums />,
-  // },
-  {
-    path: "/chill",
-    icon: <SiClyp color="#515253" size={22} />,
-  },
-];
+const list = (pathname: string, currentAlbum: Album | null) => {
+  const checkId = pathname.split("/");
+  const { gradient, cover } = currentAlbum || {};
+  return [
+    {
+      path: "/allmusic",
+      icon: <Music />,
+    },
+    {
+      path: "/search",
+      icon: <Search />,
+    },
+    {
+      path: "/albums",
+      icon: (
+        <div style={{ position: "relative" }}>
+          <Albums />
+          {checkId.length > 2 && (
+            <div
+              className={styles.currentAlbumBadge}
+              style={{ background: cover ? `url(${cover})` : `${gradient}`, borderRadius: "50%" }}
+            ></div>
+          )}
+        </div>
+      ),
+    },
+  ];
+};
 
 function DesktopNavigationBar() {
   const pathname = usePathname();
   const isMobile = useMobile(576);
+  const { albums } = useAlbums();
+
+  const findCurrentAlbumId = useCallback(
+    (id: string) => {
+      const album = albums?.albums.find((album) => album.id === id);
+      if (!album) return null;
+      return album;
+    },
+    [albums],
+  );
+
+  const currentAlbumId = findCurrentAlbumId(pathname.split("/")[2]);
 
   if (!isMobile) {
     return (
       <aside>
         <ul className={styles.listDeksktop}>
-          {list.map(({ path, icon }) => {
+          {list(pathname, currentAlbumId).map(({ path, icon }) => {
             const isActive: boolean = path === pathname;
             return (
               <li key={path}>
@@ -57,11 +80,22 @@ function DesktopNavigationBar() {
 function MobileNavigationbar() {
   const pathname = usePathname();
   const isMobile = useMobile(576);
+  const { albums } = useAlbums();
+  const findCurrentAlbumId = useCallback(
+    (id: string) => {
+      const album = albums?.albums.find((album) => album.id === id);
+      if (!album) return null;
+      return album;
+    },
+    [albums],
+  );
+
+  const currentAlbumId = findCurrentAlbumId(pathname.split("/")[2]);
 
   if (isMobile) {
     return (
       <ul className={styles.listMobile}>
-        {list.map(({ path, icon }) => {
+        {list(pathname, currentAlbumId).map(({ path, icon }) => {
           const isActive: boolean = path === pathname;
           return (
             <li key={path}>

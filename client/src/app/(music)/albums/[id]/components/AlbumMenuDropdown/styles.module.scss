@@ -1,0 +1,47 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.albumsMenuDropdownContainer {
+  margin-top: 10px;
+
+  .albumsMusicListMenuProps {
+    color: $text;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    width: 150px;
+    list-style: none;
+
+    & li {
+      transition: background-color 0.15s linear;
+      padding: 0.5rem;
+      &:hover {
+        background-color: $bg-alt-hover;
+      }
+
+      &[data-delete] {
+        color: #faa0a0;
+      }
+    }
+  }
+
+  .menuBadge {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: $accent;
+    border: 2px solid $widget-bg;
+    cursor: pointer;
+
+    transition:
+      0.15s background-color linear,
+      0.15s border-color linear;
+
+    &:hover {
+      background-color: $bg-alt-hover;
+      border: 2px solid $accent-darker;
+    }
+  }
+}

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
   if (checkIfSongAlreadyExist) {
     return NextResponse.json(
-      { user: null, message: "Song already exists in database" },
+      { user: null, message: "Album already exists in database" },
       { status: 200 },
     );
   }
@@ -51,5 +51,5 @@ export async function POST(req: NextRequest) {
 
   await db.$disconnect();
 
-  return NextResponse.json({ message: "Song added successfully in database" }, { status: 201 });
+  return NextResponse.json({ message: "Album added successfully in database" }, { status: 201 });
 }

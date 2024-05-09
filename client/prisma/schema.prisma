@@ -37,6 +37,14 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -45,8 +53,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Songs         Song[]
-  Albums        Album[]
+  Songs         Song[]    @relation("userSongs")
+  Albums        Album[]   @relation("userAlbums")
 }
 
 model Song {
@@ -57,11 +65,9 @@ model Song {
   url      String
   urlId    String
   addedAt  DateTime
-  cover     String?
-  User       User       @relation(fields: [userId], references: [id])
-  userId     String
-  Album    Album?   @relation(fields: [albumId], references: [id])
-  albumId  String?
+  cover    String?
+  userId   String
+  User     User     @relation("userSongs", fields: [userId], references: [id])
 }
 
 model Album {
@@ -71,15 +77,18 @@ model Album {
   description String
   cover       String?
   gradient    String
-  User        User    @relation(fields: [userId], references: [id])
   userId      String
-  Songs       Song[]
+  albumSongs  AlbumSong[] @relation("albumSong")
+  User        User        @relation("userAlbums", fields: [userId], references: [id])
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
+model AlbumSong {
+  id       String  @id @default(cuid())
+  albumId  String
+  title    String
+  duration String
+  cover    String?
+  url      String
+  urlId    String
+  Album    Album   @relation("albumSong", fields: [albumId], references: [id])
 }

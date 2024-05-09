@@ -1,0 +1,58 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.Modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  z-index: 1;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .Content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: $bg;
+    min-width: 350px;
+    min-height: 200px;
+    border-radius: 20px;
+    cursor: default;
+
+    .input {
+      background: inherit;
+      padding: 5px 10px;
+      color: $text;
+      border: none;
+      border-bottom: 1px solid $accent;
+      font-size: 18px;
+      margin-bottom: 15px;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .submitButton {
+      background: inherit;
+      padding: 12px 20px;
+      border: 1px solid $accent;
+      color: $text;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  }
+}

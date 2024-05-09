@@ -4,21 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
-import { usePlayer, useSongs } from "@/music/_/hooks";
-import { Song, SongsResponse } from "@/music/_/types";
+import { useAlbums, usePlayer, useSearch, useSongs } from "@/music/_/hooks";
+import { usePlayerContext } from "@/music/_/providers";
+import { Album, AlbumSongs, Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
-import { handleFetch } from "@/shared/utils/functions";
+import { customRevalidateTag, handleFetch } from "@/shared/utils/functions";
 
+import { miscIcons } from "../icons/misc";
 import styles from "./styles.module.scss";
 
 const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
+const { LoadingCircle } = miscIcons;
 
 const formatedDuration = (duration: string) => {
   const [hours, minutes, seconds] = duration.split(":");
@@ -32,7 +35,7 @@ const formatedDuration = (duration: string) => {
 };
 
 type MusicList = {
-  data: SongsResponse | undefined;
+  data: { songs: Song[] | AlbumSongs[]; message: string };
   session: Session;
 };
 
@@ -50,10 +53,15 @@ export function MusicList({ data, session }: MusicList) {
     loadPlayerSource,
   } = usePlayerStore();
 
-  const [isAddingSong, setIsAddingSong] = useState(false);
-
-  const currentAddedSongRef = useRef("");
   const { data: userSongs } = useSongs(session);
+  const [isAddingSong, setIsAddingSong] = useState(false);
+  const currentAddedSongRef = useRef("");
+  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
+  const [isSongInTheAlbumAccordionOpen, setIsSongInTheAlbumAccordionOpen] = useState(false);
+  const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
+  const [currentScrollableAlbumId, setCurrentScrollableAlbumId] = useState<string | null>(null);
+  const addToAlbumContainerRef = useRef<HTMLDivElement>(null);
+  const { searchMutate } = useSearch();
 
   const handlePlayById = async (song: Song) => {
     if (currentSongRef.current?.urlId === song.urlId) {
@@ -95,7 +103,7 @@ export function MusicList({ data, session }: MusicList) {
     setIsAddingSong(true);
     currentAddedSongRef.current = id;
 
-    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/add`, "POST", {
+    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/create`, "POST", {
       url,
       id,
       title,
@@ -133,7 +141,7 @@ export function MusicList({ data, session }: MusicList) {
     const isSongInDB = userSongs?.songs.find((userSong) => userSong.urlId === song.id);
 
     if (isAddingSong && ifIsSongID) {
-      return <div className={styles.loader} />;
+      return <LoadingCircle />;
     } else if (isSongInDB) {
       return <Add key={song.id} className={styles.added} />;
     } else {
@@ -149,7 +157,7 @@ export function MusicList({ data, session }: MusicList) {
   };
 
   const deleteFromMyMusic = async (songId: Song["urlId"]) => {
-    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/delete`, "POST", {
+    await handleFetch<{ message: string }>(`/api/songs/delete`, "POST", {
       songId,
       session,
     });
@@ -157,8 +165,108 @@ export function MusicList({ data, session }: MusicList) {
     mutate(`/api/songs/get-all`);
   };
 
-  const menuProps = (song: Song) => {
+  const handleMusicListDropdownToggle = useCallback(
+    (index: number) => {
+      setOpenDropdownIndex(openDropdownIndex === index ? null : index);
+    },
+    [openDropdownIndex],
+  );
+
+  useEffect(() => {
+    const handleClickOutsideDropdown = (event: MouseEvent) => {
+      if (
+        (event.target as HTMLElement).tagName === "LI" ||
+        (event.target as HTMLElement).tagName === "SPAN"
+      ) {
+        return;
+      } else {
+        setOpenDropdownIndex(null);
+        setIsSongInTheAlbumAccordionOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutsideDropdown);
+    return () => {
+      document.removeEventListener("click", handleClickOutsideDropdown);
+    };
+  }, [
+    isSongInTheAlbumAccordionOpen,
+    setIsSongInTheAlbumAccordionOpen,
+    openDropdownIndex,
+    handleMusicListDropdownToggle,
+  ]);
+
+  const handleSongInAlbumAccordion = (event: React.MouseEvent<HTMLLIElement>) => {
+    event.stopPropagation();
+    setIsSongInTheAlbumAccordionOpen(!isSongInTheAlbumAccordionOpen);
+  };
+
+  const checkIfSongInTheAlbum = (song: Song, album: Album) => {
+    const findSongInAlbum = album.albumSongs.find((albumSong) => albumSong.urlId === song.urlId);
+    if (findSongInAlbum) {
+      return <p>&#10004;</p>;
+    } else {
+      return <p>+</p>;
+    }
+  };
+
+  const addOrRemoveSongInTheAlbum = async (song: Song, album: Album) => {
+    await handleFetch<{ message: string }>(`/api/albums/add-or-delete-song`, "POST", {
+      session,
+      album,
+      song,
+    });
+    albumsMutate();
+    customRevalidateTag(`/albums/${album.id}`);
+    setCurrentScrollableAlbumId(album.id);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (currentScrollableAlbumId) {
+        const albumElement = document.querySelector(
+          `li[data-album-id="${currentScrollableAlbumId}"]`,
+        );
+        albumElement?.scrollIntoView({ block: "center" });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [currentScrollableAlbumId]);
+
+  const dropdownMenuProps = (song: Song, pathname: string) => {
+    const classAddToAlbumContainer = isSongInTheAlbumAccordionOpen
+      ? styles.addToAlbumsContainerVisible
+      : styles.addToAlbumsContainer;
+
+    const checkIfAlbumId = pathname.split("/");
+    const getAlbumById = (id: string) => albums?.albums.find((album) => album.id === id);
+
     const list = (className: string) => [
+      {
+        node: pathname === "/allmusic" && (
+          <>
+            <li className={className} onClick={(e) => handleSongInAlbumAccordion(e)}>
+              add to album
+            </li>
+            {isSongInTheAlbumAccordionOpen && (
+              <div className={classAddToAlbumContainer} ref={addToAlbumContainerRef}>
+                {albums?.albums.map((album) => (
+                  <li
+                    data-album-id={album.id}
+                    className={styles.addToAlbums}
+                    key={album.id}
+                    onClick={() => addOrRemoveSongInTheAlbum(song, album)}
+                  >
+                    {albumsIsLoading ? <LoadingCircle /> : checkIfSongInTheAlbum(song, album)}
+                    <span className={styles.addToAlbumsTitle}>{album.title}</span>
+                  </li>
+                ))}
+              </div>
+            )}
+          </>
+        ),
+      },
       {
         node: (
           <li className={className}>
@@ -169,12 +277,26 @@ export function MusicList({ data, session }: MusicList) {
         ),
       },
       {
-        node: pathname !== "/search" && (
+        node: pathname === "/allmusic" && (
           <li className={styles.deleteSong} onClick={() => deleteFromMyMusic(song.id)}>
             x from music
           </li>
         ),
       },
+      ...(checkIfAlbumId.length > 2
+        ? [
+            {
+              node: (
+                <li
+                  className={styles.deleteSong}
+                  onClick={() => addOrRemoveSongInTheAlbum(song, getAlbumById(checkIfAlbumId[2])!)}
+                >
+                  x from album
+                </li>
+              ),
+            },
+          ]
+        : []),
     ];
 
     const result = (
@@ -191,7 +313,7 @@ export function MusicList({ data, session }: MusicList) {
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
-        {data?.songs.map((song) => (
+        {data?.songs?.map((song, index) => (
           <div className={styles.liWrapper} key={song.id}>
             <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
@@ -213,8 +335,10 @@ export function MusicList({ data, session }: MusicList) {
                 {formatedDuration(song.duration)}
                 {pathname === "/search" && renderAddButton(song)}
                 <MenuDropdown
-                  props={menuProps(song)}
+                  props={dropdownMenuProps(song, pathname)}
                   Icon={<ThreeDots className={styles.threeDotsMenu} />}
+                  isOpen={openDropdownIndex === index}
+                  setIsOpen={() => handleMusicListDropdownToggle(index)}
                 />
               </div>
             </li>

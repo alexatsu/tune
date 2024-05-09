@@ -16,8 +16,21 @@
 .logo {
   font-family: $qwitcher;
   color: $text;
-  font-size: 2rem;
+  font-size: 1.5rem;
   user-select: none;
   cursor: pointer;
   text-decoration: none;
+}
+
+.menuPropsList {
+  padding: 0.8rem;
+  text-decoration: none;
+  color: $text;
+  cursor: pointer;
+  transition: 0.15s color linear;
+  white-space: nowrap;
+
+  &:hover {
+    color: $accent;
+  }
 }

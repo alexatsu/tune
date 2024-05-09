@@ -1,11 +1,3 @@
-//click delete song from my music
-//fetch db and check if user exist
-//then delete song from user music in db
-//done
-
-//check if music has user relations
-//if there is none, then send request to music-service and delete folder with a music
-
 import { NextRequest, NextResponse } from "next/server";
 import { Session } from "next-auth";
 
@@ -43,13 +35,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const findSongForDeletion = findUser.Songs.find((song) => song.id === songId);
-
   await db.user.update({
-    where: { email: userEmail },
+    where: {
+      email: userEmail,
+    },
     data: {
       Songs: {
-        delete: findSongForDeletion,
+        delete: {
+          id: songId,
+        },
       },
     },
   });
