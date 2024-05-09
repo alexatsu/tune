@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import Image from "next/image";
+
 import { playerIcons } from "@/music/_/components/icons/player";
 import {
   ImageBlockDesktop,
@@ -12,13 +13,13 @@ import {
   SoundMobile,
   TitleDesktop,
 } from "@/music/_/components/Player|Streamer";
+import { useMobile } from "@/music/_/hooks";
 import { useChillStreamerContext } from "@/music/_/providers";
+import { updateProgressBar } from "@/music/_/utils/functions";
 import type { StreamResponse } from "@/music/chill/_/types";
 import { useChillStore } from "@/shared/store";
 
 import styles from "./styles.module.scss";
-import { updateProgressBar } from "@/music/_/utils/functions";
-import { useMobile } from "@/music/_/hooks";
 
 const { Pause, Play, Unmuted: SoundIcon } = playerIcons;
 
@@ -68,7 +69,7 @@ export function ChillStreamer() {
     }
 
     return () => setIsStreaming(false);
-  }, [volumeRef, setVolume, data]);
+  }, [volumeRef, setVolume, data, setIsStreaming]);
 
   useEffect(() => {
     if ((isMobile && soundMobileOpen) || !isMobile) {

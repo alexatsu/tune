@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
 import fs from "fs";
+import { NextResponse } from "next/server";
+
 import { extractStreamInfo, filePath } from "./extract";
 
 const readFromJson = async () => {

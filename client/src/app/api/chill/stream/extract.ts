@@ -1,6 +1,7 @@
-import { ChillStreamResponse } from "@/shared/utils/types";
-import cron from "node-cron";
 import fs from "fs";
+import cron from "node-cron";
+
+import { ChillStreamResponse } from "@/shared/utils/types";
 
 export const filePath = "./src/app/api/chill/stream/chill-stream-info.json";
 

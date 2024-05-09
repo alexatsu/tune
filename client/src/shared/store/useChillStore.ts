@@ -1,6 +1,7 @@
-import { updateProgressBar } from "@/music/_/utils/functions";
 import { RefObject } from "react";
 import { create } from "zustand";
+
+import { updateProgressBar } from "@/music/_/utils/functions";
 
 type ChillStore = {
   currentId: string;

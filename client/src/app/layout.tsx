@@ -1,7 +1,6 @@
 import "@/shared/sass/main.scss";
 
 import type { Metadata } from "next";
-import { PlayerProvider } from "./_/providers";
 import dynamic from "next/dynamic";
 import { Quicksand, Qwitcher_Grypen } from "next/font/google";
 import { getServerSession, Session } from "next-auth";
@@ -9,6 +8,8 @@ import { getServerSession, Session } from "next-auth";
 import { Header } from "@/app/_/layouts";
 import { SessionProvider } from "@/app/_/providers";
 import { authOptions } from "@/shared/utils/functions";
+
+import { PlayerProvider } from "./_/providers";
 
 // const PlayerProvider = dynamic(
 //   () => import("/providers").then((mod) => mod.PlayerProvider),

@@ -2,11 +2,11 @@
 
 import useSWR from "swr";
 
+import { Skeleton } from "@/app/(music)/_/components/Skeleton";
 import type { StreamResponse } from "@/app/(music)/chill/_/types";
 
 import { ChillCard } from "../ChillCard";
 import styles from "./styles.module.scss";
-import { Skeleton } from "@/app/(music)/_/components/Skeleton";
 
 export function ChillList() {
   const fetchAllStreams = async () => {
