@@ -2,12 +2,14 @@
 import { usePathname } from "next/navigation";
 import { MutableRefObject, RefObject } from "react";
 
+import { Stream } from "@/app/(music)/chill/_/types";
+
 import { Song } from "../../../types";
 import styles from "./styles.module.scss";
 
 type TitleProps = {
   isLoading: boolean;
-  currentPlayRef: MutableRefObject<Song | null>;
+  currentPlayRef: MutableRefObject<Song | null> | MutableRefObject<Stream | null>;
 };
 
 export function TitleDesktop({ isLoading, currentPlayRef }: TitleProps) {

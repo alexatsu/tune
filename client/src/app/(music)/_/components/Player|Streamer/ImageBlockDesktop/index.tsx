@@ -1,12 +1,14 @@
 import Image from "next/image";
 import { MutableRefObject } from "react";
 
+import { Stream } from "@/app/(music)/chill/_/types";
+
 import { Song } from "../../../types";
 import styles from "./styles.module.scss";
 
 type ImageBlockProps = {
   isLoading: boolean;
-  currentPlayRef: MutableRefObject<Song | null>;
+  currentPlayRef: MutableRefObject<Song | null> | MutableRefObject<Stream | null>;
 };
 
 export function ImageBlockDesktop({ isLoading, currentPlayRef }: ImageBlockProps) {
