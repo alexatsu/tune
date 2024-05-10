@@ -1,5 +1,6 @@
 import { AlbumList } from "@/music/albums/_/components";
 
 export default function Page() {
-  return <AlbumList />;
+  return <div>test</div>;
+  // return <AlbumList />;
 }
