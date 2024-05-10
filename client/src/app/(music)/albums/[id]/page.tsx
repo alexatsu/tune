@@ -10,7 +10,7 @@ import { AlbumMenuDropdown } from "./components";
 import styles from "./styles.module.scss";
 
 const fetchAlbumById = async (session: Session, id: string) => {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/albums/get-by-id`, {
+  const response = await fetch(`${process.env.CLIENT_URL}/api/albums/get-by-id`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ session, id }),
