@@ -22,13 +22,17 @@ function usePlayerContext() {
 }
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const playerRef = useRef(new Audio());
+  const playerRef = useRef<HTMLAudioElement | null>(null);
   const currentSongRef = useRef<Song | null>(null);
 
   const values: PlayerContext = {
     playerRef,
     currentSongRef,
   };
+
+  if (typeof window !== "undefined") {
+    playerRef.current = new Audio();
+  }
 
   return <PlayerContext.Provider value={values}>{children}</PlayerContext.Provider>;
 }
