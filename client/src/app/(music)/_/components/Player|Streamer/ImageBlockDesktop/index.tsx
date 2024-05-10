@@ -1,20 +1,12 @@
 import Image from "next/image";
-import { RefObject } from "react";
+import { MutableRefObject } from "react";
 
+import { Song } from "../../../types";
 import styles from "./styles.module.scss";
 
 type ImageBlockProps = {
   isLoading: boolean;
-  currentPlayRef: RefObject<{
-    id: string;
-    title: string;
-    cover: string;
-    url: string;
-    duration?: string;
-    urlId?: string;
-    addedAt?: Date;
-    userId?: string;
-  }>;
+  currentPlayRef: MutableRefObject<Song | null>;
 };
 
 export function ImageBlockDesktop({ isLoading, currentPlayRef }: ImageBlockProps) {
@@ -22,7 +14,7 @@ export function ImageBlockDesktop({ isLoading, currentPlayRef }: ImageBlockProps
     <div className={styles.imageBlockDesktop}>
       {isLoading ? (
         <div className={styles.skeletonImage} />
-      ) : currentPlayRef.current ? (
+      ) : currentPlayRef?.current ? (
         <Image
           src={currentPlayRef.current?.cover || ""}
           alt="cover"

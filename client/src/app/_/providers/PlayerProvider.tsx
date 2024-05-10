@@ -1,12 +1,12 @@
 "use client";
 
-import { createContext, RefObject, useContext, useRef } from "react";
+import { createContext, MutableRefObject, RefObject, useContext, useRef } from "react";
 
 import type { Song } from "../../(music)/_/types";
 
 type PlayerContext = {
   playerRef: RefObject<HTMLAudioElement>;
-  currentSongRef: React.MutableRefObject<Song | null>;
+  currentSongRef: MutableRefObject<Song | null>;
 };
 
 const PlayerContext = createContext<PlayerContext | null>(null);

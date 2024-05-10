@@ -19,6 +19,7 @@ import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
 
+import { Song } from "../../types";
 import styles from "./styles.module.scss";
 
 const { Play, Pause, PreviousTrack, NextTrack, Unmuted: SoundIcon } = playerIcons;

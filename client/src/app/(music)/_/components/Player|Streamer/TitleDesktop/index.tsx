@@ -1,21 +1,13 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { RefObject } from "react";
+import { MutableRefObject, RefObject } from "react";
 
+import { Song } from "../../../types";
 import styles from "./styles.module.scss";
 
 type TitleProps = {
   isLoading: boolean;
-  currentPlayRef: RefObject<{
-    id: string;
-    title: string;
-    cover: string;
-    url: string;
-    duration?: string;
-    urlId?: string;
-    addedAt?: Date;
-    userId?: string;
-  }>;
+  currentPlayRef: MutableRefObject<Song | null>;
 };
 
 export function TitleDesktop({ isLoading, currentPlayRef }: TitleProps) {
