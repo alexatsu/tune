@@ -4,9 +4,9 @@ type Song = {
   duration: string;
   url: string;
   urlId: string;
-  addedAt: Date;
-  userId: string;
-  cover: string;
+  addedAt?: Date;
+  userId?: string;
+  cover: string | null;
 };
 
 type SongsResponse = {

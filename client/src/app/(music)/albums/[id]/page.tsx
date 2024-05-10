@@ -1,48 +1,50 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession, Session } from "next-auth";
+import { getServerSession } from "next-auth";
 
+import { db } from "@/app/api/_/services";
 import { MusicList } from "@/music/_/components";
-import { AlbumIdResponse } from "@/music/_/types";
+import { AlbumSongs } from "@/music/_/types";
 import { authOptions } from "@/shared/utils/functions";
 
 import { AlbumMenuDropdown } from "./components";
 import styles from "./styles.module.scss";
 
-const fetchAlbumById = async (session: Session, id: string) => {
-  const response = await fetch(`${process.env.CLIENT_URL}/api/albums/get-by-id`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ session, id }),
+const fetchAlbumById = async (id: string) => {
+  const userAlbum = await db.album.findUnique({
+    where: { id: id },
+    include: { albumSongs: true },
   });
 
-  return response.json();
+  const musicList = {
+    songs: userAlbum?.albumSongs || ([] as AlbumSongs[]),
+    message: `success, albumId is ${id}`,
+  };
+
+  await db.$disconnect();
+
+  return { userAlbum, musicList };
 };
 
 export default async function Page({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const { id } = params;
-  const payload = (await fetchAlbumById(session as Session, id)) as AlbumIdResponse;
 
   if (!session) redirect("/signin");
-
-  const musicList = {
-    songs: payload?.album?.albumSongs || [],
-    message: `success, albumId is ${id}`,
-  };
+  const { userAlbum, musicList } = await fetchAlbumById(id);
 
   return (
     <div className={styles.albumIdPageContainer}>
       <div className={styles.AlbumHead}>
-        <div className={styles.Cover} style={{ background: payload?.album?.gradient }}></div>
+        <div className={styles.Cover} style={{ background: userAlbum?.gradient }}></div>
         <div className={styles.Content}>
-          <h1 className={styles.Title}>{payload?.album?.title}</h1>
-          <span className={styles.Description}>{payload?.album?.description}</span>
+          <h1 className={styles.Title}>{userAlbum?.title}</h1>
+          <span className={styles.Description}>{userAlbum?.description}</span>
         </div>
         <AlbumMenuDropdown albumId={id} />
       </div>
 
-      {musicList.songs.length < 1 ? (
+      {userAlbum?.albumSongs && userAlbum?.albumSongs.length < 1 ? (
         <div className={styles.noSongsWereAdded}>
           No songs were added. Look for them in <Link href={"/allmusic"}>Music</Link>
         </div>

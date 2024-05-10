@@ -318,7 +318,7 @@ export function MusicList({ data, session }: MusicList) {
                 <div className={styles.imageBlock}>
                   {pathname !== "/search" && renderPlayButton(song)}
                   <Image
-                    src={song.cover}
+                    src={song.cover || ""}
                     alt={song.title}
                     width={40}
                     height={40}

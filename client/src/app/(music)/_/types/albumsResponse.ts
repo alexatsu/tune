@@ -8,7 +8,7 @@ type Album = {
   id: string;
   title: string;
   description: string;
-  cover?: string;
+  cover?: string | null;
   gradient: string;
   userId: string;
   albumSongs: AlbumSongs[];
