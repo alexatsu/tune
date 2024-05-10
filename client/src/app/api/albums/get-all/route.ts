@@ -3,6 +3,8 @@ import { Session } from "next-auth";
 
 import { db } from "@/api/_/services";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   const { session }: { session: Session } = await req.json();
 
