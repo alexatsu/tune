@@ -101,7 +101,7 @@ export function MusicList({ data, session }: MusicList) {
     setIsAddingSong(true);
     currentAddedSongRef.current = id;
 
-    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/add`, "POST", {
+    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/create`, "POST", {
       url,
       id,
       title,
