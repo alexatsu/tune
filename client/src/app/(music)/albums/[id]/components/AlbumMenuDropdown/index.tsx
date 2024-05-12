@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRef, useState } from "react";
 
 import { MenuDropdown } from "@/app/_/components";
-import { customRevalidateTag, handleFetch } from "@/shared/utils/functions";
+import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
 import { EditAlbumModal } from "./EditAlbumModal";
 import styles from "./styles.module.scss";
@@ -26,7 +26,7 @@ export function AlbumMenuDropdown({ albumId }: { albumId: string }) {
     });
 
     if (response) {
-      customRevalidateTag("/albums");
+      customRevalidatePath("/albums");
       router.push("/albums");
     }
   };

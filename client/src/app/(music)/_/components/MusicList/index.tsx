@@ -14,7 +14,7 @@ import { useAlbums, usePlayer, useSongs } from "@/music/_/hooks";
 import { Album, AlbumSongs, Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { usePlayerStore } from "@/shared/store";
-import { customRevalidateTag, handleFetch } from "@/shared/utils/functions";
+import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
 import { miscIcons } from "../icons/misc";
 import styles from "./styles.module.scss";
@@ -215,7 +215,7 @@ export function MusicList({ data, session }: MusicList) {
       song,
     });
     albumsMutate();
-    customRevalidateTag(`/albums/${album.id}`);
+    customRevalidatePath(`/albums/${album.id}`);
     setCurrentScrollableAlbumId(album.id);
   };
 

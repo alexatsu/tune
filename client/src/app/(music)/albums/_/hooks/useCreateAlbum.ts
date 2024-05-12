@@ -2,7 +2,7 @@ import { Session } from "next-auth";
 import { FormEvent, useRef, useState } from "react";
 
 import { Album } from "@/music/_/types";
-import { customRevalidateTag, handleFetch } from "@/shared/utils/functions";
+import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
 import { generateRandomTwoColorGradient } from "../utils";
 
@@ -35,7 +35,7 @@ export function useCreateAlbum(session: Session | null) {
 
       setModalVisible(false);
       console.log(response);
-      customRevalidateTag("/albums");
+      customRevalidatePath("/albums");
     }
   };
 

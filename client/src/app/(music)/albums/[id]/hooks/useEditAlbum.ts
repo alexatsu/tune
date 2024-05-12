@@ -1,7 +1,7 @@
 import { Session } from "next-auth";
 import { FormEvent, useRef } from "react";
 
-import { customRevalidateTag, handleFetch } from "@/shared/utils/functions";
+import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
 export function useEditAlbum(session: Session | null, albumId: string) {
   const title = useRef<HTMLInputElement>(null);
@@ -21,7 +21,7 @@ export function useEditAlbum(session: Session | null, albumId: string) {
         description: descriptionValue,
       });
 
-      customRevalidateTag(`/albums/${albumId}`);
+      customRevalidatePath(`/albums/${albumId}`);
     }
   };
 

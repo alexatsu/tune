@@ -1,9 +1,9 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
-const customRevalidateTag = (tag: string) => {
-  revalidateTag(tag);
+const customRevalidatePath = (tag: string) => {
+  revalidatePath(tag);
 };
 
-export { customRevalidateTag };
+export { customRevalidatePath };
