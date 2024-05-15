@@ -13,7 +13,7 @@ import { playerIcons } from "@/music/_/components/icons/player";
 import { useAlbums, usePlayer, useSongs } from "@/music/_/hooks";
 import { Album, AlbumSongs, Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
-import { usePlayerStore } from "@/shared/store";
+import { useChillStore, usePlayerStore } from "@/shared/store";
 import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
 import { miscIcons } from "../icons/misc";
@@ -41,14 +41,14 @@ type MusicList = {
 export function MusicList({ data, session }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
-  const { currentSongRef, playerRef } = usePlayerContext();
+  const { currentSongRef, playerRef, volumeRef } = usePlayerContext();
   const {
-    isPlaying,
+    // isPlaying,
     setIsPlaying,
-    handlePlay,
+    // handlePlay,
     currentSong,
     setCurrentSong,
-    handlePause,
+    // handlePause,
     loadPlayerSource,
   } = usePlayerStore();
 
@@ -60,26 +60,74 @@ export function MusicList({ data, session }: MusicList) {
   const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
   const [currentScrollableAlbumId, setCurrentScrollableAlbumId] = useState<string | null>(null);
   const addToAlbumContainerRef = useRef<HTMLDivElement>(null);
+  const {
+    currentId,
+    setCurrentId,
+    isStreaming: isPlaying,
+    setIsStreaming,
+    handlePause,
+    handlePlay,
+    volume,
+    setVolume,
+    handleVolume,
+    toggleMute,
+  } = useChillStore();
+  // const handlePlayById = async (song: Song) => {
+  //   if (currentSongRef.current?.urlId === song.urlId) {
+  //     handlePlay(playerRef);
+  //     setIsPlaying(true);
+  //     return;
+  //   }
 
-  const handlePlayById = async (song: Song) => {
-    if (currentSongRef.current?.urlId === song.urlId) {
-      handlePlay(playerRef);
-      setIsPlaying(true);
+  //   currentSongRef.current = song;
+  //   setCurrentSong(song);
+  //   loadPlayerSource(playerRef, currentSongRef.current);
+  //   handlePlay(playerRef);
+  //   setIsPlaying(true);
+  // };
+  const handlePlayById = (song: Song, volume: number) => {
+    const { urlId, cover, title, duration, id } = song;
+    setIsStreaming(true);
+    setCurrentId(urlId);
+
+    if (currentId === urlId) {
+      playerRef.current?.contentWindow?.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        "*",
+      );
       return;
     }
 
-    currentSongRef.current = song;
-    setCurrentSong(song);
-    loadPlayerSource(playerRef, currentSongRef.current);
-    handlePlay(playerRef);
-    setIsPlaying(true);
-  };
+    if (playerRef.current) {
+      playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
+      currentSongRef.current = {
+        id,
+        url: `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`,
+        cover,
+        title,
+        duration,
+        urlId,
+      };
 
+      setTimeout(() => {
+        playerRef.current?.contentWindow?.postMessage(
+          `{"event":"command","func":"setVolume","args":["${volume}"]}`,
+          "*",
+        );
+        playerRef.current?.contentWindow?.postMessage(
+          '{"event":"command","func":"playVideo","args":""}',
+          "*",
+        );
+      }, 1000);
+
+      setVolume(volumeRef, volume / 100);
+    }
+  };
   const renderPlayButton = (song: Song) => {
-    const iscurrentTrackRef = song.urlId === currentSong?.urlId;
+    const iscurrentTrackRef = song.urlId === currentId;
 
     const playButton = (
-      <div className={styles.notPlaying} onClick={() => handlePlayById(song)}>
+      <div className={styles.notPlaying} onClick={() => handlePlayById(song, volume.value * 100)}>
         <Play />
       </div>
     );
@@ -112,24 +160,24 @@ export function MusicList({ data, session }: MusicList) {
 
     currentAddedSongRef.current = "";
 
-    if (!currentSongRef.current) {
-      const getFirstSong = async (): Promise<SongsResponse> => {
-        const res = await fetch(`/api/songs/get-all`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ session }),
-        });
+    // if (!currentSongRef.current) {
+    //   const getFirstSong = async (): Promise<SongsResponse> => {
+    //     const res = await fetch(`/api/songs/get-all`, {
+    //       method: "POST",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify({ session }),
+    //     });
 
-        const data = await res.json();
-        return data;
-      };
+    //     const data = await res.json();
+    //     return data;
+    //   };
 
-      const firstSong = (await getFirstSong()).songs[0] as Song;
-      currentSongRef.current = firstSong;
-      setCurrentSong(firstSong);
-      loadPlayerSource(playerRef, currentSongRef.current);
-      mutate(`/api/songs/get-all`);
-    }
+    //   const firstSong = (await getFirstSong()).songs[0] as Song;
+    //   currentSongRef.current = firstSong;
+    //   setCurrentSong(firstSong);
+    //   loadPlayerSource(playerRef, currentSongRef.current);
+    //   mutate(`/api/songs/get-all`);
+    // }
     setIsAddingSong(false);
     mutate(`/api/songs/get-all`);
   };

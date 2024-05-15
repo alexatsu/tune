@@ -5,7 +5,9 @@ import { createContext, MutableRefObject, RefObject, useContext, useRef } from "
 import type { Song } from "../../(music)/_/types";
 
 type PlayerContext = {
-  playerRef: RefObject<HTMLAudioElement>;
+  playerRef: RefObject<HTMLIFrameElement>;
+  // playerRef: RefObject<HTMLAudioElement>;
+  volumeRef: React.RefObject<HTMLInputElement>;
   currentSongRef: MutableRefObject<Song | null>;
 };
 
@@ -22,17 +24,20 @@ function usePlayerContext() {
 }
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const playerRef = useRef<HTMLAudioElement | null>(null);
+  const playerRef = useRef<HTMLIFrameElement | null>(null);
+  // const playerRef = useRef<HTMLAudioElement | null>(null);
   const currentSongRef = useRef<Song | null>(null);
+  const volumeRef = useRef<HTMLInputElement>(null);
 
   const values: PlayerContext = {
     playerRef,
     currentSongRef,
+    volumeRef,
   };
 
-  if (typeof window !== "undefined") {
-    playerRef.current = new Audio();
-  }
+  // if (typeof window !== "undefined") {
+  //   playerRef.current = new Audio();
+  // }
 
   return <PlayerContext.Provider value={values}>{children}</PlayerContext.Provider>;
 }

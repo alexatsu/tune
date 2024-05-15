@@ -134,7 +134,6 @@ export function ChillStreamer() {
       )}
 
       <iframe
-        src={`https://www.youtube.com/embed/${currentId}?enablejsapi=1&html5=1`}
         ref={chillRef}
         allow="autoplay; encrypted-media; fullscreen;"
         title="video"
