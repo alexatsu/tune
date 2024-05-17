@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { RefObject, useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
@@ -90,6 +90,28 @@ export function Player() {
   //     return () => setIsPlaying(false);
   //   }
   // }, [currentSongRef, songs, setCurrentSong, setIsPlaying, setVolume, volumeRef, playerRef]);
+  const loadSource = useCallback(
+    (song: Song) => {
+      const { urlId } = song;
+
+      if (playerRef.current) {
+        playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
+        currentSongRef.current = song;
+
+        setTimeout(() => {
+          playerRef.current?.contentWindow?.postMessage(
+            `{"event":"command","func":"setVolume","args":["${volume.value * 100}"]}`,
+            "*",
+          );
+          playerRef.current?.contentWindow?.postMessage(
+            '{"event":"command","func":"playVideo","args":""}',
+            "*",
+          );
+        }, 1000);
+      }
+    },
+    [currentSongRef, playerRef, volume],
+  );
 
   const handleNextTrack = useCallback(() => {
     if (!currentSongRef.current) {
@@ -105,6 +127,7 @@ export function Player() {
       currentSongRef.current = songs[0];
       // loadPlayerSource(playerRef, songs[0]);
       // setCurrentSong(songs[0]);
+      loadSource(songs[0]);
       setCurrentId(songs[0].urlId);
     }
 
@@ -112,12 +135,13 @@ export function Player() {
       currentSongRef.current = songs[trackIndex + 1];
       // loadPlayerSource(playerRef, songs[trackIndex + 1]);
       // setCurrentSong(songs[trackIndex + 1]);
+      loadSource(songs[trackIndex + 1]);
       setCurrentId(songs[trackIndex + 1].urlId);
     }
 
     handlePlay(playerRef, volume.value * 100);
-    // setSeek(0);
-    // updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+    setSeek(0);
+    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
   }, [
     currentSongRef,
     // duration,
@@ -130,86 +154,122 @@ export function Player() {
     // loadPlayerSource,
     setCurrentId,
     volume.value,
+    loadSource,
+    duration,
   ]);
 
-  // const handlePreviousTrack = () => {
-  //   if (!currentSongRef.current) {
-  //     return;
-  //   }
+  const handlePreviousTrack = () => {
+    if (!currentSongRef.current) {
+      return;
+    }
 
-  //   if (!songs) {
-  //     return;
-  //   }
-  //   const trackIndex = songs.indexOf(currentSongRef.current);
+    if (!songs) {
+      return;
+    }
+    const trackIndex = songs.indexOf(currentSongRef.current);
 
-  //   if (trackIndex === 0) {
-  //     currentSongRef.current = songs[songs.length - 1];
-  //     loadPlayerSource(playerRef, songs[songs.length - 1]);
-  //     setCurrentSong(songs[songs.length - 1]);
-  //   }
+    if (trackIndex === 0) {
+      currentSongRef.current = songs[songs.length - 1];
+      // loadPlayerSource(playerRef, songs[songs.length - 1]);
+      // setCurrentSong(songs[songs.length - 1]);
+      setCurrentId(songs[songs.length - 1].urlId);
+      loadSource(songs[songs.length - 1]);
+    }
 
-  //   if (trackIndex > 0) {
-  //     currentSongRef.current = songs[trackIndex - 1];
-  //     loadPlayerSource(playerRef, songs[trackIndex - 1]);
-  //     setCurrentSong(songs[trackIndex - 1]);
-  //   }
+    if (trackIndex > 0) {
+      currentSongRef.current = songs[trackIndex - 1];
+      // loadPlayerSource(playerRef, songs[trackIndex - 1]);
+      // setCurrentSong(songs[trackIndex - 1]);
+      setCurrentId(songs[trackIndex - 1].urlId);
+      loadSource(songs[trackIndex - 1]);
+    }
 
-  //   handlePlay(playerRef);
-  //   setSeek(0);
-  //   updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
-  // };
+    handlePlay(playerRef, volume.value * 100);
+    setSeek(0);
+    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+  };
 
-  // useEffect(() => {
-  //   const player = playerRef.current;
-  //   player?.addEventListener("ended", handleNextTrack);
+  const [seek, setSeek] = useState(0);
 
-  //   return () => {
-  //     player?.removeEventListener("ended", handleNextTrack);
-  //   };
-  // }, [handleNextTrack, playerRef]);
+  useEffect(() => {
+    if (seek >= duration) {
+      handleNextTrack();
+    }
+  }, [duration, handleNextTrack, seek]);
 
-  // useEffect(() => {
-  //   if ((isMobile && soundMobileOpen) || !isMobile) {
-  //     updateProgressBar(volumeRef, `${volume.value * 100}`);
-  //     updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
-  //     updateProgressBar(bufferRef, `${(bufferedTime / duration) * 100}`);
-  //   }
-  // }, [
-  //   playerRef,
-  //   isMobile,
-  //   volumeRef,
-  //   volume.value,
-  //   seek,
-  //   duration,
-  //   bufferRef,
-  //   bufferedTime,
-  //   trackSeekRef,
-  //   soundMobileOpen,
-  // ]);
+  const trackSeekRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if ((isMobile && soundMobileOpen) || !isMobile) {
+      updateProgressBar(volumeRef, `${volume.value * 100}`);
+      updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
+      // updateProgressBar(bufferRef, `${(bufferedTime / duration) * 100}`);
+    }
+  }, [
+    playerRef,
+    isMobile,
+    volumeRef,
+    volume.value,
+    seek,
+    duration,
+    // bufferRef,
+    // bufferedTime,
+    trackSeekRef,
+    soundMobileOpen,
+  ]);
 
-  // const inputs = (
-  //   <>
-  //     <input
-  //       className={styles.trackSeek}
-  //       ref={trackSeekRef}
-  //       type="range"
-  //       min={0}
-  //       value={seek}
-  //       onChange={handleSeekTrack}
-  //       max={duration}
-  //     />
-  //     <input
-  //       className={styles.buffer}
-  //       ref={bufferRef}
-  //       type="range"
-  //       min={0}
-  //       defaultValue={bufferedTime}
-  //       max={duration}
-  //     />
-  //   </>
-  // );
+  const handleSeekTrack = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const seekTime = Number(event.target.value);
+    const player = playerRef.current;
+    console.log(seekTime, "here is the seekTime");
 
-  console.log(currentSongRef.current, playerRef.current);
+    if (player) {
+      // player.currentTime = seekTime;
+      setSeek(seekTime);
+      player.contentWindow?.postMessage(
+        `{"event":"command","func":"seekTo","args":[${seekTime}]}`,
+        "*",
+      );
+      updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`);
+    }
+  };
+
+  useEffect(() => {
+    const updateCurrentTime = setInterval(() => {
+      const player = playerRef.current;
+
+      if (!isPlaying) return;
+
+      if (player) {
+        setSeek((prev) => prev + 1);
+        updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(updateCurrentTime);
+  }, [playerRef, isPlaying, duration, seek]);
+
+  const inputs = (
+    <>
+      <input
+        className={styles.trackSeek}
+        ref={trackSeekRef}
+        type="range"
+        min={0}
+        value={seek}
+        onChange={handleSeekTrack}
+        max={duration}
+      />
+      {/* <input
+        className={styles.buffer}
+        ref={bufferRef}
+        type="range"
+        min={0}
+        defaultValue={bufferedTime}
+        max={duration}
+      /> */}
+    </>
+  );
+
   if (!session) redirect("/signin");
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -229,14 +289,14 @@ export function Player() {
 
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
-              {/* <PreviousTrack onClick={handlePreviousTrack} /> */}
+              <PreviousTrack onClick={handlePreviousTrack} />
               {isPlaying && <Pause onClick={() => handlePause(playerRef)} />}
               {!isPlaying && <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />}
 
               <NextTrack onClick={handleNextTrack} />
             </div>
 
-            {/* <div className={styles.inputsDesktop}>{inputs}</div> */}
+            <div className={styles.inputsDesktop}>{inputs}</div>
 
             <TitleDesktop isLoading={isLoading} currentPlayRef={currentSongRef} />
           </MainTrack>
@@ -250,7 +310,7 @@ export function Player() {
         </PlayerContainer>
       ) : (
         <PlayerContainer className={styles.mobilePlayerContainer}>
-          {/* <div className={styles.inputsMobile}>{inputs}</div> */}
+          <div className={styles.inputsMobile}>{inputs}</div>
 
           {soundMobileOpen ? (
             <SoundMobile

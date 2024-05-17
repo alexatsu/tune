@@ -100,14 +100,7 @@ export function MusicList({ data, session }: MusicList) {
 
     if (playerRef.current) {
       playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
-      currentSongRef.current = {
-        id,
-        url: `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`,
-        cover,
-        title,
-        duration,
-        urlId,
-      };
+      currentSongRef.current = song;
 
       setTimeout(() => {
         playerRef.current?.contentWindow?.postMessage(
@@ -209,6 +202,7 @@ export function MusicList({ data, session }: MusicList) {
     });
 
     mutate(`/api/songs/get-all`);
+    setOpenDropdownIndex(null);
   };
 
   const handleMusicListDropdownToggle = useCallback(
