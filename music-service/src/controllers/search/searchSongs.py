@@ -1,5 +1,5 @@
-import yt_dlp
-
+import json
+import subprocess
 from models.audio import Search
 from utils.functions import format_duration
 
@@ -10,26 +10,38 @@ data = {
 
 
 def search_songs(query: Search):
-    with yt_dlp.YoutubeDL(data) as ydl:
-        video_results = ydl.extract_info(f"ytsearch5:{query}", download=False)
+    command = [
+        "yt-dlp",
+        "ytsearch{}:{}".format(5, query),
+        "--dump-json",
+        "--default-search",
+        "--no-playlist",
+        "--no-check-certificate",
+        "--geo-bypass",
+        "--flat-playlist",
+        "--skip-download",
+        "--quiet",
+        "--ignore-errors",
+    ]
+    try:
+        # Get the output and analyze it
+        output = subprocess.check_output(command).decode("utf-8")
+        videos = [json.loads(line) for line in output.splitlines()]
+        # Simplify the results for displaying to the user
+        simplified_results = []
+        for video in videos:
+            simplified_results.append(
+                {
+                    "title": video.get("title", "N/A"),
+                    "urlId": video.get("id", "N/A"),
+                    "url": video.get("original_url", "N/A"),
+                    "duration": format_duration(video.get("duration", 0)),
+                    "cover": video.get("thumbnails", "N/A")[0].get("url", "N/A"),
+                }
+            )
 
-        if video_results:
-            video_entries: list = video_results["entries"]
+        print(simplified_results)
+        return {"songs": simplified_results, "music_type": "search"}
 
-            get_songs_data = []
-            for video in video_entries:
-                try:
-                    song_data = {
-                        "urlId": video["id"],
-                        "title": video["title"],
-                        "url": video["original_url"],
-                        "cover": video.get("thumbnail", None),
-                        "duration": format_duration(video.get("duration", None)),
-                    }
-                    get_songs_data.append(song_data)
-
-                except Exception as e:
-                    print(f"Error processing song: {e}")
-                    continue  # Skip to the next song
-
-            return {"songs": get_songs_data, "music_type": "search"}
+    except subprocess.CalledProcessError:
+        return []
