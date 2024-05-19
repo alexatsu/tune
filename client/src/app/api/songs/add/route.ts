@@ -2,19 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { Session } from "next-auth";
 
 import { db } from "@/api/_/services";
-
-type Props = {
-  session: Session;
-  url: string;
-  id: string;
-  title: string;
-  cover: string;
-  duration: string;
-};
+import { Song } from "@/app/(music)/_/types";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { session, url, id, title, duration, cover }: Props = body;
+  const { session, url, urlId, title, duration, cover }: Song & { session: Session } = body;
 
   if (!session) {
     return NextResponse.json({ user: null, message: "Session is required" }, { status: 404 });
@@ -33,7 +25,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ user: null, message: "User not found" }, { status: 404 });
   }
 
-  const checkIfSongAlreadyExist = findUser.Songs.find((song) => song.urlId === id);
+  const checkIfSongAlreadyExist = findUser.Songs.find((song) => song.urlId === urlId);
 
   if (checkIfSongAlreadyExist) {
     return NextResponse.json(
@@ -47,7 +39,7 @@ export async function POST(req: NextRequest) {
       title,
       duration,
       url,
-      urlId: id,
+      urlId,
       cover: cover,
       addedAt: new Date(),
       userId: findUser.id,

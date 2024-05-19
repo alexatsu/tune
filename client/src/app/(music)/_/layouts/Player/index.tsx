@@ -40,7 +40,6 @@ export function Player() {
     volumeRef,
     currentPayload,
   } = usePlayerContext();
-  console.log(currentPayload, " here is the current payload");
   const pathname = usePathname();
   const isMobile = useMobile(576);
   const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
@@ -169,7 +168,6 @@ export function Player() {
   const handleSeekTrack = (event: React.ChangeEvent<HTMLInputElement>) => {
     const seekTime = Number(event.target.value);
     const player = playerRef.current;
-    console.log(seekTime, "here is the seekTime");
 
     if (player) {
       setSeek(seekTime);

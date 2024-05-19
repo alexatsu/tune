@@ -128,13 +128,13 @@ export function MusicList({ data, session }: MusicList) {
   };
 
   const addSongToMyMusic = async (song: Song) => {
-    const { url, id, title, duration, cover } = song;
+    const { url, urlId, title, duration, cover } = song;
     setIsAddingSong(true);
-    currentAddedSongRef.current = id;
+    currentAddedSongRef.current = urlId;
 
     const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/add`, "POST", {
       url,
-      id,
+      urlId,
       title,
       duration,
       cover,
@@ -148,7 +148,7 @@ export function MusicList({ data, session }: MusicList) {
   };
 
   const renderAddButton = (song: Song & { isAdded?: boolean }) => {
-    const ifIsSongID = song.id === currentAddedSongRef.current;
+    const ifIsSongID = song.urlId === currentAddedSongRef.current;
     const isSongInDB = userSongs?.songs.find((userSong) => userSong.urlId === song.urlId);
 
     if (isAddingSong && ifIsSongID) {
@@ -326,7 +326,7 @@ export function MusicList({ data, session }: MusicList) {
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
         {data?.songs?.map((song, index) => (
-          <div className={styles.liWrapper} key={song.id}>
+          <div className={styles.liWrapper} key={song.urlId}>
             <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
                 <div className={styles.imageBlock}>

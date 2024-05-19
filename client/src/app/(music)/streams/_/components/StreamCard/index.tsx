@@ -14,8 +14,6 @@ export function StreamCard({ stream, data }: { stream: Stream; data: StreamRespo
   const { currentSongOrStreamRef, playerRef, currentPayload } = usePlayerContext();
 
   const handleStreamById = (stream: Stream, volume: number) => {
-    console.log(stream, " here is the stream");
-
     if (!currentPayload.current || currentPayload.current.type !== data.type) {
       currentPayload.current = {
         songsOrStreams: data.streams,
@@ -44,7 +42,6 @@ export function StreamCard({ stream, data }: { stream: Stream; data: StreamRespo
   };
 
   const togglePlay = () => {
-    console.log(stream.urlId, " here is the url id");
     if (isStreaming && currentId === stream.urlId) {
       handlePause(playerRef);
     } else {
