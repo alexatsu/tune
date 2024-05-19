@@ -1,17 +1,16 @@
-import { PlayerOrChillWrapper } from "./_/components/PlayerOrChillWrapper";
-import { DesktopNavigationBar, MobileNavigationbar } from "./_/layouts";
-import { ChillStreamerProvider } from "./_/providers/ChillStreamerProvider";
+import { DesktopNavigationBar, MobileNavigationbar, Player } from "./_/layouts";
+import { StreamProvider } from "./_/providers/StreamProvider";
 import styles from "./layout.module.scss";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <ChillStreamerProvider>
+    <StreamProvider>
       <main className={styles.container}>
         <DesktopNavigationBar />
         {children}
       </main>
-      <PlayerOrChillWrapper />
+      <Player />
       <MobileNavigationbar />
-    </ChillStreamerProvider>
+    </StreamProvider>
   );
 }

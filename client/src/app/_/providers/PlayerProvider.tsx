@@ -2,11 +2,18 @@
 
 import { createContext, MutableRefObject, RefObject, useContext, useRef } from "react";
 
-import type { Song } from "../../(music)/_/types";
+import type { AlbumSongs, Song } from "@/music/_/types";
+import { Stream } from "@/music/_/types";
 
 type PlayerContext = {
-  playerRef: RefObject<HTMLAudioElement>;
-  currentSongRef: MutableRefObject<Song | null>;
+  playerRef: RefObject<HTMLIFrameElement>;
+  volumeRef: React.RefObject<HTMLInputElement>;
+  currentSongOrStreamRef: MutableRefObject<Song | Stream | null>;
+  currentPayload: MutableRefObject<{
+    songsOrStreams: (Song | Stream | AlbumSongs)[];
+    type: string | undefined;
+    id?: string;
+  } | null>;
 };
 
 const PlayerContext = createContext<PlayerContext | null>(null);
@@ -22,17 +29,17 @@ function usePlayerContext() {
 }
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const playerRef = useRef<HTMLAudioElement | null>(null);
-  const currentSongRef = useRef<Song | null>(null);
+  const playerRef = useRef<HTMLIFrameElement | null>(null);
+  const currentSongOrStreamRef = useRef<Song | Stream | null>(null);
+  const volumeRef = useRef<HTMLInputElement>(null);
+  const currentPayload = useRef(null);
 
   const values: PlayerContext = {
     playerRef,
-    currentSongRef,
+    currentSongOrStreamRef,
+    volumeRef,
+    currentPayload,
   };
-
-  if (typeof window !== "undefined") {
-    playerRef.current = new Audio();
-  }
 
   return <PlayerContext.Provider value={values}>{children}</PlayerContext.Provider>;
 }

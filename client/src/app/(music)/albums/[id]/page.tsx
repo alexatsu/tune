@@ -19,6 +19,8 @@ const fetchAlbumById = async (id: string) => {
   const musicList = {
     songs: userAlbum?.albumSongs || ([] as AlbumSongs[]),
     message: `success, albumId is ${id}`,
+    type: "album",
+    id,
   };
 
   await db.$disconnect();

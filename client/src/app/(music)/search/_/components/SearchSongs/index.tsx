@@ -1,4 +1,5 @@
 "use client";
+import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useState } from "react";
 
@@ -16,6 +17,8 @@ function SearchSongs() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [input, setInput] = useState("");
+
+  if (!session) redirect("/signin");
 
   const searchSongsFromQuery = useCallback(async () => {
     if (isLoading) {
@@ -68,6 +71,7 @@ function SearchSongs() {
   const payload = {
     songs: data?.songs || [],
     message: data?.message || "",
+    type: "search",
   };
 
   return (
@@ -90,18 +94,7 @@ function SearchSongs() {
           <p style={{ color: "white", marginBottom: "10px" }}>
             Something went wrong. Error message: {error.message}
           </p>
-          <button
-            style={{
-              color: "white",
-              backgroundColor: "var(--widget-bg)",
-              padding: "0.5rem",
-              borderRadius: "10px",
-
-              border: "none",
-              cursor: "pointer",
-            }}
-            onClick={handleErrorRecovery}
-          >
+          <button className={styles.buttonRetry} onClick={handleErrorRecovery}>
             Retry
           </button>
         </div>
@@ -111,7 +104,7 @@ function SearchSongs() {
           <Skeleton className={styles.musicListSkeleton} />
         </div>
       ) : (
-        <MusicList data={payload} session={session!} />
+        <MusicList data={payload} session={session} />
       )}
     </>
   );

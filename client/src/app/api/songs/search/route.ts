@@ -37,5 +37,12 @@ export async function POST(request: NextRequest) {
 
   await db.$disconnect();
 
-  return NextResponse.json({ songs: attachIsAddedToSongs, message: "success" }, { status: 200 });
+  const payload = {
+    type: "search",
+  };
+
+  return NextResponse.json(
+    { songs: attachIsAddedToSongs, message: "success", payload },
+    { status: 200 },
+  );
 }

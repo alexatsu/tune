@@ -25,8 +25,13 @@ export async function POST(req: NextRequest) {
 
   await db.$disconnect();
 
+  const payload = {
+    type: "albumId",
+    id,
+  };
+
   return NextResponse.json(
-    { album: userAlbum, message: "Albums fetched successfully" },
+    { album: userAlbum, message: "Albums fetched successfully", payload },
     { status: 200 },
   );
 }

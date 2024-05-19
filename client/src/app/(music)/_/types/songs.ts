@@ -12,6 +12,7 @@ type Song = {
 type SongsResponse = {
   message: string;
   songs: Song[];
+  type: string;
 };
 
 export type { Song, SongsResponse };

@@ -13,7 +13,7 @@ import { playerIcons } from "@/music/_/components/icons/player";
 import { useAlbums, usePlayer, useSongs } from "@/music/_/hooks";
 import { Album, AlbumSongs, Song, SongsResponse } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
-import { usePlayerStore } from "@/shared/store";
+import { useStreamStore } from "@/shared/store";
 import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
 import { miscIcons } from "../icons/misc";
@@ -34,52 +34,83 @@ const formatedDuration = (duration: string) => {
 };
 
 type MusicList = {
-  data: { songs: Song[] | AlbumSongs[]; message: string };
+  data: {
+    songs: Song[] | AlbumSongs[];
+    message: string;
+
+    type: string | undefined;
+    id?: string | undefined;
+  };
   session: Session;
 };
 
 export function MusicList({ data, session }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
-  const { currentSongRef, playerRef } = usePlayerContext();
-  const {
-    isPlaying,
-    setIsPlaying,
-    handlePlay,
-    currentSong,
-    setCurrentSong,
-    handlePause,
-    loadPlayerSource,
-  } = usePlayerStore();
-
+  const { currentSongOrStreamRef, playerRef, currentPayload } = usePlayerContext();
   const { data: userSongs } = useSongs(session);
+
   const [isAddingSong, setIsAddingSong] = useState(false);
   const currentAddedSongRef = useRef("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
   const [isSongInTheAlbumAccordionOpen, setIsSongInTheAlbumAccordionOpen] = useState(false);
-  const { albums, albumsMutate, albumsError, albumsIsLoading } = useAlbums();
+
+  const { albums, albumsMutate, albumsIsLoading } = useAlbums();
   const [currentScrollableAlbumId, setCurrentScrollableAlbumId] = useState<string | null>(null);
   const addToAlbumContainerRef = useRef<HTMLDivElement>(null);
+  const {
+    currentId,
+    setCurrentId,
+    isStreaming: isPlaying,
+    setIsStreaming,
+    handlePause,
+    volume,
+    setSeek,
+  } = useStreamStore();
 
-  const handlePlayById = async (song: Song) => {
-    if (currentSongRef.current?.urlId === song.urlId) {
-      handlePlay(playerRef);
-      setIsPlaying(true);
+  const handlePlayById = (song: Song, volume: number) => {
+    const { urlId } = song;
+    setIsStreaming(true);
+    setCurrentId(urlId);
+    setSeek(0);
+
+    if (!currentPayload.current || currentPayload.current.type !== data.type) {
+      currentPayload.current = {
+        songsOrStreams: data.songs,
+        type: data.type,
+      };
+    }
+
+    if (currentId === urlId) {
+      playerRef.current?.contentWindow?.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        "*",
+      );
       return;
     }
 
-    currentSongRef.current = song;
-    setCurrentSong(song);
-    loadPlayerSource(playerRef, currentSongRef.current);
-    handlePlay(playerRef);
-    setIsPlaying(true);
+    if (playerRef.current) {
+      playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
+      currentSongOrStreamRef.current = song;
+
+      setTimeout(() => {
+        playerRef.current?.contentWindow?.postMessage(
+          `{"event":"command","func":"setVolume","args":["${volume}"]}`,
+          "*",
+        );
+        playerRef.current?.contentWindow?.postMessage(
+          '{"event":"command","func":"playVideo","args":""}',
+          "*",
+        );
+      }, 1000);
+    }
   };
 
   const renderPlayButton = (song: Song) => {
-    const iscurrentTrackRef = song.urlId === currentSong?.urlId;
+    const iscurrentTrackRef = song.urlId === currentId;
 
     const playButton = (
-      <div className={styles.notPlaying} onClick={() => handlePlayById(song)}>
+      <div className={styles.notPlaying} onClick={() => handlePlayById(song, volume.value * 100)}>
         <Play />
       </div>
     );
@@ -89,7 +120,7 @@ export function MusicList({ data, session }: MusicList) {
       </div>
     );
 
-    if (isPlaying && iscurrentTrackRef) {
+    if (isPlaying && iscurrentTrackRef && currentPayload.current?.type === data.type) {
       return pauseButton;
     } else {
       return playButton;
@@ -112,31 +143,13 @@ export function MusicList({ data, session }: MusicList) {
 
     currentAddedSongRef.current = "";
 
-    if (!currentSongRef.current) {
-      const getFirstSong = async (): Promise<SongsResponse> => {
-        const res = await fetch(`/api/songs/get-all`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ session }),
-        });
-
-        const data = await res.json();
-        return data;
-      };
-
-      const firstSong = (await getFirstSong()).songs[0] as Song;
-      currentSongRef.current = firstSong;
-      setCurrentSong(firstSong);
-      loadPlayerSource(playerRef, currentSongRef.current);
-      mutate(`/api/songs/get-all`);
-    }
     setIsAddingSong(false);
     mutate(`/api/songs/get-all`);
   };
 
   const renderAddButton = (song: Song & { isAdded?: boolean }) => {
     const ifIsSongID = song.id === currentAddedSongRef.current;
-    const isSongInDB = userSongs?.songs.find((userSong) => userSong.urlId === song.id);
+    const isSongInDB = userSongs?.songs.find((userSong) => userSong.urlId === song.urlId);
 
     if (isAddingSong && ifIsSongID) {
       return <LoadingCircle />;
@@ -161,6 +174,7 @@ export function MusicList({ data, session }: MusicList) {
     });
 
     mutate(`/api/songs/get-all`);
+    setOpenDropdownIndex(null);
   };
 
   const handleMusicListDropdownToggle = useCallback(
@@ -316,7 +330,7 @@ export function MusicList({ data, session }: MusicList) {
             <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
                 <div className={styles.imageBlock}>
-                  {pathname !== "/search" && renderPlayButton(song)}
+                  {renderPlayButton(song)}
                   <Image
                     src={song.cover || ""}
                     alt={song.title}
@@ -341,7 +355,7 @@ export function MusicList({ data, session }: MusicList) {
               </div>
             </li>
 
-            {pathname === "/search" && <SongPreview song={song} />}
+            {/* {pathname === "/search" && <SongPreview song={song} />} */}
           </div>
         ))}
       </ul>

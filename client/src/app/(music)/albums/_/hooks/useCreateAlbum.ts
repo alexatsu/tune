@@ -1,8 +1,9 @@
 import { Session } from "next-auth";
 import { FormEvent, useRef, useState } from "react";
 
+import { useAlbums } from "@/app/(music)/_/hooks";
 import { Album } from "@/music/_/types";
-import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
+import { handleFetch } from "@/shared/utils/functions";
 
 import { generateRandomTwoColorGradient } from "../utils";
 
@@ -10,6 +11,7 @@ export function useCreateAlbum(session: Session | null) {
   const title = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLInputElement>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const { albumsMutate } = useAlbums();
 
   const createAlbum = async (event: FormEvent<HTMLButtonElement>) => {
     const [gradient1, gradient2] = generateRandomTwoColorGradient();
@@ -34,8 +36,7 @@ export function useCreateAlbum(session: Session | null) {
       );
 
       setModalVisible(false);
-      console.log(response);
-      customRevalidatePath("/albums");
+      albumsMutate();
     }
   };
 

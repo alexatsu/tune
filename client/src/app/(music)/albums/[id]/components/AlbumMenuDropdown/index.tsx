@@ -4,7 +4,8 @@ import { useSession } from "next-auth/react";
 import { useRef, useState } from "react";
 
 import { MenuDropdown } from "@/app/_/components";
-import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
+import { useAlbums } from "@/app/(music)/_/hooks";
+import { handleFetch } from "@/shared/utils/functions";
 
 import { EditAlbumModal } from "./EditAlbumModal";
 import styles from "./styles.module.scss";
@@ -18,6 +19,7 @@ export function AlbumMenuDropdown({ albumId }: { albumId: string }) {
   const [isDeletingAlbum, setIsDeletingAlbum] = useState(false);
   const deleteIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const { albumsMutate } = useAlbums();
 
   const handleDeleteAlbum = async () => {
     const response = await handleFetch("/api/albums/delete", "POST", {
@@ -26,7 +28,7 @@ export function AlbumMenuDropdown({ albumId }: { albumId: string }) {
     });
 
     if (response) {
-      customRevalidatePath("/albums");
+      albumsMutate();
       router.push("/albums");
     }
   };

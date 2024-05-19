@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { RefObject, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
@@ -15,9 +15,10 @@ import {
   SoundMobile,
   TitleDesktop,
 } from "@/music/_/components/Player|Streamer";
-import { useMobile, usePlayer, useSongs } from "@/music/_/hooks";
+import { useMobile } from "@/music/_/hooks";
+import { Stream } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
-import { usePlayerStore } from "@/shared/store";
+import { useStreamStore } from "@/shared/store";
 
 import { Song } from "../../types";
 import styles from "./styles.module.scss";
@@ -33,144 +34,168 @@ const convertStringDurationToNumber = (duration: string | undefined) => {
 
 export function Player() {
   const { data: session } = useSession();
-  const { playerRef, currentSongRef } = usePlayerContext();
-  const { isPlaying, setCurrentSong, handlePlay, handlePause, setIsPlaying, loadPlayerSource } =
-    usePlayerStore();
-  const { error, isLoading, songs } = useSongs(session);
-
+  const {
+    playerRef,
+    currentSongOrStreamRef: currentSongRef,
+    volumeRef,
+    currentPayload,
+  } = usePlayerContext();
+  console.log(currentPayload, " here is the current payload");
+  const pathname = usePathname();
   const isMobile = useMobile(576);
   const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
 
   const {
-    volumeRef,
+    setCurrentId,
+    isStreaming,
+    handlePause,
+    handlePlay,
     volume,
-    handleVolumeChange,
-    handleMute,
-    bufferRef,
-    bufferedTime,
-    trackSeekRef,
+    setVolume,
+    handleVolume,
+    toggleMute,
     seek,
     setSeek,
-    handleSeekTrack,
-    setVolume,
-  } = usePlayer(playerRef);
-
+  } = useStreamStore();
   const [soundMobileOpen, setSoundMobileOpen] = useState(false);
+  const trackSeekRef = useRef<HTMLInputElement>(null);
+  // const [seek, setSeek] = useState(0);
 
-  useEffect(() => {
-    if (songs) {
-      currentSongRef.current = songs[0];
-      setCurrentSong(songs[0]);
-
-      const initialVolume = 0.3;
+  const loadSource = useCallback(
+    (songOrStream: Song | Stream) => {
+      const { urlId } = songOrStream;
 
       if (playerRef.current) {
-        playerRef.current.src = currentSongRef.current?.url
-          ? `/api/songs/stream?url=${currentSongRef.current?.url}`
-          : "";
-        playerRef.current.preload = "auto";
-        playerRef.current.style.display = "none";
-        playerRef.current.volume = initialVolume;
+        playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
+        currentSongRef.current = songOrStream;
+
+        setTimeout(() => {
+          playerRef.current?.contentWindow?.postMessage(
+            `{"event":"command","func":"setVolume","args":["${volume.value * 100}"]}`,
+            "*",
+          );
+          playerRef.current?.contentWindow?.postMessage(
+            '{"event":"command","func":"playVideo","args":""}',
+            "*",
+          );
+        }, 1000);
       }
-
-      setVolume({ value: initialVolume, muted: false });
-      updateProgressBar(volumeRef, `${initialVolume * 100}`);
-
-      return () => setIsPlaying(false);
-    }
-  }, [currentSongRef, songs, setCurrentSong, setIsPlaying, setVolume, volumeRef, playerRef]);
+    },
+    [currentSongRef, playerRef, volume],
+  );
 
   const handleNextTrack = useCallback(() => {
+    const { songsOrStreams } = currentPayload.current || {};
     if (!currentSongRef.current) {
       return;
     }
 
-    if (!songs) {
-      return;
-    }
-    const trackIndex = songs.indexOf(currentSongRef.current);
+    const trackIndex = songsOrStreams?.indexOf(currentSongRef.current) || 0;
 
-    if (trackIndex === songs.length - 1) {
-      currentSongRef.current = songs[0];
-      loadPlayerSource(playerRef, songs[0]);
-      setCurrentSong(songs[0]);
-    }
+    if (songsOrStreams) {
+      if (trackIndex === songsOrStreams.length - 1) {
+        currentSongRef.current = songsOrStreams[0];
 
-    if (trackIndex < songs.length - 1) {
-      currentSongRef.current = songs[trackIndex + 1];
-      loadPlayerSource(playerRef, songs[trackIndex + 1]);
-      setCurrentSong(songs[trackIndex + 1]);
-    }
+        loadSource(songsOrStreams[0]);
+        setCurrentId(songsOrStreams[0].urlId);
+      }
 
-    handlePlay(playerRef);
-    setSeek(0);
-    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+      if (trackIndex < songsOrStreams.length - 1) {
+        currentSongRef.current = songsOrStreams[trackIndex + 1];
+
+        loadSource(songsOrStreams[trackIndex + 1]);
+        setCurrentId(songsOrStreams[trackIndex + 1].urlId);
+      }
+
+      handlePlay(playerRef, volume.value * 100);
+      setSeek(0);
+      updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+    }
   }, [
     currentSongRef,
-    duration,
     handlePlay,
     playerRef,
-    setCurrentSong,
+    setCurrentId,
+    volume.value,
+    loadSource,
+    duration,
+    currentPayload,
     setSeek,
-    songs,
-    trackSeekRef,
-    loadPlayerSource,
   ]);
 
   const handlePreviousTrack = () => {
+    const { songsOrStreams } = currentPayload.current || {};
     if (!currentSongRef.current) {
       return;
     }
 
-    if (!songs) {
-      return;
-    }
-    const trackIndex = songs.indexOf(currentSongRef.current);
+    const trackIndex = songsOrStreams?.indexOf(currentSongRef.current) || 0;
 
-    if (trackIndex === 0) {
-      currentSongRef.current = songs[songs.length - 1];
-      loadPlayerSource(playerRef, songs[songs.length - 1]);
-      setCurrentSong(songs[songs.length - 1]);
-    }
+    if (songsOrStreams) {
+      if (trackIndex === 0) {
+        currentSongRef.current = songsOrStreams[songsOrStreams.length - 1];
 
-    if (trackIndex > 0) {
-      currentSongRef.current = songs[trackIndex - 1];
-      loadPlayerSource(playerRef, songs[trackIndex - 1]);
-      setCurrentSong(songs[trackIndex - 1]);
-    }
+        setCurrentId(songsOrStreams[songsOrStreams.length - 1].urlId);
+        loadSource(songsOrStreams[songsOrStreams.length - 1]);
+      }
 
-    handlePlay(playerRef);
-    setSeek(0);
-    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+      if (trackIndex > 0) {
+        currentSongRef.current = songsOrStreams[trackIndex - 1];
+
+        setCurrentId(songsOrStreams[trackIndex - 1].urlId);
+        loadSource(songsOrStreams[trackIndex - 1]);
+      }
+
+      handlePlay(playerRef, volume.value * 100);
+      setSeek(0);
+      updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+    }
   };
 
   useEffect(() => {
-    const player = playerRef.current;
-    player?.addEventListener("ended", handleNextTrack);
-
-    return () => {
-      player?.removeEventListener("ended", handleNextTrack);
-    };
-  }, [handleNextTrack, playerRef]);
+    if (currentPayload.current?.type === "streams") return;
+    if (seek >= duration) {
+      handleNextTrack();
+    }
+  }, [duration, handleNextTrack, seek, currentPayload]);
 
   useEffect(() => {
     if ((isMobile && soundMobileOpen) || !isMobile) {
       updateProgressBar(volumeRef, `${volume.value * 100}`);
       updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
-      updateProgressBar(bufferRef, `${(bufferedTime / duration) * 100}`);
     }
-  }, [
-    playerRef,
-    isMobile,
-    volumeRef,
-    volume.value,
-    seek,
-    duration,
-    bufferRef,
-    bufferedTime,
-    trackSeekRef,
-    soundMobileOpen,
-  ]);
+  }, [playerRef, isMobile, volumeRef, volume.value, seek, duration, trackSeekRef, soundMobileOpen]);
+
+  const handleSeekTrack = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const seekTime = Number(event.target.value);
+    const player = playerRef.current;
+    console.log(seekTime, "here is the seekTime");
+
+    if (player) {
+      setSeek(seekTime);
+      player.contentWindow?.postMessage(
+        `{"event":"command","func":"seekTo","args":[${seekTime}]}`,
+        "*",
+      );
+      updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`);
+    }
+  };
+
+  useEffect(() => {
+    if (currentPayload.current?.type === "streams") return;
+    const updateCurrentTime = setInterval(() => {
+      const player = playerRef.current;
+
+      if (!isStreaming) return;
+
+      if (player) {
+        setSeek(seek + 1);
+        updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(updateCurrentTime);
+  }, [playerRef, isStreaming, duration, seek, currentPayload, setSeek]);
 
   const inputs = (
     <>
@@ -183,50 +208,62 @@ export function Player() {
         onChange={handleSeekTrack}
         max={duration}
       />
-      <input
+      {/* <input
         className={styles.buffer}
         ref={bufferRef}
         type="range"
         min={0}
         defaultValue={bufferedTime}
         max={duration}
-      />
+      /> */}
     </>
   );
 
-  console.log(currentSongRef.current, playerRef.current);
   if (!session) redirect("/signin");
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    updateProgressBar(volumeRef, `${value}`);
+
+    if (playerRef.current) {
+      handleVolume(playerRef, +value);
+      setVolume(volumeRef, +value / 100);
+    }
+  };
 
   return (
     <>
       {!isMobile ? (
         <PlayerContainer className={styles.desktopPlayerContainer}>
-          <ImageBlockDesktop isLoading={isLoading} currentPlayRef={currentSongRef} />
+          <ImageBlockDesktop currentPlayRef={currentSongRef} />
 
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
               <PreviousTrack onClick={handlePreviousTrack} />
-              {isPlaying && <Pause onClick={() => handlePause(playerRef)} />}
-              {!isPlaying && <Play onClick={() => handlePlay(playerRef)} />}
+              {isStreaming && <Pause onClick={() => handlePause(playerRef)} />}
+              {!isStreaming && <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />}
 
               <NextTrack onClick={handleNextTrack} />
             </div>
 
-            <div className={styles.inputsDesktop}>{inputs}</div>
+            {currentPayload.current?.type !== "streams" ? (
+              <div className={styles.inputsDesktop}>{inputs}</div>
+            ) : (
+              <div className="filler" style={{ visibility: "hidden", height: "2rem" }}></div>
+            )}
 
-            <TitleDesktop isLoading={isLoading} currentPlayRef={currentSongRef} />
+            <TitleDesktop currentPlayRef={currentSongRef} />
           </MainTrack>
 
           <SoundDesktop
             volume={volume}
-            handleMute={handleMute}
+            handleMute={() => toggleMute(playerRef, volumeRef)}
             handleVolumeChange={handleVolumeChange}
             volumeRef={volumeRef}
           />
         </PlayerContainer>
       ) : (
         <PlayerContainer className={styles.mobilePlayerContainer}>
-          <div className={styles.inputsMobile}>{inputs}</div>
+          {pathname !== "/streams" && <div className={styles.inputsMobile}>{inputs}</div>}
 
           {soundMobileOpen ? (
             <SoundMobile
@@ -248,8 +285,8 @@ export function Player() {
                   />
                 )}
 
-                {isPlaying && <Pause onClick={() => handlePause(playerRef)} />}
-                {!isPlaying && <Play onClick={() => handlePlay(playerRef)} />}
+                {isStreaming && <Pause onClick={() => handlePause(playerRef)} />}
+                {!isStreaming && <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />}
               </div>
 
               <div className={styles.title}>{currentSongRef.current?.title || ""}</div>
@@ -261,14 +298,13 @@ export function Player() {
         </PlayerContainer>
       )}
 
-      {/* <audio
-        src={
-          currentSongRef.current?.url ? `/api/songs/stream?url=${currentSongRef.current?.url}` : ""
-        }
-        preload={"auto"}
-        style={{ display: "none" }}
+      <iframe
         ref={playerRef}
-      /> */}
+        allow="autoplay; encrypted-media; fullscreen;"
+        title="video"
+        allowFullScreen
+        style={{ display: "none" }}
+      />
     </>
   );
 }

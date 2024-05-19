@@ -1,16 +1,16 @@
 import fs from "fs";
 import cron from "node-cron";
 
-import { ChillStreamResponse } from "@/shared/utils/types";
+import { StreamResponse } from "@/music/_/types";
 
-export const filePath = "./src/app/api/chill/stream/chill-stream-info.json";
+export const filePath = "./src/app/api/streams/all/stream-info.json";
 
 export async function extractStreamInfo() {
   const response = await fetch(`${process.env.MUSIC_SERVICE_CONTAINER}/chill/extract`, {
     headers: { "Content-Type": "application/json" },
   });
 
-  const data = (await response.json()) as ChillStreamResponse;
+  const data = (await response.json()) as StreamResponse;
 
   try {
     fs.writeFileSync(filePath, JSON.stringify(data));

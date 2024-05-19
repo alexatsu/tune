@@ -1,4 +1,4 @@
-export function Chill() {
+export function Stream() {
   return (
     <svg
       width="24"
