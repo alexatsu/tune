@@ -20,5 +20,6 @@ export async function GET() {
   }
 
   const streams = await readFromJson();
-  return NextResponse.json({ message: "success", streams }, { status: 307 });
+
+  return NextResponse.json({ message: "success", streams, type: "streams" }, { status: 307 });
 }

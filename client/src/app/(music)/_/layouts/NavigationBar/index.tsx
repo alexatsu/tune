@@ -11,7 +11,7 @@ import { useAlbums, useMobile } from "@/music/_/hooks";
 import { Album } from "../../types";
 import styles from "./styles.module.scss";
 
-const { Music, Search, Albums, Chill } = navigationIcons;
+const { Music, Search, Albums, Stream } = navigationIcons;
 
 const list = (pathname: string, currentAlbum: Album | null) => {
   const checkId = pathname.split("/");
@@ -40,7 +40,7 @@ const list = (pathname: string, currentAlbum: Album | null) => {
       ),
     },
     {
-      path: "/chill",
+      path: "/streams",
       icon: <SiClyp color="#515253" size={22} />,
     },
   ];

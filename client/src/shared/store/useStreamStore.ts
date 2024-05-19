@@ -3,15 +3,15 @@ import { create } from "zustand";
 
 import { updateProgressBar } from "@/music/_/utils/functions";
 
-type ChillStore = {
+type StreamStore = {
   currentId: string;
   setCurrentId: (value: string) => void;
 
   isStreaming: boolean;
   setIsStreaming: (value: boolean) => void;
-  handleLoad: (chillRef: RefObject<HTMLIFrameElement>) => void;
-  handlePlay: (chillRef: RefObject<HTMLIFrameElement>, volume: number) => void;
-  handlePause: (chillRef: RefObject<HTMLIFrameElement>) => void;
+  handleLoad: (streamRef: RefObject<HTMLIFrameElement>) => void;
+  handlePlay: (streamRef: RefObject<HTMLIFrameElement>, volume: number) => void;
+  handlePause: (streamRef: RefObject<HTMLIFrameElement>) => void;
 
   volume: {
     value: number;
@@ -19,42 +19,44 @@ type ChillStore = {
   };
   setVolume: (volumeRef: RefObject<HTMLInputElement>, value: number) => void;
   toggleMute: (
-    chillRef: RefObject<HTMLIFrameElement>,
+    streamRef: RefObject<HTMLIFrameElement>,
     volumeRef: RefObject<HTMLInputElement>,
   ) => void;
-  handleVolume: (chillRef: RefObject<HTMLIFrameElement>, volume: number) => void;
+  handleVolume: (streamRef: RefObject<HTMLIFrameElement>, volume: number) => void;
 };
 
-const useChillStore = create<ChillStore>((set, get) => ({
+const useStreamStore = create<StreamStore>((set, get) => ({
   currentId: "",
   setCurrentId: (value) => set({ currentId: value }),
 
   isStreaming: false,
   setIsStreaming: (value) => set({ isStreaming: value }),
-  handleLoad: (chillRef) => {
-    if (chillRef.current) {
-      chillRef.current.contentWindow?.postMessage(
+  handleLoad: (streamRef) => {
+    if (streamRef.current) {
+      streamRef.current.contentWindow?.postMessage(
         '{"event":"command","func":"loadVideoById","args":["' + get().currentId + '"]}',
         "*",
       );
     }
   },
-  handlePlay: (chillRef, volume) => {
-    if (chillRef.current) {
-      chillRef.current.contentWindow?.postMessage(
+
+  handlePlay: (streamRef, volume) => {
+    if (streamRef.current) {
+      streamRef.current.contentWindow?.postMessage(
         '{"event":"command","func":"playVideo","args":""}',
         "*",
       );
-      chillRef.current.contentWindow?.postMessage(
+      streamRef.current.contentWindow?.postMessage(
         `{"event":"command","func":"setVolume","args":["${volume}"]}`,
         "*",
       );
       set({ isStreaming: true });
     }
   },
-  handlePause: (chillRef) => {
-    if (chillRef.current) {
-      chillRef.current.contentWindow?.postMessage(
+
+  handlePause: (streamRef) => {
+    if (streamRef.current) {
+      streamRef.current.contentWindow?.postMessage(
         '{"event":"command","func":"pauseVideo","args":""}',
         "*",
       );
@@ -65,13 +67,15 @@ const useChillStore = create<ChillStore>((set, get) => ({
     value: 0.3,
     muted: false,
   },
+
   setVolume: (volumeRef, value) => {
     updateProgressBar(volumeRef, `${value * 100}`);
     set({ volume: { ...get().volume, value } });
   },
-  toggleMute: (chilRef, volumeRef) => {
-    if (chilRef.current && !get().volume.muted) {
-      chilRef.current.contentWindow?.postMessage(
+
+  toggleMute: (streamRef, volumeRef) => {
+    if (streamRef.current && !get().volume.muted) {
+      streamRef.current.contentWindow?.postMessage(
         '{"event":"command","func":"mute","args":""}',
         "*",
       );
@@ -80,7 +84,7 @@ const useChillStore = create<ChillStore>((set, get) => ({
         volume: { ...state.volume, muted: true },
       }));
     } else {
-      chilRef.current?.contentWindow?.postMessage(
+      streamRef.current?.contentWindow?.postMessage(
         '{"event":"command","func":"unMute","args":""}',
         "*",
       );
@@ -90,9 +94,10 @@ const useChillStore = create<ChillStore>((set, get) => ({
       }));
     }
   },
-  handleVolume: (chillRef, volume) => {
-    if (chillRef.current) {
-      chillRef.current.contentWindow?.postMessage(
+
+  handleVolume: (streamRef, volume) => {
+    if (streamRef.current) {
+      streamRef.current.contentWindow?.postMessage(
         `{"event":"command","func":"setVolume","args":["${volume}"]}`,
         "*",
       );
@@ -100,4 +105,4 @@ const useChillStore = create<ChillStore>((set, get) => ({
   },
 }));
 
-export { useChillStore };
+export { useStreamStore };

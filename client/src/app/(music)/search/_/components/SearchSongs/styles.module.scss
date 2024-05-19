@@ -28,7 +28,7 @@
     background: transparent;
     border-radius: 10px;
     cursor: pointer;
-    
+
     svg path {
       transition: 0.15s stroke linear;
     }
@@ -38,7 +38,6 @@
     }
   }
 }
-
 
 .musicListSkeletonContainer {
   width: 100%;
@@ -59,4 +58,13 @@
 
     @include skeletonAnimation();
   }
+}
+
+.buttonRetry {
+  color: white;
+  background-color: var(--widget-bg);
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
 }

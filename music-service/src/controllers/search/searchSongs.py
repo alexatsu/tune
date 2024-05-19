@@ -20,7 +20,7 @@ def search_songs(query: Search):
             for video in video_entries:
                 try:
                     song_data = {
-                        "id": video["id"],
+                        "urlId": video["id"],
                         "title": video["title"],
                         "url": video["original_url"],
                         "cover": video.get("thumbnail", None),

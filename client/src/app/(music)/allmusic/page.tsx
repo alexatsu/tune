@@ -1,6 +1,4 @@
 "use client";
-
-// import { MusicList } from "@/music/_/components";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -17,10 +15,9 @@ import styles from "./styles.module.scss";
 export default function Page() {
   const { data: session } = useSession();
   const { songs, isLoading, data } = useSongs(session);
-
   if (!session) redirect("/signin");
 
-  const payload = { songs: songs || [], message: "success" };
+  const payload = { songs: songs || [], message: "success", type: "allmusic" };
 
   const musicList = isLoading ? (
     <div className={styles.musicListSkeletonContainer}>

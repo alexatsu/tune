@@ -1,12 +1,11 @@
 "use client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession, Session } from "next-auth";
+import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 
 import { AlbumsResponse } from "@/music/_/types";
-import { authOptions } from "@/shared/utils/functions";
 
 import { AlbumCard } from "../AlbumCard";
 import { CreateAlbumModal } from "./CreateAlbumModal";
@@ -25,8 +24,7 @@ const fetchAllAlbums = async (session: Session) => {
 
 export function AlbumList() {
   const { data: session } = useSession();
-  // const session = await getServerSession(authOptions);
-  // const payload = (await fetchAllAlbums(session as Session)) as AlbumsResponse;
+
   const { data, isLoading, error } = useSWR<AlbumsResponse>(`/api/albums/get-all`, fetchAllAlbums, {
     revalidateOnFocus: false,
   });

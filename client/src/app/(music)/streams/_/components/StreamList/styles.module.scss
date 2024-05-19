@@ -1,7 +1,7 @@
 @use "@/sass/abstracts/colors.scss" as *;
 @use "@/sass/mixins/skeletonAnimation.module.scss" as *;
 
-.chillBlock {
+.streamBlock {
   padding: 0.5rem 0;
   display: flex;
   flex-wrap: wrap;
@@ -28,7 +28,7 @@
   }
 }
 
-.chillListSkeleton {
+.streamListSkeleton {
   width: 250px;
   height: 200px;
   background: $widget-bg;

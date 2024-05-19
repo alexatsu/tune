@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   await db.$disconnect();
 
   return NextResponse.json(
-    { songs: userSongs?.Songs, message: "Songs fetched successfully" },
+    { songs: userSongs?.Songs, message: "Songs fetched successfully", type: "allMusic" },
     { status: 200 },
   );
 }

@@ -14,8 +14,12 @@ export async function GET(request: NextRequest) {
 
   const data: Data = await res.json();
 
+  const payload = {
+    type: "streams",
+  };
+
   return NextResponse.json(
-    { stream: data, message: "success" },
+    { stream: data, message: "success", payload },
     { status: 307, headers: { location: data.audio_url } },
   );
 }
