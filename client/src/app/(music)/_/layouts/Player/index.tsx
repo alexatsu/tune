@@ -58,7 +58,6 @@ export function Player() {
   } = useStreamStore();
   const [soundMobileOpen, setSoundMobileOpen] = useState(false);
   const trackSeekRef = useRef<HTMLInputElement>(null);
-  // const [seek, setSeek] = useState(0);
 
   const loadSource = useCallback(
     (songOrStream: Song | Stream) => {
@@ -89,7 +88,10 @@ export function Player() {
       return;
     }
 
-    const trackIndex = songsOrStreams?.indexOf(currentSongRef.current) || 0;
+    const trackIndex = songsOrStreams?.indexOf(currentSongRef.current);
+    if (!trackIndex) {
+      return;
+    }
 
     if (songsOrStreams) {
       if (trackIndex === songsOrStreams.length - 1) {
@@ -128,7 +130,11 @@ export function Player() {
       return;
     }
 
-    const trackIndex = songsOrStreams?.indexOf(currentSongRef.current) || 0;
+    const trackIndex = songsOrStreams?.indexOf(currentSongRef.current);
+
+    if (!trackIndex) {
+      return;
+    }
 
     if (songsOrStreams) {
       if (trackIndex === 0) {
