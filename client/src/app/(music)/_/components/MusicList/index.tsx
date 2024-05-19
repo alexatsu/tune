@@ -65,12 +65,14 @@ export function MusicList({ data, session }: MusicList) {
     setIsStreaming,
     handlePause,
     volume,
+    setSeek,
   } = useStreamStore();
 
   const handlePlayById = (song: Song, volume: number) => {
     const { urlId } = song;
     setIsStreaming(true);
     setCurrentId(urlId);
+    setSeek(0);
 
     if (!currentPayload.current || currentPayload.current.type !== data.type) {
       currentPayload.current = {
@@ -118,7 +120,7 @@ export function MusicList({ data, session }: MusicList) {
       </div>
     );
 
-    if (isPlaying && iscurrentTrackRef) {
+    if (isPlaying && iscurrentTrackRef && currentPayload.current?.type === data.type) {
       return pauseButton;
     } else {
       return playButton;

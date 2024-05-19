@@ -23,6 +23,8 @@ type StreamStore = {
     volumeRef: RefObject<HTMLInputElement>,
   ) => void;
   handleVolume: (streamRef: RefObject<HTMLIFrameElement>, volume: number) => void;
+  seek: number;
+  setSeek: (value: number) => void;
 };
 
 const useStreamStore = create<StreamStore>((set, get) => ({
@@ -103,6 +105,9 @@ const useStreamStore = create<StreamStore>((set, get) => ({
       );
     }
   },
+
+  seek: 0,
+  setSeek: (value) => set({ seek: value }),
 }));
 
 export { useStreamStore };

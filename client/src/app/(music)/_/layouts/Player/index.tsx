@@ -54,10 +54,12 @@ export function Player() {
     setVolume,
     handleVolume,
     toggleMute,
+    seek,
+    setSeek,
   } = useStreamStore();
   const [soundMobileOpen, setSoundMobileOpen] = useState(false);
   const trackSeekRef = useRef<HTMLInputElement>(null);
-  const [seek, setSeek] = useState(0);
+  // const [seek, setSeek] = useState(0);
 
   const loadSource = useCallback(
     (songOrStream: Song | Stream) => {
@@ -118,6 +120,7 @@ export function Player() {
     loadSource,
     duration,
     currentPayload,
+    setSeek,
   ]);
 
   const handlePreviousTrack = () => {
@@ -150,10 +153,11 @@ export function Player() {
   };
 
   useEffect(() => {
+    if (currentPayload.current?.type === "streams") return;
     if (seek >= duration) {
       handleNextTrack();
     }
-  }, [duration, handleNextTrack, seek]);
+  }, [duration, handleNextTrack, seek, currentPayload]);
 
   useEffect(() => {
     if ((isMobile && soundMobileOpen) || !isMobile) {
@@ -185,13 +189,13 @@ export function Player() {
       if (!isStreaming) return;
 
       if (player) {
-        setSeek((prev) => prev + 1);
+        setSeek(seek + 1);
         updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
       }
     }, 1000);
 
     return () => clearInterval(updateCurrentTime);
-  }, [playerRef, isStreaming, duration, seek, currentPayload]);
+  }, [playerRef, isStreaming, duration, seek, currentPayload, setSeek]);
 
   const inputs = (
     <>
@@ -241,7 +245,11 @@ export function Player() {
               <NextTrack onClick={handleNextTrack} />
             </div>
 
-            {pathname !== "/streams" && <div className={styles.inputsDesktop}>{inputs}</div>}
+            {currentPayload.current?.type !== "streams" ? (
+              <div className={styles.inputsDesktop}>{inputs}</div>
+            ) : (
+              <div className="filler" style={{ visibility: "hidden", height: "2rem" }}></div>
+            )}
 
             <TitleDesktop currentPlayRef={currentSongRef} />
           </MainTrack>
