@@ -89,7 +89,7 @@ export function Player() {
     }
 
     const trackIndex = songsOrStreams?.indexOf(currentSongRef.current);
-    if (!trackIndex) {
+    if (trackIndex === -1 || trackIndex === undefined) {
       return;
     }
 
@@ -132,7 +132,7 @@ export function Player() {
 
     const trackIndex = songsOrStreams?.indexOf(currentSongRef.current);
 
-    if (!trackIndex) {
+    if (trackIndex === -1 || trackIndex === undefined) {
       return;
     }
 
