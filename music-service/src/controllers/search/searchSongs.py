@@ -30,15 +30,19 @@ def search_songs(query: Search):
         # Simplify the results for displaying to the user
         simplified_results = []
         for video in videos:
-            simplified_results.append(
-                {
-                    "title": video.get("title", "N/A"),
-                    "urlId": video.get("id", "N/A"),
-                    "url": video.get("original_url", "N/A"),
-                    "duration": format_duration(video.get("duration", 0)),
-                    "cover": video.get("thumbnails", "N/A")[0].get("url", "N/A"),
-                }
-            )
+
+            duration = video.get("duration")
+
+            if duration is not None:
+                simplified_results.append(
+                    {
+                        "title": video.get("title", "N/A"),
+                        "urlId": video.get("id", "N/A"),
+                        "url": video.get("original_url", "N/A"),
+                        "duration": format_duration(video.get("duration")),
+                        "cover": video.get("thumbnails", "N/A")[0].get("url", "N/A"),
+                    }
+                )
 
         print(simplified_results)
         return {"songs": simplified_results, "music_type": "search"}
