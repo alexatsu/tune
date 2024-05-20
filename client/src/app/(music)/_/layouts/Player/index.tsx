@@ -58,6 +58,7 @@ export function Player() {
   } = useStreamStore();
   const [soundMobileOpen, setSoundMobileOpen] = useState(false);
   const trackSeekRef = useRef<HTMLInputElement>(null);
+  const savedVolumeRef = useRef<number>(volume.value);
 
   const loadSource = useCallback(
     (songOrStream: Song | Stream) => {
@@ -260,7 +261,7 @@ export function Player() {
 
           <SoundDesktop
             volume={volume}
-            handleMute={() => toggleMute(playerRef, volumeRef)}
+            handleMute={() => toggleMute(playerRef, volumeRef, savedVolumeRef)}
             handleVolumeChange={handleVolumeChange}
             volumeRef={volumeRef}
           />

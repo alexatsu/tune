@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { MutableRefObject, RefObject } from "react";
 import { create } from "zustand";
 
 import { updateProgressBar } from "@/music/_/utils/functions";
@@ -21,6 +21,7 @@ type StreamStore = {
   toggleMute: (
     streamRef: RefObject<HTMLIFrameElement>,
     volumeRef: RefObject<HTMLInputElement>,
+    savedVolumeRef: MutableRefObject<number>,
   ) => void;
   handleVolume: (streamRef: RefObject<HTMLIFrameElement>, volume: number) => void;
   seek: number;
@@ -75,24 +76,27 @@ const useStreamStore = create<StreamStore>((set, get) => ({
     set({ volume: { ...get().volume, value } });
   },
 
-  toggleMute: (streamRef, volumeRef) => {
+  toggleMute: (streamRef, volumeRef, savedVolumeRef) => {
     if (streamRef.current && !get().volume.muted) {
       streamRef.current.contentWindow?.postMessage(
         '{"event":"command","func":"mute","args":""}',
         "*",
       );
+
+      savedVolumeRef.current = get().volume.value;
       updateProgressBar(volumeRef, `${0}`);
       set((state) => ({
-        volume: { ...state.volume, muted: true },
+        volume: { value: 0, muted: true },
       }));
     } else {
       streamRef.current?.contentWindow?.postMessage(
         '{"event":"command","func":"unMute","args":""}',
         "*",
       );
+
       updateProgressBar(volumeRef, `${get().volume.value * 100}`);
       set((state) => ({
-        volume: { ...state.volume, muted: false },
+        volume: { value: savedVolumeRef.current, muted: false },
       }));
     }
   },
