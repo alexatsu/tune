@@ -165,9 +165,10 @@
         -ms-user-select: none;
         user-select: none;
         cursor: default;
+        fill: $accent;
 
-        & path {
-          fill: $grey;
+        path {
+          stroke: $widget-bg;
         }
       }
     }
