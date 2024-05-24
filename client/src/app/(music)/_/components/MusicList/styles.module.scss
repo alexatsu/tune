@@ -26,7 +26,6 @@
   overflow: auto;
   width: 100%;
   height: 100%;
-  padding: 0.5rem 0;
 
   @media screen and (width <= 425px) {
     height: calc(100dvh - 140px);
@@ -183,6 +182,7 @@
   width: 100%;
   transition: background-color 0.15s linear;
   width: 150px;
+  border-radius: 10px;
 
   &:hover {
     background-color: $bg-alt-hover;

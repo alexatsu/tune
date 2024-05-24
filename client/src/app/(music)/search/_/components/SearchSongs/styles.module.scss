@@ -2,17 +2,16 @@
 @use "@/sass/mixins/skeletonAnimation.module.scss" as *;
 
 .form {
-  padding-top: 1rem;
   display: flex;
   gap: 10px;
   align-items: center;
   margin-bottom: 10px;
 
   .input {
-    padding: 1rem;
+    padding: 1.35rem;
     background-color: $widget-bg;
     border: none;
-    border-radius: 10px;
+    border-radius: 1rem;
     transition: 0.15s outline ease-out;
     color: $text;
 

@@ -65,7 +65,7 @@ function DesktopNavigationBar() {
   if (!isMobile) {
     return (
       <aside>
-        <ul className={styles.listDeksktop}>
+        <ul className={styles.listDesktop}>
           {list(pathname, currentAlbumId).map(({ path, icon }) => {
             const isActive: boolean = path === pathname;
             return (
