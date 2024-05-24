@@ -14,6 +14,7 @@
     & li {
       transition: background-color 0.15s linear;
       padding: 0.5rem;
+      border-radius: 10px;
       &:hover {
         background-color: $bg-alt-hover;
       }

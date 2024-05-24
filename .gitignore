@@ -4,3 +4,6 @@ node_modules
 docker-compose.yaml
 checkTypes.js
 test.ts
+
+test-remix/*
+backup-service/*
