@@ -1,0 +1,22 @@
+{
+  "name": "backup-service",
+  "module": "main.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch run src/main.ts"
+  },
+  "dependencies": {
+    "cloudinary": "^2.2.0",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.13"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node-cron": "^3.0.11",
+    "@types/nodemailer": "^6.4.15"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
