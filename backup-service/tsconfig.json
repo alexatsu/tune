@@ -23,10 +23,11 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
-
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/utils/*": ["./utils/*"]
+      "@/*": ["./src/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/modules/*": ["./src/modules/*"]
     }
   }
 }

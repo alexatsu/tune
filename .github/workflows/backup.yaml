@@ -1,0 +1,28 @@
+name: main
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: stop backup container
+        run: docker stop tune-backup
+        continue-on-error: true
+
+      - name: remove backup container
+        run: docker rm tune-backup
+        continue-on-error: true
+
+      - name: build backup container
+        run: docker build -t backup-service -f ./backup-service/Dockerfile .
+
+      - name: run backup container
+        run: docker run -d --name tune-backup -v ./backup-service:/app -p 8001:8001 --restart always -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_USER=${{ secrets.DATABASE_USER }} -e DATABASE_PORT=${{ secrets.DATABASE_PORT }} -e DATABASE_NAME=${{ secrets.DATABASE_NAME }} -e CLOUDINARY_URL=${{ secrets.CLOUDINARY_URL }} -e CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} -e CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} -e CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }} -e NODE_ENV=production backup-service
+
+      - name: connect backup to tune network
+        run: docker network connect tune tune-backup

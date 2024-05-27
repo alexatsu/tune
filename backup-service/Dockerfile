@@ -11,4 +11,4 @@ RUN bun install
 
 # USER bun
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "--watch", "run", "main.ts" ]
+ENTRYPOINT [ "bun", "dev" ]
