@@ -1,4 +1,4 @@
-name: main
+name: backup
 
 on:
   workflow_dispatch:
@@ -17,6 +17,10 @@ jobs:
       - name: remove backup container
         run: docker rm tune-backup
         continue-on-error: true
+
+      - name: cd to backup service
+        run: |
+          cd backup-service
 
       - name: build backup container
         run: docker build -t backup-service -f ./backup-service/Dockerfile .

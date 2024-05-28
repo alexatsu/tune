@@ -1,9 +1,10 @@
 {
   "name": "backup-service",
   "module": "main.ts",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "dev": "bun --watch run src/main.ts"
+    "dev": "bun --watch run src/main.ts",
+    "build": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js"
   },
   "dependencies": {
     "cloudinary": "^2.2.0",
@@ -14,9 +15,9 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/node-cron": "^3.0.11",
-    "@types/nodemailer": "^6.4.15"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+    "@types/nodemailer": "^6.4.15",
+    "esbuild": "0.21.4",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.4.5"
   }
 }
