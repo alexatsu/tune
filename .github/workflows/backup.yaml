@@ -24,7 +24,7 @@ jobs:
 
       - name: run backup container
         working-directory: ./backup-service
-        run: docker run -d --name tune-backup -v tune-backup-volume:/app -p 8001:8001 --restart always -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_USER=${{ secrets.DATABASE_USER }} -e DATABASE_PORT=${{ secrets.DATABASE_PORT }} -e DATABASE_NAME=${{ secrets.DATABASE_NAME }} -e CLOUDINARY_URL=${{ secrets.CLOUDINARY_URL }} -e CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} -e CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} -e CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }} -e NODE_ENV=production backup-service
+        run: docker run -d --name tune-backup -p 8001:8001 --restart always -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_USER=${{ secrets.DATABASE_USER }} -e DATABASE_PORT=${{ secrets.DATABASE_PORT }} -e DATABASE_NAME=${{ secrets.DATABASE_NAME }} -e CLOUDINARY_URL=${{ secrets.CLOUDINARY_URL }} -e CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} -e CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} -e CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }} -e NODE_ENV=production backup-service
 
       - name: connect backup to tune network
         working-directory: ./backup-service
