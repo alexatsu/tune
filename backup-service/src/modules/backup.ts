@@ -56,7 +56,7 @@ const deleteOldestBackupFromCloudinary = async () => {
   }
 };
 
-const updloadBackupToCloudinary = async () => {
+const uploadBackupToCloudinary = async () => {
   const options: UploadApiOptions = {
     resource_type: "raw",
     type: "upload",
@@ -85,24 +85,20 @@ const deleteLocalBackup = async () => {
   }
 };
 
-const uploadBackupToCloudinary = async () => {
+const schedule = async () => {
+  await takePGBackup();
   const { resources } = await getAllBackupsFromCloudinary();
 
   if (resources.length > 2) {
     await deleteOldestBackupFromCloudinary();
   }
 
-  await updloadBackupToCloudinary();
-  await deleteLocalBackup();
-};
-
-const schedule = async () => {
-  await takePGBackup();
   await uploadBackupToCloudinary();
+  await deleteLocalBackup();
 
   console.log("Scheduled backup");
 };
 
-schedule();
+await schedule();
 
 cron.schedule("0 0 * * *", schedule);
