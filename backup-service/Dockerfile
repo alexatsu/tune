@@ -11,5 +11,4 @@ RUN zypper -n install nodejs npm
 RUN npm install -g bun
 RUN bun install
 
-EXPOSE 3000/tcp
-ENTRYPOINT [ "bun",  "dev" ]
+CMD [ "bun", "run", "dev" ]

@@ -103,4 +103,6 @@ const schedule = async () => {
   console.log("Scheduled backup");
 };
 
+schedule();
+
 cron.schedule("0 0 * * *", schedule);
