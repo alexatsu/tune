@@ -18,6 +18,13 @@ jobs:
         run: docker rm tune-backup
         continue-on-error: true
 
+      - name: cd to backup service
+        run: |
+          cd backup-service
+          
+      - name: print folder
+        run: pwd
+
       - name: build backup container
         working-directory: ./backup-service
         run: docker build -t backup-service --no-cache .
