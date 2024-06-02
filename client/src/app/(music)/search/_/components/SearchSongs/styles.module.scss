@@ -14,6 +14,11 @@
     border-radius: 1rem;
     transition: 0.15s outline ease-out;
     color: $text;
+    width: 50%;
+
+    @media screen and (width <= 576px) {
+      width: 100%;
+    }
 
     &:focus {
       outline: 1px solid $accent;
@@ -40,7 +45,6 @@
 
 .musicListSkeletonContainer {
   width: 100%;
-  padding: 0.5rem 0;
 
   .musicListSkeleton {
     background-color: $widget-bg;

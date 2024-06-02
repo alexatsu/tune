@@ -1,42 +1,40 @@
 services:
-  # client: # service name
-  #   container_name: client
-  #   build: # build image
-  #     context: ./client # path
-  #     dockerfile: ./Dockerfile # dockerfile path
-  #   volumes:
-  #     - ./client:/app #mount path
-  #     - /app/node_modules #needed folder to persist/update data
-  #     # remove old container+image if new packages are added
-  #   ports:
-  #     # hostport:containerport
-  #     - 3000:3000
-  #   env_file:
-  #     - ./client/.env
-  #   environment:
-  #     - WATCHPACK_POLLING=true # for nextjs hot reload
-  #   # depends_on:
-  #   #   - db
-  #   restart: always
+  client: # service name
+    container_name: client
+    build: # build image
+      context: ./client # path
+      dockerfile: ./Dockerfile # dockerfile path
+    volumes:
+      - ./client:/app #mount path
+      - /app/node_modules #needed folder to persist/update data
+      # remove old container+image if new packages are added
+    ports:
+      # hostport:containerport
+      - 3000:3000
+    env_file:
+      - ./client/.env
+    environment:
+      - WATCHPACK_POLLING=true # for nextjs hot reload
+    # depends_on:
+    #   - db
+    restart: always
 
   # containers can communicate with each other via container name and inner port
   # if normaly you should do 3000:3000, for containers you need only second port
   # because docker create network automatically
   # like db:5432
 
+  # backup-service:
+  #   container_name: backup-service
+  #   build:
+  #     context: ./backup-service
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - 8001:8001
+  #   depends_on:
+  #     - db
+  #   restart: always
 
-  backup-service:
-    container_name: backup-service
-    build:
-      context: ./backup-service
-      dockerfile: ./Dockerfile
-    ports:
-      - 8001:8001
-    volumes:
-      - ./backup-service:/app
-    depends_on:
-      - db
-    restart: always
   db:
     container_name: db
     ports:
@@ -52,16 +50,16 @@ services:
     image: postgres:16-alpine
     restart: always
 
-  # music-service:
-  #   container_name: music-service
-  #   build:
-  #     context: ./music-service
-  #     dockerfile: ./Dockerfile
-  #   ports:
-  #     - 8000:8000
-  #   volumes:
-  #     - ./music-service:/app
-  #   restart: always
+  music-service:
+    container_name: music-service
+    build:
+      context: ./music-service
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./music-service:/app
+    restart: always
 
 volumes:
   db:

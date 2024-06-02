@@ -5,12 +5,13 @@
   margin: 0 auto;
   background-color: $widget-bg;
   border-radius: 15px;
-  // width: 80%;
+  width: 100%;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-height: 30%;
 
   p {
     color: $text;
@@ -38,7 +39,6 @@
 
 .musicListSkeletonContainer {
   width: 100%;
-  padding: 0.5rem 0;
 
   .musicListSkeleton {
     background-color: $widget-bg;
