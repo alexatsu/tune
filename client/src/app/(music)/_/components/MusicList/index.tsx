@@ -10,16 +10,15 @@ import { useSWRConfig } from "swr";
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
-import { useAlbums, usePlayer, useSongs } from "@/music/_/hooks";
-import { Album, AlbumSongs, Song, SongsResponse } from "@/music/_/types";
-import { updateProgressBar } from "@/music/_/utils/functions";
+import { useAlbums, useSongs } from "@/music/_/hooks";
+import { Album, AlbumSongs, Song } from "@/music/_/types";
 import { useStreamStore } from "@/shared/store";
 import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
 import { miscIcons } from "../icons/misc";
 import styles from "./styles.module.scss";
 
-const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
+const { Play, Pause, ThreeDots, Add } = playerIcons;
 const { LoadingCircle } = miscIcons;
 
 const formatedDuration = (duration: string) => {
@@ -322,10 +321,20 @@ export function MusicList({ data, session }: MusicList) {
     return result;
   };
 
+  const sortByDateDescending = (payload: Song[] | AlbumSongs[]) => {
+    return payload.sort((a, b) => {
+      const aDate = a.addedAt ? new Date(a.addedAt) : new Date(0);
+      const bDate = b.addedAt ? new Date(b.addedAt) : new Date(0);
+      return bDate.getTime() - aDate.getTime();
+    });
+  };
+
+  const sortedSongs = sortByDateDescending(data?.songs || []);
+
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
-        {data?.songs?.map((song, index) => (
+        {sortedSongs.map((song, index) => (
           <div className={styles.liWrapper} key={song.urlId}>
             <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
