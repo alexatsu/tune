@@ -3,10 +3,11 @@ from fastapi import APIRouter
 from models.audio import ListenTemporal, SaveAndStore, ListenStream
 from controllers.search import (
     search_songs,
-    listen_temporal as listen_temp,
-    save_and_store,
+    # listen_temporal as listen_temp,
+    # save_and_store,
     streamTemporal
 )
+from controllers.charts import create_top_chart
 
 router = APIRouter()
 
@@ -27,3 +28,4 @@ async def search(query: str = ""):
 @router.get("/stream")
 async def listenStream(url=""):
     return streamTemporal(url)
+

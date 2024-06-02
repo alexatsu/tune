@@ -33,7 +33,23 @@ const parseHTML = async () => {
     return products.filter((product) => product.title && product.artist);
   };
 
-  console.log(removeEmpty(products));
+  return removeEmpty(products);
 };
 
-parseHTML();
+const payload = await parseHTML();
+
+await fetch("http://localhost:8000/charts/top", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ payload }),
+});
+
+
+// const response = await fetch("http://localhost:8000/charts/all", {
+//   method: "GET",
+//   headers: { "Content-Type": "application/json" },
+// });
+
+// const data = await response.json();
+
+// console.log(data);

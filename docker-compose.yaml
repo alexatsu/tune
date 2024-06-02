@@ -25,18 +25,18 @@ services:
   # like db:5432
 
 
-  backup-service:
-    container_name: backup-service
-    build:
-      context: ./backup-service
-      dockerfile: ./Dockerfile
-    ports:
-      - 8001:8001
-    volumes:
-      - ./backup-service:/app
-    depends_on:
-      - db
-    restart: always
+  # backup-service:
+  #   container_name: backup-service
+  #   build:
+  #     context: ./backup-service
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - 8001:8001
+  #   volumes:
+  #     - ./backup-service:/app
+  #   depends_on:
+  #     - db
+  #   restart: always
   db:
     container_name: db
     ports:
@@ -52,16 +52,16 @@ services:
     image: postgres:16-alpine
     restart: always
 
-  # music-service:
-  #   container_name: music-service
-  #   build:
-  #     context: ./music-service
-  #     dockerfile: ./Dockerfile
-  #   ports:
-  #     - 8000:8000
-  #   volumes:
-  #     - ./music-service:/app
-  #   restart: always
+  music-service:
+    container_name: music-service
+    build:
+      context: ./music-service
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./music-service:/app
+    restart: always
 
 volumes:
   db:
