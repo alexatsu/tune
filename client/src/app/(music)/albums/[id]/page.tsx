@@ -52,7 +52,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         </div>
       ) : (
         <div className={styles.AlbumList}>
-          <MusicList data={musicList} session={session} />
+          <MusicList data={musicList} session={session} albumId={id} />
         </div>
       )}
     </div>

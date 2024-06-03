@@ -41,9 +41,10 @@ type MusicList = {
     id?: string | undefined;
   };
   session: Session;
+  albumId?: string;
 };
 
-export function MusicList({ data, session }: MusicList) {
+export function MusicList({ data, session, albumId }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
   const { currentSongOrStreamRef, playerRef, currentPayload } = usePlayerContext();
@@ -67,18 +68,34 @@ export function MusicList({ data, session }: MusicList) {
     setSeek,
   } = useStreamStore();
 
-  const handlePlayById = (song: Song, volume: number) => {
-    const { urlId } = song;
-    setIsStreaming(true);
-    setCurrentId(urlId);
-    setSeek(0);
-
+  const updateCurrentPayload = () => {
     if (!currentPayload.current || currentPayload.current.type !== data.type) {
       currentPayload.current = {
         songsOrStreams: data.songs,
         type: data.type,
       };
     }
+
+    if (currentPayload.current.type === "album") {
+      const albumSongs = currentPayload.current?.songsOrStreams[0] as AlbumSongs;
+      const currentAlbumId = albumSongs.albumId;
+
+      if (currentAlbumId !== albumId) {
+        currentPayload.current = {
+          songsOrStreams: data.songs,
+          type: data.type,
+        };
+      }
+    }
+  };
+
+  const handlePlayById = (song: Song | AlbumSongs, volume: number) => {
+    const { urlId } = song;
+    setIsStreaming(true);
+    setCurrentId(urlId);
+    setSeek(0);
+
+    updateCurrentPayload();
 
     if (currentId === urlId) {
       playerRef.current?.contentWindow?.postMessage(
