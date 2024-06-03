@@ -74,6 +74,7 @@ export function AlbumMenuDropdown({ albumId }: { albumId: string }) {
               ref={deleteProgressRef}
               data-delete
               onMouseDown={deletingProgress}
+              onMouseLeave={handleMouseUp}
               onMouseUp={handleMouseUp}
             >
               x album (hold)
