@@ -18,6 +18,7 @@ type StreamStore = {
     muted: boolean;
   };
   setVolume: (volumeRef: RefObject<HTMLInputElement>, value: number) => void;
+  setUnmute: (streamRef: RefObject<HTMLIFrameElement>) => void;
   toggleMute: (
     streamRef: RefObject<HTMLIFrameElement>,
     volumeRef: RefObject<HTMLInputElement>,
@@ -76,6 +77,16 @@ const useStreamStore = create<StreamStore>((set, get) => ({
     set({ volume: { ...get().volume, value } });
   },
 
+  setUnmute: (streamRef) => {
+    if (streamRef.current) {
+      streamRef.current.contentWindow?.postMessage(
+        '{"event":"command","func":"unMute","args":""}',
+        "*",
+      );
+    }
+
+    set({ volume: { ...get().volume, muted: false } });
+  },
   toggleMute: (streamRef, volumeRef, savedVolumeRef) => {
     if (streamRef.current && !get().volume.muted) {
       streamRef.current.contentWindow?.postMessage(
