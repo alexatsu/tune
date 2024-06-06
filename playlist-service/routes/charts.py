@@ -1,7 +1,7 @@
 import json
 from fastapi import APIRouter
 from controllers.charts import create_top_chart
-from models.audio import GenCharts
+from models.charts import GenCharts
 
 router = APIRouter()
 

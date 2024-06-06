@@ -18,7 +18,3 @@ class SaveAndStore(BaseModel):
 
 class ListenStream(BaseModel):
     url: str
-
-
-class GenCharts(BaseModel):
-    payload: list[dict[str, str]]

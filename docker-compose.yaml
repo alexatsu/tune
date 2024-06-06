@@ -24,7 +24,6 @@ services:
   # because docker create network automatically
   # like db:5432
 
-
   # backup-service:
   #   container_name: backup-service
   #   build:
@@ -37,30 +36,41 @@ services:
   #   depends_on:
   #     - db
   #   restart: always
-  db:
-    container_name: db
-    ports:
-      # hostport:containerport
-      - 5432:5432
-    environment:
-      # test if i need these variables
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - db:/var/lib/postgresql/data
-    image: postgres:16-alpine
-    restart: always
+  # db:
+  #   container_name: db
+  #   ports:
+  #     # hostport:containerport
+  #     - 5432:5432
+  #   environment:
+  #     # test if i need these variables
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=postgres
+  #   volumes:
+  #     - db:/var/lib/postgresql/data
+  #   image: postgres:16-alpine
+  #   restart: always
 
-  music-service:
-    container_name: music-service
+  # music-service:
+  #   container_name: music-service
+  #   build:
+  #     context: ./music-service
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - 8000:8000
+  #   volumes:
+  #     - ./music-service:/app
+  #   restart: always
+
+  playlist-service:
+    container_name: playlist-service
     build:
-      context: ./music-service
+      context: ./playlist-service
       dockerfile: ./Dockerfile
     ports:
-      - 8000:8000
+      - 8010:8010
     volumes:
-      - ./music-service:/app
+      - ./playlist-service:/app
     restart: always
 
 volumes:

@@ -1,6 +1,6 @@
 import json
 import subprocess
-from models.audio import GenCharts
+from models.charts import GenCharts
 from utils.functions import format_duration
 
 
@@ -57,8 +57,8 @@ def format_artist_and_title(payload: GenCharts):
     return result
 
 
-def delete_previous_chart():
-    delete_previous_chart = open("charts.json", "w")
+def delete_previous_chart(chart_type: str):
+    delete_previous_chart = open("./data/" + chart_type + "-chart.json", "w")
     delete_previous_chart.truncate(0)
 
 
@@ -88,14 +88,15 @@ def find_most_popular(raw_chart):
     return polished_chart
 
 
-def save_new_chart(polished_chart: list[dict[str, str]]) -> None:
-    with open("charts.json", "w") as f:
+def save_new_chart(polished_chart: list[dict[str, str]], chart_type: str) -> None:
+    with open("./data/" + chart_type + "-chart.json", "w") as f:
         json.dump(polished_chart, f)
 
 
 def create_top_chart(payload: GenCharts) -> dict[str, list[dict[str, str]]]:
+    chart_type = payload.chartType
 
-    delete_previous_chart()
+    delete_previous_chart(chart_type)
 
     formatted_input = format_artist_and_title(payload)
 
@@ -103,6 +104,6 @@ def create_top_chart(payload: GenCharts) -> dict[str, list[dict[str, str]]]:
 
     popular_chart = find_most_popular(raw_chart)
 
-    save_new_chart(popular_chart)
+    save_new_chart(popular_chart, chart_type)
 
     return {"message": "success", "result": popular_chart}
