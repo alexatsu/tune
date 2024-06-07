@@ -249,7 +249,7 @@ export function Player() {
 
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
-              <PreviousTrack onClick={handlePreviousTrack} />
+              <PreviousTrack onClick={handlePreviousTrack} style={{ cursor: "pointer" }} />
               {isStreaming && <Pause onClick={() => handlePause(playerRef)} />}
               {!isStreaming && <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />}
 

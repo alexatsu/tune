@@ -87,13 +87,19 @@ export function MusicList({ data, session, albumId }: MusicList) {
         };
       }
     }
+
+    if (currentPayload.current.type === "search") {
+      currentPayload.current = {
+        songsOrStreams: data.songs,
+        type: data.type,
+      };
+    }
   };
 
   const handlePlayById = (song: Song | AlbumSongs, volume: number) => {
     const { urlId } = song;
     setIsStreaming(true);
     setCurrentId(urlId);
-    setSeek(0);
 
     updateCurrentPayload();
 
@@ -106,6 +112,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
     }
 
     if (playerRef.current) {
+      setSeek(0);
       playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
       currentSongOrStreamRef.current = song;
 
