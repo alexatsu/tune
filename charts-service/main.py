@@ -18,9 +18,9 @@ app.add_middleware(
 app.include_router(charts.router)
 
 
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello World"}
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
 
 if __name__ == "__main__":

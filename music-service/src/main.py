@@ -22,9 +22,9 @@ app.include_router(search.router)
 app.include_router(chill.router)
 
 
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello World"}
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
 
 if __name__ == "__main__":

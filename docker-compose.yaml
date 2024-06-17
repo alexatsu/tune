@@ -1,28 +1,78 @@
 services:
-  # client: # service name
-  #   container_name: client
-  #   build: # build image
-  #     context: ./client # path
-  #     dockerfile: ./Dockerfile # dockerfile path
-  #   volumes:
-  #     - ./client:/app #mount path
-  #     - /app/node_modules #needed folder to persist/update data
-  #     # remove old container+image if new packages are added
-  #   ports:
-  #     # hostport:containerport
-  #     - 3000:3000
-  #   env_file:
-  #     - ./client/.env
-  #   environment:
-  #     - WATCHPACK_POLLING=true # for nextjs hot reload
-  #   # depends_on:
-  #   #   - db
-  #   restart: always
+  client: # service name
+    container_name: client
+    build: # build image
+      context: ./client # path
+      dockerfile: ./Dockerfile # dockerfile path
+    volumes:
+      - ./client:/app #mount path
+      - /app/node_modules #needed folder to persist/update data
+      # remove old container+image if new packages are added
+    ports:
+      # hostport:containerport
+      - 3000:3000
+    env_file:
+      - ./client/.env
+    environment:
+      - WATCHPACK_POLLING=true # for nextjs hot reload
+    # depends_on:
+    #   - db
+    restart: always
 
   # containers can communicate with each other via container name and inner port
   # if normaly you should do 3000:3000, for containers you need only second port
   # because docker create network automatically
   # like db:5432
+
+  
+  db:
+    container_name: db
+    ports:
+      # hostport:containerport
+      - 5432:5432
+    environment:
+      # test if i need these variables
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+    image: postgres:16-alpine
+    restart: always
+
+  music-service:
+    container_name: music-service
+    build:
+      context: ./music-service
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./music-service:/app
+    restart: always
+
+  charts-service:
+    container_name: charts-service
+    build:
+      context: ./charts-service
+      dockerfile: ./Dockerfile
+    ports:
+      - 8010:8010
+    volumes:
+      - ./charts-service:/app
+    restart: always
+
+  parser-service:
+    container_name: parser-service
+    build:
+      context: ./parser-service
+      dockerfile: ./Dockerfile
+    ports:
+      - 8020:8020
+
+    volumes:
+      - ./parser-service:/app
+    restart: always
 
   # backup-service:
   #   container_name: backup-service
@@ -33,45 +83,12 @@ services:
   #     - 8001:8001
   #   volumes:
   #     - ./backup-service:/app
-  #   depends_on:
-  #     - db
   #   restart: always
-  # db:
-  #   container_name: db
-  #   ports:
-  #     # hostport:containerport
-  #     - 5432:5432
-  #   environment:
-  #     # test if i need these variables
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-  #     - POSTGRES_DB=postgres
-  #   volumes:
-  #     - db:/var/lib/postgresql/data
-  #   image: postgres:16-alpine
-  #   restart: always
-
-  # music-service:
-  #   container_name: music-service
-  #   build:
-  #     context: ./music-service
-  #     dockerfile: ./Dockerfile
-  #   ports:
-  #     - 8000:8000
-  #   volumes:
-  #     - ./music-service:/app
-  #   restart: always
-
-  playlist-service:
-    container_name: playlist-service
-    build:
-      context: ./playlist-service
-      dockerfile: ./Dockerfile
-    ports:
-      - 8010:8010
-    volumes:
-      - ./playlist-service:/app
-    restart: always
+  #   healthcheck:
+  #       test: ["CMD", "curl", "-f", "http://localhost:8001"]
+  #       interval: 5s
+  #       timeout: 5s
+  #       retries: 5
 
 volumes:
   db:

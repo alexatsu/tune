@@ -1,46 +1,19 @@
-import puppeteer from "puppeteer";
+import { Hono } from "hono";
+import { prettyJSON } from "hono/pretty-json";
+import { serve } from "@hono/node-server";
+import { routes } from "@/routes";
+ 
+import "@/cron/parseCharts";
 
-const parseTopSongs = async () => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    defaultViewport: null,
-  });
+const app = new Hono();
+const { chartsRoutes } = routes;
 
-  const page = await browser.newPage();
-  await page.goto("https://www.chosic.com/genre-chart/pop/tracks/", {
-    waitUntil: "domcontentloaded",
-  });
+app.use(prettyJSON());
+// app.get("/", (c) => c.json({ message: "Hello, World!" }));
 
-  type Results = { title: string | null; artist: string | null }[];
-  const results: Results = [];
+app.route("/", chartsRoutes);
 
-  const charts = await page.$$(".song-div");
-
-  for (const chart of charts) {
-    const getTrackListItem = await chart.$(".track-list-item");
-    const getTrackListItemInfoText = await getTrackListItem?.$(".track-list-item-info-text");
-    const getAChildren = await getTrackListItemInfoText?.$$("a");
-    const [title, artist] = await Promise.all(
-      getAChildren?.map((a) => a.evaluate((el) => el.textContent)) || []
-    );
-
-    results.push({ title, artist });
-  }
-
-  await browser.close();
-  // console.log(results);
-  // console.log(results.length, "results found");
-
-  return results;
-};
-
-parseTopSongs();
-
-const payload = await parseTopSongs();
-// console.log(payload);
-
-await fetch("http://localhost:8010/charts/top", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ payload, chartType: "top-pop" }),
+serve({
+  fetch: app.fetch,
+  port: 8020,
 });
