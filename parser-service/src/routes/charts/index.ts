@@ -5,6 +5,6 @@ const chartsRoutes = new Hono().basePath("/charts");
 
 chartsRoutes.post("/retrieve-processed", retrieveProcessedCharts);
 chartsRoutes.get("/send-charts-to-backup", sendToBackup);
-chartsRoutes.get("/get-charts", getCharts);
+chartsRoutes.get("/get-all", getCharts);
 
 export { chartsRoutes };
