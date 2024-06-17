@@ -43,7 +43,7 @@ const sortResourcesDescending = (resources: ResourceApiResponse["resources"]) =>
 
 const deleteOldestBackupFromCloudinary = async () => {
   try {
-    const { resources } = await getAllBackupsFromCloudinary();
+    const { resources } = await getAllBackupsFromCloudinary(`tune/db-backup`);
 
     const sortedBackups = sortResourcesDescending(resources) as ResourceApiResponse["resources"] &
       { public_id: string }[];
@@ -84,10 +84,10 @@ const deleteLocalBackup = async () => {
     console.error("Error deleting local backup:", err);
   }
 };
-
+  
 const schedule = async () => {
   await takePGBackup();
-  const { resources } = await getAllBackupsFromCloudinary();
+  const { resources } = await getAllBackupsFromCloudinary(`tune/db-backup`);
 
   if (resources.length > 2) {
     await deleteOldestBackupFromCloudinary();

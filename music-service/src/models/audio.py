@@ -10,6 +10,7 @@ class ListenTemporal(BaseModel):
     id: str
     duration: str
 
+
 class SaveAndStore(BaseModel):
     url: str
     id: str

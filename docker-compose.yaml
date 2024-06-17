@@ -24,17 +24,7 @@ services:
   # because docker create network automatically
   # like db:5432
 
-  # backup-service:
-  #   container_name: backup-service
-  #   build:
-  #     context: ./backup-service
-  #     dockerfile: ./Dockerfile
-  #   ports:
-  #     - 8001:8001
-  #   depends_on:
-  #     - db
-  #   restart: always
-
+  
   db:
     container_name: db
     ports:
@@ -60,6 +50,45 @@ services:
     volumes:
       - ./music-service:/app
     restart: always
+
+  charts-service:
+    container_name: charts-service
+    build:
+      context: ./charts-service
+      dockerfile: ./Dockerfile
+    ports:
+      - 8010:8010
+    volumes:
+      - ./charts-service:/app
+    restart: always
+
+  parser-service:
+    container_name: parser-service
+    build:
+      context: ./parser-service
+      dockerfile: ./Dockerfile
+    ports:
+      - 8020:8020
+
+    volumes:
+      - ./parser-service:/app
+    restart: always
+
+  # backup-service:
+  #   container_name: backup-service
+  #   build:
+  #     context: ./backup-service
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - 8001:8001
+  #   volumes:
+  #     - ./backup-service:/app
+  #   restart: always
+  #   healthcheck:
+  #       test: ["CMD", "curl", "-f", "http://localhost:8001"]
+  #       interval: 5s
+  #       timeout: 5s
+  #       retries: 5
 
 volumes:
   db:

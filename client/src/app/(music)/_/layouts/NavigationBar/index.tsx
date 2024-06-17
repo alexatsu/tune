@@ -43,6 +43,10 @@ const list = (pathname: string, currentAlbum: Album | null) => {
       path: "/streams",
       icon: <SiClyp color="#515253" size={22} />,
     },
+    {
+      path: "/charts",
+      icon: <div style={{ color: "white" }}>c</div>,
+    },
   ];
 };
 
