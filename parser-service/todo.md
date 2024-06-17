@@ -10,7 +10,9 @@
 
 //TODO
 //create client page with charts in figma(probably tabs)
-//write partial tests
+//add charts/parser to ci/cd
+//add initial top-charts into build
+//deploy and polish bugs
 //make update to 0.9
 
 //fix all issues in todo
