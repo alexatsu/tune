@@ -33,6 +33,8 @@ body {
   object-fit: cover;
   font-size: $default;
   height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 body::before {
