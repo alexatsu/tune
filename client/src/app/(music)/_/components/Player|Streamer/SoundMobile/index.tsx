@@ -7,7 +7,7 @@ type PlayerSoundMobileProps = Omit<PlayerSoundProps, "handleMute"> & {
 };
 
 export function SoundMobile({
-  // volume,
+  volume,
   handleVolumeChange,
   volumeRef,
   setSoundMobileOpen,
@@ -18,7 +18,7 @@ export function SoundMobile({
         className={styles.volumeMobileTrack}
         ref={volumeRef}
         type="range"
-        // value={volume.muted ? 0 : volume.value * 100}
+        value={volume.muted ? 0 : volume.value * 100}
         onChange={handleVolumeChange}
       />
       <svg

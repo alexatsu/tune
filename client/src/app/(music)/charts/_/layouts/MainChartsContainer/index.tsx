@@ -4,10 +4,10 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 
-import { MusicList, Skeleton } from "@/app/(music)/_/components";
-import { ChartSongs } from "@/app/(music)/_/types";
 import { Categories } from "@/charts/_/components";
 import { useCharts } from "@/charts/_/hooks";
+import { MusicList, Skeleton } from "@/music/_/components";
+import { ChartSongs } from "@/music/_/types";
 
 import styles from "./styles.module.scss";
 
@@ -16,7 +16,8 @@ export function MainChartsContainer() {
   const { data: session } = useSession();
   const chart = charts?.data || {};
   const firstChart = Object.keys(chart)[0];
-  const [selectedCategory, setSelectedCategory] = useState<string>(firstChart);
+  const cachedCategory = localStorage.getItem("selectedCategory");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
@@ -25,9 +26,9 @@ export function MainChartsContainer() {
 
   useEffect(() => {
     if (charts) {
-      setSelectedCategory(firstChart);
+      setSelectedCategory(cachedCategory || firstChart);
     }
-  }, [firstChart, charts]);
+  }, [firstChart, charts, cachedCategory]);
 
   const payload = {
     songs: chart[selectedCategory] as ChartSongs[],
@@ -49,10 +50,13 @@ export function MainChartsContainer() {
     <div className={styles.chartsMainContainer}>
       <div className={styles.text}>
         <h2>Top Charts</h2>
-        <IoIosArrowDown
-          onClick={toggleDropdown}
-          className={showDropdown ? styles.dropdownIconOpen : styles.dropdownIcon}
-        />
+        <div onClick={toggleDropdown} className={styles.dropdown}>
+          <IoIosArrowDown
+            onClick={toggleDropdown}
+            className={showDropdown ? styles.dropdownIconOpen : styles.dropdownIcon}
+          />
+          <p>{selectedCategory}</p>
+        </div>
       </div>
 
       <div

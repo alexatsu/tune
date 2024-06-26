@@ -35,14 +35,27 @@
   }
 }
 
-.dropdownIcon {
+.dropdown {
   cursor: pointer;
-  color: $accent;
-}
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.15s ease;
+  padding: 0.2rem 1rem;
+  border-radius: 1rem;
 
-.dropdownIconOpen {
-  transform: rotate(180deg);
-  @extend .dropdownIcon;
+  &:hover {
+    background-color: $widget-bg-hover;
+  }
+
+  .dropdownIcon {
+    color: $accent;
+  }
+
+  .dropdownIconOpen {
+    transform: rotate(180deg);
+    @extend .dropdownIcon;
+  }
 }
 
 .chartsCategoriesSkeletonContainer {

@@ -37,7 +37,10 @@ const Categories = memo(function Categories({ data, setSelectedCategory }: Categ
             className={styles.categriesListItem}
             style={{ border }}
             key={crypto.randomUUID()}
-            onClick={() => setSelectedCategory(category + "-chart")}
+            onClick={() => {
+              setSelectedCategory(category + "-chart");
+              localStorage.setItem("selectedCategory", category + "-chart");
+            }}
           >
             {category}
           </li>

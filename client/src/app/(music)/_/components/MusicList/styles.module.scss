@@ -51,25 +51,16 @@
     width: 4px;
   }
 
-  .liWrapper {
-    &:not(:has(.previewContainer)) {
-      .musicListItem {
-        border-radius: 1rem;
-        margin-bottom: 10px;
-      }
-    }
-  }
-
   .musicListItem {
     background-color: $widget-bg;
     font-size: 0.9rem;
     padding: 0.6rem 1.4rem;
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    margin-bottom: 10px;
+    border-radius: 1rem;
 
     @media screen and (width <= 576px) {
       padding: 0.5rem;

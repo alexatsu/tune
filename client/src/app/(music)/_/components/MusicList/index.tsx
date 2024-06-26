@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuid } from "uuid";
+import { useShallow } from "zustand/react/shallow";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
@@ -67,7 +68,17 @@ export function MusicList({ data, session, albumId }: MusicList) {
     handlePause,
     volume,
     setSeek,
-  } = useStreamStore();
+  } = useStreamStore(
+    useShallow((state) => ({
+      currentId: state.currentId,
+      setCurrentId: state.setCurrentId,
+      isStreaming: state.isStreaming,
+      setIsStreaming: state.setIsStreaming,
+      handlePause: state.handlePause,
+      volume: state.volume,
+      setSeek: state.setSeek,
+    })),
+  );
 
   const updateCurrentPayload = () => {
     if (!currentPayload.current || currentPayload.current.type !== data.type) {
@@ -277,10 +288,11 @@ export function MusicList({ data, session, albumId }: MusicList) {
 
     const checkIfAlbumId = pathname.split("/");
     const getAlbumById = (id: string) => albums?.albums.find((album) => album.id === id);
+    const allowedPaths = ["/allmusic", "/charts"];
 
     const list = (className: string) => [
       {
-        node: pathname === "/allmusic" && (
+        node: allowedPaths.includes(pathname) && (
           <>
             <li className={className} onClick={(e) => handleSongInAlbumAccordion(e)}>
               add to album
@@ -355,41 +367,52 @@ export function MusicList({ data, session, albumId }: MusicList) {
   };
 
   const sortedSongs = sortByDateDescending(data?.songs || []);
+  /**
+   * This function is used to attach a unique identifier to each song in the list.
+   * Sometimes there is urlId that is not unique.
+   * So i need to use uuid() function to create a unique identifier.
+   */
+  const attachUUIDToSortedSongs = useMemo(
+    () => sortedSongs.map((song) => ({ ...song, uuid: uuid() })),
+    [sortedSongs],
+  );
 
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
-        {sortedSongs.map((song, index) => (
-          <div className={styles.liWrapper} key={uuidv4()}>
-            <li className={styles.musicListItem}>
-              <div className={styles.leftSection}>
-                <div className={styles.imageBlock}>
-                  {renderPlayButton(song)}
-                  <Image
-                    src={song.cover || ""}
-                    alt={song.title}
-                    width={40}
-                    height={40}
-                    style={{ objectFit: "cover" }}
-                    unoptimized
-                  />
-                </div>
-                <span className={styles.title}>{song.title}</span>
-              </div>
-
-              <div className={styles.rightSection}>
-                {formatedDuration(song.duration)}
-                {pathname === "/search" && renderAddButton(song)}
-                {pathname === "/charts" && renderAddButton(song)}
-                <MenuDropdown
-                  props={dropdownMenuProps(song, pathname)}
-                  Icon={<ThreeDots className={styles.threeDotsMenu} />}
-                  isOpen={openDropdownIndex === index}
-                  setIsOpen={() => handleMusicListDropdownToggle(index)}
+        {attachUUIDToSortedSongs.map((song, index) => (
+          <li
+            className={styles.musicListItem}
+            key={song.uuid}
+            style={{ backgroundColor: currentId === song.urlId ? "var(--widget-bg-playing)" : "" }}
+          >
+            <div className={styles.leftSection}>
+              <div className={styles.imageBlock}>
+                {renderPlayButton(song)}
+                <Image
+                  src={song.cover || ""}
+                  alt={song.title}
+                  width={40}
+                  height={40}
+                  style={{ objectFit: "cover" }}
+                  unoptimized
                 />
               </div>
-            </li>
-          </div>
+              <span className={styles.title}>{song.title}</span>
+            </div>
+
+            <div className={styles.rightSection}>
+              {formatedDuration(song.duration)}
+              {pathname === "/search" && renderAddButton(song)}
+              {pathname === "/charts" && renderAddButton(song)}
+              <MenuDropdown
+                props={dropdownMenuProps(song, pathname)}
+                Icon={<ThreeDots className={styles.threeDotsMenu} />}
+                isOpen={openDropdownIndex === index}
+                setIsOpen={() => handleMusicListDropdownToggle(index)}
+              />
+            </div>
+          </li>
         ))}
       </ul>
     </div>
