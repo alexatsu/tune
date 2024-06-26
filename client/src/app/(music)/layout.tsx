@@ -9,8 +9,10 @@ export default function layout({ children }: { children: React.ReactNode }) {
         <DesktopNavigationBar />
         {children}
       </main>
-      <Player />
-      <MobileNavigationbar />
+      <div className={styles.mobilePlayerAndNavigation}>
+        <Player />
+        <MobileNavigationbar />
+      </div>
     </StreamProvider>
   );
 }

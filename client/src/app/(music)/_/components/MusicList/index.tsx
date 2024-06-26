@@ -4,14 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
+import { v4 as uuidv4 } from "uuid";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { useAlbums, useSongs } from "@/music/_/hooks";
-import { Album, AlbumSongs, Song } from "@/music/_/types";
+import { Album, AlbumSongs, ChartSongs, Song } from "@/music/_/types";
 import { useStreamStore } from "@/shared/store";
 import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
@@ -34,7 +35,7 @@ const formatedDuration = (duration: string) => {
 
 type MusicList = {
   data: {
-    songs: Song[] | AlbumSongs[];
+    songs: Song[] | AlbumSongs[] | ChartSongs[];
     message: string;
 
     type: string | undefined;
@@ -190,7 +191,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
     }
   };
 
-  const deleteFromMyMusic = async (songId: Song["urlId"]) => {
+  const deleteFromMyMusic = async (songId: Song["id"]) => {
     await handleFetch<{ message: string }>(`/api/songs/delete`, "POST", {
       songId,
       session,
@@ -359,7 +360,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
         {sortedSongs.map((song, index) => (
-          <div className={styles.liWrapper} key={song.urlId}>
+          <div className={styles.liWrapper} key={uuidv4()}>
             <li className={styles.musicListItem}>
               <div className={styles.leftSection}>
                 <div className={styles.imageBlock}>
@@ -379,6 +380,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
               <div className={styles.rightSection}>
                 {formatedDuration(song.duration)}
                 {pathname === "/search" && renderAddButton(song)}
+                {pathname === "/charts" && renderAddButton(song)}
                 <MenuDropdown
                   props={dropdownMenuProps(song, pathname)}
                   Icon={<ThreeDots className={styles.threeDotsMenu} />}

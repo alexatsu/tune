@@ -1,0 +1,28 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.categoriesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-evenly;
+  list-style: none;
+  color: $text;
+  font-weight: 600;
+  padding: 0.5rem 0;
+}
+
+.categriesListItem {
+  background-color: $widget-bg;
+  padding: 1rem 1rem;
+  border-radius: 1rem;
+  min-width: 15%;
+  text-align: center;
+  font-size: clamp(0.8rem, 1rem, 1.2rem);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  user-select: none;
+
+  &:hover {
+    background-color: $widget-bg-hover;
+  }
+}

@@ -1,9 +1,10 @@
 import { Context } from "hono";
 import fs from "fs";
+import { Tracks } from "../types";
 
 const readProcessedCharts = async (c: Context) => {
   const file = fs.readFileSync("./src/data/top-charts.json", "utf8");
-  const parse = JSON.parse(file);
+  const parse = JSON.parse(file) as { [key: string]: Tracks[] };
 
   return parse;
 };

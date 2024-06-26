@@ -5,9 +5,11 @@
   --bg: #121313;
   --bg-alt: #1c1c1c;
   --bg-alt-hover: #2c2c2c;
-  --widget-bg: #1a1e1f;
-  --widget-bg-alt: #222729;
 
+  --widget-bg: hsl(192, 9%, 11%);
+  --widget-bg-hover: color-mix(in srgb, var(--widget-bg), white 5%);
+  --widget-bg-alt: #222729;
+  
   --text: #ececec;
   --dark-text: #111;
 
