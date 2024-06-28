@@ -4,11 +4,6 @@ from models.audio import Search
 from utils.functions import format_duration
 
 
-data = {
-    "ignoreerrors": True,
-}
-
-
 def search_songs(query: Search):
     command = [
         "yt-dlp",

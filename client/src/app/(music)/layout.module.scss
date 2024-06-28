@@ -2,6 +2,8 @@
   display: flex;
   gap: 2rem;
   padding: 0 15%;
+  flex: 1;
+  overflow: auto;
   height: 80%;
 
   @media screen and (width <= 1024px) {
@@ -12,4 +14,9 @@
     padding: 0 0.5rem;
     gap: 0;
   }
+}
+
+.mobilePlayerAndNavigation {
+  display: flex;
+  flex-direction: column;
 }

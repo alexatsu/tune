@@ -2,7 +2,7 @@
 
 import { createContext, MutableRefObject, RefObject, useContext, useRef } from "react";
 
-import type { AlbumSongs, Song } from "@/music/_/types";
+import type { AlbumSongs, ChartSongs, Song } from "@/music/_/types";
 import { Stream } from "@/music/_/types";
 
 type PlayerContext = {
@@ -10,7 +10,7 @@ type PlayerContext = {
   volumeRef: React.RefObject<HTMLInputElement>;
   currentSongOrStreamRef: MutableRefObject<Song | Stream | null>;
   currentPayload: MutableRefObject<{
-    songsOrStreams: (Song | Stream | AlbumSongs)[];
+    songsOrStreams: (Song | Stream | AlbumSongs | ChartSongs)[];
     type: string | undefined;
     id?: string;
   } | null>;

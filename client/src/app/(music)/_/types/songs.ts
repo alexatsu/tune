@@ -1,12 +1,12 @@
 type Song = {
-  id: string;
   title: string;
   duration: string;
   url: string;
   urlId: string;
+  cover: string | null;
+  id?: string;
   addedAt?: Date;
   userId?: string;
-  cover: string | null;
 };
 
 type SongsResponse = {

@@ -4,22 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
+import { v4 as uuid } from "uuid";
+import { useShallow } from "zustand/react/shallow";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
-import { useAlbums, usePlayer, useSongs } from "@/music/_/hooks";
-import { Album, AlbumSongs, Song, SongsResponse } from "@/music/_/types";
-import { updateProgressBar } from "@/music/_/utils/functions";
+import { useAlbums, useSongs } from "@/music/_/hooks";
+import { Album, AlbumSongs, ChartSongs, Song } from "@/music/_/types";
 import { useStreamStore } from "@/shared/store";
 import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
 import { miscIcons } from "../icons/misc";
 import styles from "./styles.module.scss";
 
-const { Play, Pause, ThreeDots, Add, Muted, Unmuted } = playerIcons;
+const { Play, Pause, ThreeDots, Add } = playerIcons;
 const { LoadingCircle } = miscIcons;
 
 const formatedDuration = (duration: string) => {
@@ -35,16 +36,17 @@ const formatedDuration = (duration: string) => {
 
 type MusicList = {
   data: {
-    songs: Song[] | AlbumSongs[];
+    songs: Song[] | AlbumSongs[] | ChartSongs[];
     message: string;
 
     type: string | undefined;
     id?: string | undefined;
   };
   session: Session;
+  albumId?: string;
 };
 
-export function MusicList({ data, session }: MusicList) {
+export function MusicList({ data, session, albumId }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
   const { currentSongOrStreamRef, playerRef, currentPayload } = usePlayerContext();
@@ -66,20 +68,52 @@ export function MusicList({ data, session }: MusicList) {
     handlePause,
     volume,
     setSeek,
-  } = useStreamStore();
+  } = useStreamStore(
+    useShallow((state) => ({
+      currentId: state.currentId,
+      setCurrentId: state.setCurrentId,
+      isStreaming: state.isStreaming,
+      setIsStreaming: state.setIsStreaming,
+      handlePause: state.handlePause,
+      volume: state.volume,
+      setSeek: state.setSeek,
+    })),
+  );
 
-  const handlePlayById = (song: Song, volume: number) => {
-    const { urlId } = song;
-    setIsStreaming(true);
-    setCurrentId(urlId);
-    setSeek(0);
-
+  const updateCurrentPayload = () => {
     if (!currentPayload.current || currentPayload.current.type !== data.type) {
       currentPayload.current = {
         songsOrStreams: data.songs,
         type: data.type,
       };
     }
+
+    if (currentPayload.current.type === "album") {
+      const albumSongs = currentPayload.current?.songsOrStreams[0] as AlbumSongs;
+      const currentAlbumId = albumSongs.albumId;
+
+      if (currentAlbumId !== albumId) {
+        currentPayload.current = {
+          songsOrStreams: data.songs,
+          type: data.type,
+        };
+      }
+    }
+
+    if (currentPayload.current.type === "search") {
+      currentPayload.current = {
+        songsOrStreams: data.songs,
+        type: data.type,
+      };
+    }
+  };
+
+  const handlePlayById = (song: Song | AlbumSongs, volume: number) => {
+    const { urlId } = song;
+    setIsStreaming(true);
+    setCurrentId(urlId);
+
+    updateCurrentPayload();
 
     if (currentId === urlId) {
       playerRef.current?.contentWindow?.postMessage(
@@ -90,6 +124,7 @@ export function MusicList({ data, session }: MusicList) {
     }
 
     if (playerRef.current) {
+      setSeek(0);
       playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
       currentSongOrStreamRef.current = song;
 
@@ -167,7 +202,7 @@ export function MusicList({ data, session }: MusicList) {
     }
   };
 
-  const deleteFromMyMusic = async (songId: Song["urlId"]) => {
+  const deleteFromMyMusic = async (songId: Song["id"]) => {
     await handleFetch<{ message: string }>(`/api/songs/delete`, "POST", {
       songId,
       session,
@@ -253,10 +288,11 @@ export function MusicList({ data, session }: MusicList) {
 
     const checkIfAlbumId = pathname.split("/");
     const getAlbumById = (id: string) => albums?.albums.find((album) => album.id === id);
+    const allowedPaths = ["/allmusic", "/charts"];
 
     const list = (className: string) => [
       {
-        node: pathname === "/allmusic" && (
+        node: allowedPaths.includes(pathname) && (
           <>
             <li className={className} onClick={(e) => handleSongInAlbumAccordion(e)}>
               add to album
@@ -322,39 +358,61 @@ export function MusicList({ data, session }: MusicList) {
     return result;
   };
 
+  const sortByDateDescending = (payload: Song[] | AlbumSongs[]) => {
+    return payload.sort((a, b) => {
+      const aDate = a.addedAt ? new Date(a.addedAt) : new Date(0);
+      const bDate = b.addedAt ? new Date(b.addedAt) : new Date(0);
+      return bDate.getTime() - aDate.getTime();
+    });
+  };
+
+  const sortedSongs = sortByDateDescending(data?.songs || []);
+  /**
+   * This function is used to attach a unique identifier to each song in the list.
+   * Sometimes there is urlId that is not unique.
+   * So i need to use uuid() function to create a unique identifier.
+   */
+  const attachUUIDToSortedSongs = useMemo(
+    () => sortedSongs.map((song) => ({ ...song, uuid: uuid() })),
+    [sortedSongs],
+  );
+
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
-        {data?.songs?.map((song, index) => (
-          <div className={styles.liWrapper} key={song.urlId}>
-            <li className={styles.musicListItem}>
-              <div className={styles.leftSection}>
-                <div className={styles.imageBlock}>
-                  {renderPlayButton(song)}
-                  <Image
-                    src={song.cover || ""}
-                    alt={song.title}
-                    width={40}
-                    height={40}
-                    style={{ objectFit: "cover" }}
-                    unoptimized
-                  />
-                </div>
-                <span className={styles.title}>{song.title}</span>
-              </div>
-
-              <div className={styles.rightSection}>
-                {formatedDuration(song.duration)}
-                {pathname === "/search" && renderAddButton(song)}
-                <MenuDropdown
-                  props={dropdownMenuProps(song, pathname)}
-                  Icon={<ThreeDots className={styles.threeDotsMenu} />}
-                  isOpen={openDropdownIndex === index}
-                  setIsOpen={() => handleMusicListDropdownToggle(index)}
+        {attachUUIDToSortedSongs.map((song, index) => (
+          <li
+            className={styles.musicListItem}
+            key={song.uuid}
+            style={{ backgroundColor: currentId === song.urlId ? "var(--widget-bg-playing)" : "" }}
+          >
+            <div className={styles.leftSection}>
+              <div className={styles.imageBlock}>
+                {renderPlayButton(song)}
+                <Image
+                  src={song.cover || ""}
+                  alt={song.title}
+                  width={40}
+                  height={40}
+                  style={{ objectFit: "cover" }}
+                  unoptimized
                 />
               </div>
-            </li>
-          </div>
+              <span className={styles.title}>{song.title}</span>
+            </div>
+
+            <div className={styles.rightSection}>
+              {formatedDuration(song.duration)}
+              {pathname === "/search" && renderAddButton(song)}
+              {pathname === "/charts" && renderAddButton(song)}
+              <MenuDropdown
+                props={dropdownMenuProps(song, pathname)}
+                Icon={<ThreeDots className={styles.threeDotsMenu} />}
+                isOpen={openDropdownIndex === index}
+                setIsOpen={() => handleMusicListDropdownToggle(index)}
+              />
+            </div>
+          </li>
         ))}
       </ul>
     </div>

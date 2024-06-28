@@ -51,6 +51,7 @@ export function Player() {
     handlePlay,
     volume,
     setVolume,
+    setUnmute,
     handleVolume,
     toggleMute,
     seek,
@@ -225,14 +226,19 @@ export function Player() {
   );
 
   if (!session) redirect("/signin");
+
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    updateProgressBar(volumeRef, `${value}`);
 
     if (playerRef.current) {
       handleVolume(playerRef, +value);
       setVolume(volumeRef, +value / 100);
     }
+
+    if (volume.muted) {
+      setUnmute(playerRef);
+    }
+    updateProgressBar(volumeRef, `${value}`);
   };
 
   return (
@@ -243,7 +249,7 @@ export function Player() {
 
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
-              <PreviousTrack onClick={handlePreviousTrack} />
+              <PreviousTrack onClick={handlePreviousTrack} style={{ cursor: "pointer" }} />
               {isStreaming && <Pause onClick={() => handlePause(playerRef)} />}
               {!isStreaming && <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />}
 

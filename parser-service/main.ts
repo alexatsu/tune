@@ -1,39 +1,21 @@
-import * as cheerio from "cheerio";
+import { Hono } from "hono";
+import { cors } from 'hono/cors'
+import { prettyJSON } from "hono/pretty-json";
+import { serve } from "@hono/node-server";
+import { routes } from "@/routes";
+ 
+import "@/cron/parseCharts";
 
-const parseHTML = async () => {
-  const url = "https://www.billboard.com/charts/hot-100/";
+const app = new Hono();
+const { chartsRoutes } = routes;
 
-  const res = await fetch(url).then((res) => res.text());
-  const $ = cheerio.load(res);
+app.use(prettyJSON());
+app.use(cors({ origin: "*" }));
+// app.get("/", (c) => c.json({ message: "Hello, World!" }));
 
-  const products = [] as { title: string; artist: string }[];
+app.route("/", chartsRoutes);
 
-  $(".lrv-u-width-100p").each((i: number, el: cheerio.Element) => {
-    const ul = $(el).find("ul.lrv-a-unstyle-list > li:first");
-
-    const title = ul
-      .find("h3")
-      .text()
-      .replace(/[\t\n]/g, "");
-    const artist = ul
-      .find("span")
-      .text()
-      .trim()
-      .replace(/[\t\n]/g, "");
-
-    const escapes = ["Follow Billboard on Facebook", "Account"];
-
-    products.push({
-      title: escapes.includes(title) ? "" : title,
-      artist: escapes.includes(artist) ? "" : artist,
-    });
-  });
-
-  const removeEmpty = (products: { title: string; artist: string }[]) => {
-    return products.filter((product) => product.title && product.artist);
-  };
-
-  console.log(removeEmpty(products));
-};
-
-parseHTML();
+serve({
+  fetch: app.fetch,
+  port: 8020,
+});

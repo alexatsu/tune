@@ -48,7 +48,9 @@ export function MenuDropdown({ props, Icon, isOpen, setIsOpen }: Props) {
   return (
     <div className={styles.container}>
       <div onClick={toggleDropdown}>
-        <div ref={menuRef}>{Icon}</div>
+        <div style={{ display: "flex", alignItems: "center" }} ref={menuRef}>
+          {Icon}
+        </div>
       </div>
 
       <ul className={isOpen ? styles.ulOpen : styles.ul} ref={dropdownRef}>

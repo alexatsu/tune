@@ -21,12 +21,16 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
-      "@/shared/*":["./src/shared/*"],
-      "@/sass/*":["./src/shared/sass/*"],
-      
+      "@/shared/*": ["./src/shared/*"],
+      "@/sass/*": ["./src/shared/sass/*"],
+
       "@/app/*": ["./src/app/*"],
-      "@/music/*":["./src/app/(music)/*"],
-      "@/albums/*":["./src/app/(music)/albums/*"],
+
+      "@/music/*": ["./src/app/(music)/*"],
+
+      "@/albums/*": ["./src/app/(music)/albums/*"],
+      "@/charts/*": ["./src/app/(music)/charts/*"],
+
       "@/api/*": ["./src/app/api/*"]
     }
   },

@@ -1,7 +1,6 @@
 import uvicorn
 import os
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from routes import search, chill

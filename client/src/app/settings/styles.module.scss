@@ -8,12 +8,13 @@
     background-color: $widget-bg;
     padding: 2rem;
     border-radius: 1rem;
-    
+
     h1 {
       margin-bottom: 2rem;
     }
 
     a {
+      font-weight: 600;
       text-decoration: none;
       color: $accent;
       &:visited {
