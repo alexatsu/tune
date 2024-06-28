@@ -9,11 +9,12 @@
 //add api call to fetch charts in client
 //create client page with charts in figma(probably tabs)
 //create ui page for client and test ui
-
-//TODO
 //merge into dev and test build client (check for linting and ts errors)
 //don't forget to uncomment cron jobs for backup/parser
+
+//TODO
 //add charts/parser to ci/cd
 //add initial top-charts into build
+//add backup service to ci/cd
 //deploy and polish bugs
 //make update to 0.9

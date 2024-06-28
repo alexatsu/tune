@@ -1,4 +1,3 @@
-import fs from "fs";
 import cron from "node-cron";
 import * as cheerio from "cheerio";
 import axios from "axios";
@@ -70,6 +69,6 @@ const runParseJob = async () => {
   sendParsedDataToChartBuilder();
 };
 
-// runParseJob();
+runParseJob();
 
-// cron.schedule("0 0 * * 0", runParseJob);
+cron.schedule("0 0 * * 0", runParseJob);

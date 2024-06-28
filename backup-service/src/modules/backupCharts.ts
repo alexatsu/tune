@@ -75,6 +75,7 @@ const uploadLatestChartsToCloudinary = async () => {
 };
 
 const deleteTempFile = async () => {
+  console.log("Deleting temp file...");
   fs.unlinkSync(tempFolder + "/charts.json");
 };
 
