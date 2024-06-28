@@ -1,0 +1,51 @@
+name: charts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: stop parser container
+        run: docker stop tune-parser
+        continue-on-error: true
+
+      - name: stop charts container
+        run: docker stop tune-charts
+        continue-on-error: true
+
+      - name: remove parser container
+        run: docker rm tune-parser
+        continue-on-error: true
+
+      - name: remove charts container
+        run: docker rm tune-charts
+        continue-on-error: true
+
+      - name: build parser container
+        working-directory: ./parser-service
+        run: docker build -t parser-service --no-cache .
+
+      - name: build charts container
+        working-directory: ./charts-service
+        run: docker build -t charts-service --no-cache .
+
+      - name: run parser container
+        working-directory: ./parser-service
+        run: docker run -d --name tune-parser -p 8020:8020 --restart always parser-service
+
+      - name: run charts container
+        working-directory: ./charts-service
+        run: docker run -d --name tune-charts -p 8010:8010 --restart always charts-service
+
+      - name: connect parser to tune network
+        working-directory: ./parser-service
+        run: docker network connect tune tune-parser
+
+      - name: connect charts to tune network
+        working-directory: ./charts-service
+        run: docker network connect tune tune-charts

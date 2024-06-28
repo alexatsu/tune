@@ -15,6 +15,7 @@
 //TODO
 //add charts/parser to ci/cd
 //add initial top-charts into build
-//add backup service to ci/cd
+
+//update backup service on ci/cd
 //deploy and polish bugs
 //make update to 0.9
