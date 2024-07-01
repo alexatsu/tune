@@ -20,8 +20,10 @@
       width: 100%;
     }
 
+    transition: all 0.15s linear;
     &:focus {
-      outline: 1px solid $accent;
+      background-color: $widget-bg-alt;
+      outline: none;
     }
   }
 
