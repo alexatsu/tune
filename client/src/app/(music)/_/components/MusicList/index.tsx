@@ -377,10 +377,12 @@ export function MusicList({ data, session, albumId }: MusicList) {
     [sortedSongs],
   );
 
+  // console.log(attachUUIDToSortedSongs, " data");
+
   return (
     <div className={styles.musicListContainer}>
       <ul className={styles.musicList}>
-        {attachUUIDToSortedSongs.map((song, index) => (
+        {sortedSongs.map((song, index) => (
           <li
             className={styles.musicListItem}
             key={song.uuid}

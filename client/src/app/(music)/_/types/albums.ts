@@ -3,6 +3,7 @@ import { Song } from "./songs";
 type AlbumSongs = Song & {
   songId: string;
   albumId: string;
+  uuid?: string;
 };
 
 type Album = {

@@ -7,6 +7,7 @@ type Song = {
   id?: string;
   addedAt?: Date;
   userId?: string;
+  uuid?: string;
 };
 
 type SongsResponse = {

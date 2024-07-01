@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { db } from "@/app/api/_/services";
 import { MusicList } from "@/music/_/components";
 import { AlbumSongs } from "@/music/_/types";
+import { attachUUIDToSongs } from "@/music/_/utils/functions";
 import { authOptions } from "@/shared/utils/functions";
 
 import { AlbumMenuDropdown } from "./components";
@@ -16,8 +17,10 @@ const fetchAlbumById = async (id: string) => {
     include: { albumSongs: true },
   });
 
+  const albumSongs = attachUUIDToSongs(userAlbum?.albumSongs || []);
+
   const musicList = {
-    songs: userAlbum?.albumSongs || ([] as AlbumSongs[]),
+    songs: albumSongs as AlbumSongs[],
     message: `success, albumId is ${id}`,
     type: "album",
     id,

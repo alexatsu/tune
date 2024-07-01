@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useCallback, useState } from "react";
 
 import { SongsResponse } from "@/app/(music)/_/types";
+import { attachUUIDToSongs } from "@/app/(music)/_/utils/functions";
 import { MusicList, Skeleton } from "@/music/_/components";
 import { playerIcons } from "@/music/_/components/icons/player";
 
@@ -68,8 +69,10 @@ function SearchSongs() {
     setInput(e.target.value);
   };
 
+  const songsWithUUID = attachUUIDToSongs(data?.songs || []);
+
   const payload = {
-    songs: data?.songs || [],
+    songs: songsWithUUID || [],
     message: data?.message || "",
     type: "search",
   };

@@ -92,6 +92,10 @@ export function Player() {
 
     const trackIndex = songsOrStreams?.indexOf(currentSongRef.current);
     if (trackIndex === -1 || trackIndex === undefined) {
+      console.log(currentSongRef.current, "current song not found");
+      console.log(trackIndex, " track index not found");
+      console.log(currentPayload.current, "current payload not found");
+      console.log("track index not found");
       return;
     }
 
@@ -240,7 +244,7 @@ export function Player() {
     }
     updateProgressBar(volumeRef, `${value}`);
   };
-
+  console.log(currentPayload.current, "currentPaylod in player");
   return (
     <>
       {!isMobile ? (

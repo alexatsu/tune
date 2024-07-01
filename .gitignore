@@ -5,3 +5,4 @@ docker-compose.yaml
 checkTypes.js
 test.ts
 **/__pycache__
+player/*

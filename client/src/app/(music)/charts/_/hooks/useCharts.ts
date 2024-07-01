@@ -1,21 +1,6 @@
 import useSWR from "swr";
 
-type Chart = {
-  title: string;
-  cover: string;
-  urlId: string;
-  url: string;
-  duration: string;
-  view_count: number;
-};
-
-type ChartsCategories = {
-  [key: string]: Chart[];
-};
-type ChartsResponse = {
-  message: string;
-  data: ChartsCategories;
-};
+import { ChartsResponse } from "@/app/(music)/_/types";
 
 export function useCharts() {
   const url = `http://localhost:8020/charts/get-all`;

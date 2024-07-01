@@ -69,6 +69,8 @@ const runParseJob = async () => {
   sendParsedDataToChartBuilder();
 };
 
-runParseJob();
+if (process.env.NODE_ENV === "production") {
+  runParseJob();  
+}
 
 cron.schedule("0 0 * * 0", runParseJob);

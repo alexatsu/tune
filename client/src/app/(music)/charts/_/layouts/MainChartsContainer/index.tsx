@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 
+import { attachUUIDToSongs } from "@/app/(music)/_/utils/functions";
 import { Categories } from "@/charts/_/components";
 import { useCharts } from "@/charts/_/hooks";
 import { MusicList, Skeleton } from "@/music/_/components";
@@ -15,6 +16,12 @@ export function MainChartsContainer() {
   const { charts, chartsIsLoading } = useCharts();
   const { data: session } = useSession();
   const chart = charts?.data || {};
+
+  for (const key in chart) {
+    const updatedChart = attachUUIDToSongs(chart[key]);
+    chart[key] = updatedChart;
+  }
+
   const firstChart = Object.keys(chart)[0];
   const cachedCategory = localStorage.getItem("selectedCategory");
   const [selectedCategory, setSelectedCategory] = useState<string>("");

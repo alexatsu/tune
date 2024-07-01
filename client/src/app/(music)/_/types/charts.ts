@@ -5,6 +5,7 @@ type ChartSongs = {
   url: string;
   duration: string;
   view_count: number;
+  uuid?: string;
 };
 
 type ChartsCategories = {

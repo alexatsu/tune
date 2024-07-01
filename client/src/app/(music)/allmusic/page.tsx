@@ -10,6 +10,7 @@ const MusicList = dynamic(() => import("@/music/_/components").then((mod) => mod
 import Link from "next/link";
 
 import { Skeleton } from "../_/components/Skeleton";
+import { attachUUIDToSongs } from "../_/utils/functions";
 import styles from "./styles.module.scss";
 
 export default function Page() {
@@ -17,7 +18,9 @@ export default function Page() {
   const { songs, isLoading, data } = useSongs(session);
   if (!session) redirect("/signin");
 
-  const payload = { songs: songs || [], message: "success", type: "allmusic" };
+  const songsWithUUID = attachUUIDToSongs(songs || []);
+
+  const payload = { songs: songsWithUUID || [], message: "success", type: "allmusic" };
 
   const musicList = isLoading ? (
     <div className={styles.musicListSkeletonContainer}>
