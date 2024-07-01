@@ -367,17 +367,6 @@ export function MusicList({ data, session, albumId }: MusicList) {
   };
 
   const sortedSongs = sortByDateDescending(data?.songs || []);
-  /**
-   * This function is used to attach a unique identifier to each song in the list.
-   * Sometimes there is urlId that is not unique.
-   * So i need to use uuid() function to create a unique identifier.
-   */
-  const attachUUIDToSortedSongs = useMemo(
-    () => sortedSongs.map((song) => ({ ...song, uuid: uuid() })),
-    [sortedSongs],
-  );
-
-  // console.log(attachUUIDToSortedSongs, " data");
 
   return (
     <div className={styles.musicListContainer}>
