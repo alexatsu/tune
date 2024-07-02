@@ -68,6 +68,8 @@ export function MusicList({ data, session, albumId }: MusicList) {
     handlePause,
     volume,
     setSeek,
+    isStartingPlaying,
+    setIsStartingPlaying,
   } = useStreamStore(
     useShallow((state) => ({
       currentId: state.currentId,
@@ -77,6 +79,8 @@ export function MusicList({ data, session, albumId }: MusicList) {
       handlePause: state.handlePause,
       volume: state.volume,
       setSeek: state.setSeek,
+      isStartingPlaying: state.isStartingPlaying,
+      setIsStartingPlaying: state.setIsStartingPlaying,
     })),
   );
 
@@ -127,7 +131,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
       setSeek(0);
       playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
       currentSongOrStreamRef.current = song;
-
+      setIsStartingPlaying(true);
       setTimeout(() => {
         playerRef.current?.contentWindow?.postMessage(
           `{"event":"command","func":"setVolume","args":["${volume}"]}`,
@@ -137,6 +141,8 @@ export function MusicList({ data, session, albumId }: MusicList) {
           '{"event":"command","func":"playVideo","args":""}',
           "*",
         );
+
+        setIsStartingPlaying(false);
       }, 1000);
     }
   };
@@ -154,6 +160,10 @@ export function MusicList({ data, session, albumId }: MusicList) {
         <Pause />
       </div>
     );
+
+    if (iscurrentTrackRef && isStartingPlaying) {
+      return <LoadingCircle />;
+    }
 
     if (isPlaying && iscurrentTrackRef && currentPayload.current?.type === data.type) {
       return pauseButton;

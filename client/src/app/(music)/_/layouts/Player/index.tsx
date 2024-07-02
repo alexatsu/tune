@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { usePlayerContext } from "@/app/_/providers";
+import { miscIcons } from "@/music/_/components/icons/misc";
 import { playerIcons } from "@/music/_/components/icons/player";
 import {
   ImageBlockDesktop,
@@ -24,6 +25,7 @@ import { Song } from "../../types";
 import styles from "./styles.module.scss";
 
 const { Play, Pause, PreviousTrack, NextTrack, Unmuted: SoundIcon } = playerIcons;
+const { LoadingCircle } = miscIcons;
 
 const convertStringDurationToNumber = (duration: string | undefined) => {
   if (!duration) return 0;
@@ -56,6 +58,7 @@ export function Player() {
     toggleMute,
     seek,
     setSeek,
+    isStartingPlaying,
   } = useStreamStore();
   const [soundMobileOpen, setSoundMobileOpen] = useState(false);
   const trackSeekRef = useRef<HTMLInputElement>(null);
@@ -206,6 +209,22 @@ export function Player() {
     return () => clearInterval(updateCurrentTime);
   }, [playerRef, isStreaming, duration, seek, currentPayload, setSeek]);
 
+  if (!session) redirect("/signin");
+
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+
+    if (playerRef.current) {
+      handleVolume(playerRef, +value);
+      setVolume(volumeRef, +value / 100);
+    }
+
+    if (volume.muted) {
+      setUnmute(playerRef);
+    }
+    updateProgressBar(volumeRef, `${value}`);
+  };
+
   const inputs = (
     <>
       <input
@@ -227,23 +246,13 @@ export function Player() {
       /> */}
     </>
   );
-
-  if (!session) redirect("/signin");
-
-  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-
-    if (playerRef.current) {
-      handleVolume(playerRef, +value);
-      setVolume(volumeRef, +value / 100);
-    }
-
-    if (volume.muted) {
-      setUnmute(playerRef);
-    }
-    updateProgressBar(volumeRef, `${value}`);
+  const playOrPause = () => {
+    return isStreaming ? (
+      <Pause onClick={() => handlePause(playerRef)} />
+    ) : (
+      <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />
+    );
   };
-
   return (
     <>
       {!isMobile ? (
@@ -252,9 +261,13 @@ export function Player() {
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
               <PreviousTrack onClick={handlePreviousTrack} style={{ cursor: "pointer" }} />
-              {isStreaming && <Pause onClick={() => handlePause(playerRef)} />}
-              {!isStreaming && <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />}
-
+              {isStartingPlaying ? (
+                <div className={styles.playOrPauseLoader}>
+                  <LoadingCircle />
+                </div>
+              ) : (
+                playOrPause()
+              )}
               <NextTrack onClick={handleNextTrack} />
             </div>
 

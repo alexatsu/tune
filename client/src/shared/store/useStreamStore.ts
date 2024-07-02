@@ -9,6 +9,8 @@ type StreamStore = {
 
   isStreaming: boolean;
   setIsStreaming: (value: boolean) => void;
+  isStartingPlaying: boolean;
+  setIsStartingPlaying: (value: boolean) => void;
   handleLoad: (streamRef: RefObject<HTMLIFrameElement>) => void;
   handlePlay: (streamRef: RefObject<HTMLIFrameElement>, volume: number) => void;
   handlePause: (streamRef: RefObject<HTMLIFrameElement>) => void;
@@ -35,6 +37,8 @@ const useStreamStore = create<StreamStore>((set, get) => ({
 
   isStreaming: false,
   setIsStreaming: (value) => set({ isStreaming: value }),
+  isStartingPlaying: false,
+  setIsStartingPlaying: (value) => set({ isStartingPlaying: value }),
   handleLoad: (streamRef) => {
     if (streamRef.current) {
       streamRef.current.contentWindow?.postMessage(

@@ -113,7 +113,6 @@
     padding: 0 1rem;
   }
 
-  
   .mainTrackDesktop {
     width: 60%;
     display: flex;
@@ -123,8 +122,6 @@
   }
 }
 
-
-
 .buttonsDesktop {
   width: 100%;
   display: flex;
@@ -133,6 +130,11 @@
 
   & svg {
     cursor: pointer;
+  }
+
+  .playOrPauseLoader {
+    display: flex;
+    align-items: center;
   }
 }
 
