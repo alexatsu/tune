@@ -9,10 +9,9 @@ import { dbPayload, formatDate, getAllBackupsFromCloudinary } from "@/utils";
 
 const { uploader } = cloudinary;
 
-const backupVersion = `${formatDate()}-${process.env.NODE_ENV}`;
-const backupFile = `./db_backup_${backupVersion}.sql`;
-
 const takePGBackup = async () => {
+  const backupVersion = `${formatDate()}-${process.env.NODE_ENV}`;
+  const backupFile = `./db_backup_${backupVersion}.sql`;
   const { host, user, database, password } = dbPayload();
 
   const commandOptions = ["-h", host, "-U", user, "-d", database, "-f", backupFile];
@@ -33,6 +32,8 @@ const takePGBackup = async () => {
       console.error(`Backup failed with code ${code}`);
     }
   });
+
+  return backupFile;
 };
 
 const sortResourcesDescending = (resources: ResourceApiResponse["resources"]) => {
@@ -56,7 +57,7 @@ const deleteOldestBackupFromCloudinary = async () => {
   }
 };
 
-const uploadBackupToCloudinary = async () => {
+const uploadBackupToCloudinary = async (backupFile: string) => {
   const options: UploadApiOptions = {
     resource_type: "raw",
     type: "upload",
@@ -84,16 +85,16 @@ const deleteLocalBackup = async () => {
     console.error("Error deleting local backup:", err);
   }
 };
-  
+
 const schedule = async () => {
-  await takePGBackup();
+  const backupFile = await takePGBackup();
   const { resources } = await getAllBackupsFromCloudinary(`tune/db-backup`);
 
   if (resources.length > 2) {
     await deleteOldestBackupFromCloudinary();
   }
 
-  await uploadBackupToCloudinary();
+  await uploadBackupToCloudinary(backupFile);
   await deleteLocalBackup();
 
   console.log("Scheduled backup");
