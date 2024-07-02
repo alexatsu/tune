@@ -177,14 +177,17 @@ export function Player() {
     const seekTime = Number(event.target.value);
     const player = playerRef.current;
 
-    if (player) {
-      setSeek(seekTime);
-      player.contentWindow?.postMessage(
-        `{"event":"command","func":"seekTo","args":[${seekTime}]}`,
-        "*",
-      );
-      updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`);
+    if (seekTime >= duration) {
+      event.preventDefault();
+      return;
     }
+
+    setSeek(seekTime);
+    player?.contentWindow?.postMessage(
+      `{"event":"command","func":"seekTo","args":[${seekTime}]}`,
+      "*",
+    );
+    updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`);
   };
 
   useEffect(() => {
@@ -240,12 +243,12 @@ export function Player() {
     }
     updateProgressBar(volumeRef, `${value}`);
   };
+
   return (
     <>
       {!isMobile ? (
         <PlayerContainer className={styles.desktopPlayerContainer}>
           <ImageBlockDesktop currentPlayRef={currentSongRef} />
-
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
               <PreviousTrack onClick={handlePreviousTrack} style={{ cursor: "pointer" }} />
