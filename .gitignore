@@ -6,3 +6,4 @@ checkTypes.js
 test.ts
 **/__pycache__
 player/*
+test-remix/*

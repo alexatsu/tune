@@ -23,7 +23,6 @@ export function MainChartsContainer() {
   }
 
   const firstChart = Object.keys(chart)[0];
-  const cachedCategory = localStorage.getItem("selectedCategory");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -33,9 +32,10 @@ export function MainChartsContainer() {
 
   useEffect(() => {
     if (charts) {
+      const cachedCategory = localStorage.getItem("selectedCategory");
       setSelectedCategory(cachedCategory || firstChart);
     }
-  }, [firstChart, charts, cachedCategory]);
+  }, [firstChart, charts]);
 
   const payload = {
     songs: chart[selectedCategory] as ChartSongs[],
