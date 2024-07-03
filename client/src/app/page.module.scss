@@ -8,7 +8,8 @@
   align-items: center;
   flex-direction: column;
   padding: 5rem 2rem;
-  height: calc(100vh - 100px);
+  height: 100%;
+  background-color: $bg;
 
   @media screen and (width <= 768px) {
     padding: 3rem 1rem;

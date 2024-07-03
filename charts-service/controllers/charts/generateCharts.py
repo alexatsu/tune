@@ -150,7 +150,16 @@ def merge_json_charts() -> None:
 
 def send_charts_to_parser():
     print("sending charts to parser")
-    url = "http://parser-service:8020/charts/retrieve-processed"
+    container_prod = os.environ.get("PARSER_SERVICE_CONTAINER")
+    container_local = "http://parser-service:8020"
+    is_production = os.environ.get("NODE_ENV") == "production"
+
+    url = (
+        container_prod
+        if is_production
+        else container_local + "/charts/retrieve-processed"
+    )
+
     headers = {
         "Content-Type": "application/json",
     }

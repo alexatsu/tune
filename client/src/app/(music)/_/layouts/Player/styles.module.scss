@@ -107,7 +107,7 @@
   justify-content: space-between;
   padding: 0 15%;
   flex: 0 0 10%;
-  background: linear-gradient(180deg, rgb(12 12 12 / 14%) 0%, rgb(26 30 31) 100%);
+  background: linear-gradient(180deg, var(--bg), rgb(26 30 31) 100%);
 
   @media screen and (width <= 1024px) {
     padding: 0 1rem;

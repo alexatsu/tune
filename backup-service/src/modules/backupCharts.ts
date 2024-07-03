@@ -22,7 +22,11 @@ const tempFolder = "./src/temp";
 
 const getProcessedChartsFromParser = async () => {
   console.log("Fetching new charts from parser...");
-  const url = "http://parser-service:8020/charts/send-charts-to-backup";
+  const prodContainer = process.env.CHARTS_SERVICE_CONTAINER;
+  const localContainer = "http://parser-service:8020";
+  const isProduction = process.env.NODE_ENV === "production";
+  const container = isProduction ? prodContainer : localContainer;
+  const url = container + "/charts/send-charts-to-backup";
   const response = await fetch(url);
   const data = (await response.json()) as ProcessedCharts;
 
@@ -55,7 +59,7 @@ const deletePreviousChartsFromCloudinary = async () => {
     await uploader.destroy(resources[0].public_id, { type: "upload", resource_type: "raw" });
   }
 };
- 
+
 const uploadLatestChartsToCloudinary = async () => {
   console.log("Uploading latest charts to Cloudinary...");
   const options: UploadApiOptions = {
@@ -64,12 +68,12 @@ const uploadLatestChartsToCloudinary = async () => {
     folder: cloudinaryFolder,
     use_filename: true,
   };
- 
+
   const upload = await uploader.upload(tempFolder + "/charts.json", options);
 
   const data = upload.url;
-  const date = new Date()
-  const today = `snapshot-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+  const date = new Date();
+  const today = `snapshot-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   console.log(data, today);
 };

@@ -1,3 +1,5 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
 .container {
   display: flex;
   gap: 2rem;
@@ -5,6 +7,7 @@
   flex: 1;
   overflow: auto;
   height: 80%;
+  background-color: $bg;
 
   @media screen and (width <= 1024px) {
     padding: 0 1rem;

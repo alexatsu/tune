@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { ChartsResponse } from "@/app/(music)/_/types";
 
 export function useCharts() {
-  const url = `http://localhost:8020/charts/get-all`;
+  const url = `/api/charts/get-all`;
 
   const fetchAllCharts = async () => {
     const response = await fetch(url);

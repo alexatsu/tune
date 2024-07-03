@@ -55,7 +55,12 @@ const runParseJob = async () => {
   }
 
   const sendParsedDataToChartBuilder = async () => {
-    const response = await fetch("http://charts-service:8010/charts/top", {
+    const prodContainer = process.env.CHARTS_SERVICE_CONTAINER;
+    const localContainer = "http://charts-service:8010";
+    const isProduction = process.env.NODE_ENV === "production";
+    const container = isProduction ? prodContainer : localContainer;
+
+    const response = await fetch(container + "/charts/top", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ payload: result }),
@@ -70,7 +75,7 @@ const runParseJob = async () => {
 };
 
 if (process.env.NODE_ENV === "production") {
-  runParseJob();  
+  runParseJob();
 }
 
 cron.schedule("0 0 * * 0", runParseJob);

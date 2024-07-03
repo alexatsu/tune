@@ -36,11 +36,11 @@ jobs:
 
       - name: run parser container
         working-directory: ./parser-service
-        run: docker run -d --name tune-parser -p 8020:8020 --restart always parser-service
+        run: docker run -d --name tune-parser -p 8020:8020 --restart always -e CHARTS_SERVICE_CONTAINER=${{ secrets.CHARTS_SERVICE_CONTAINER }} -e NODE_ENV=production parser-service
 
       - name: run charts container
         working-directory: ./charts-service
-        run: docker run -d --name tune-charts -p 8010:8010 --restart always charts-service
+        run: docker run -d --name tune-charts -p 8010:8010 --restart always -e PARSER_SERVICE_CONTAINER=${{ secrets.PARSER_SERVICE_CONTAINER }} -e NODE_ENV=production charts-service
 
       - name: connect parser to tune network
         working-directory: ./parser-service
