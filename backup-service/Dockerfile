@@ -1,7 +1,7 @@
 FROM opensuse/tumbleweed
 
 WORKDIR /app
-
+RUN mkdir -p /app/src/temp
 RUN zypper -n install postgresql
 
 COPY . . 
