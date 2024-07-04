@@ -221,6 +221,10 @@
     .imageBlockMobile {
       position: relative;
       width: 15%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       & img {
         -o-object-fit: cover;
@@ -234,11 +238,15 @@
       }
 
       & svg {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
+        z-index: 1;
+      }
+
+      .playOrPauseLoaderMobile {
+        min-height: 23px;
+        min-width: 23px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
 

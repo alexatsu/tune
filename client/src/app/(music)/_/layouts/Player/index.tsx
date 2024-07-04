@@ -310,9 +310,13 @@ export function Player() {
                     unoptimized
                   />
                 )}
-
-                {isStreaming && <Pause onClick={() => handlePause(playerRef)} />}
-                {!isStreaming && <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />}
+                {isStartingPlaying ? (
+                  <div className={styles.playOrPauseLoaderMobile}>
+                    <LoadingCircle />
+                  </div>
+                ) : (
+                  playOrPause()
+                )}
               </div>
 
               <div className={styles.title}>{currentSongRef.current?.title || ""}</div>
