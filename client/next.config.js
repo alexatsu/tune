@@ -20,3 +20,19 @@ const nextConfig = {
 };
 module.exports = nextConfig;
 // module.exports = withBundleAnalyzer(nextConfig)
+
+// module.exports = {
+//   async headers() {
+//     return [
+//       {
+//         source: '/',
+//         headers: [
+//           {
+//             key: 'Content-Security-Policy',
+//             value: "default-src 'self'; frame-src https://www.youtube.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://www.youtube.com; allow-same-origin",
+//           },
+//         ],
+//       },
+//     ];
+//   },
+// };

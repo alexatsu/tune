@@ -4,6 +4,8 @@ import { NextTrack } from "./NextTrack";
 import { Pause } from "./Pause";
 import { Play } from "./Play";
 import { PreviousTrack } from "./PreviousTrack";
+import { RepeatAll } from "./RepeatAll";
+import { RepeatOne } from "./RepeatOne";
 import { ThreeDots } from "./ThreeDots";
 import { TriggerSearch } from "./TriggerSearch";
 import { Unmuted } from "./Unmuted";
@@ -18,4 +20,6 @@ export const playerIcons = {
   Unmuted,
   Add,
   TriggerSearch,
+  RepeatAll,
+  RepeatOne,
 };

@@ -24,7 +24,15 @@ import { useStreamStore } from "@/shared/store";
 import { Song } from "../../types";
 import styles from "./styles.module.scss";
 
-const { Play, Pause, PreviousTrack, NextTrack, Unmuted: SoundIcon } = playerIcons;
+const {
+  Play,
+  Pause,
+  PreviousTrack,
+  NextTrack,
+  Unmuted: SoundIcon,
+  RepeatAll,
+  RepeatOne,
+} = playerIcons;
 const { LoadingCircle } = miscIcons;
 
 const convertStringDurationToNumber = (duration: string | undefined) => {
@@ -63,6 +71,7 @@ export function Player() {
   const [soundMobileOpen, setSoundMobileOpen] = useState(false);
   const trackSeekRef = useRef<HTMLInputElement>(null);
   const savedVolumeRef = useRef<number>(volume.value);
+  const [repeatCurrentTrack, setRepeatCurrentTrack] = useState(false);
 
   const loadSource = useCallback(
     (songOrStream: Song | Stream) => {
@@ -162,12 +171,42 @@ export function Player() {
     }
   };
 
+  const handleRepeatSingleSong = () => {
+    setRepeatCurrentTrack(!repeatCurrentTrack);
+  };
+
+  const handleRepeatCurrentSong = useCallback(() => {
+    if (!currentSongRef.current) {
+      return;
+    }
+    handlePlay(playerRef, volume.value * 100);
+    setSeek(0);
+    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+  }, [handlePlay, playerRef, duration, volume.value, trackSeekRef, currentSongRef, setSeek]);
+
+  // const handleShufflePayload = () => {
+  //   const copyPayload = Array.from(currentPayload.current?.songsOrStreams || []);
+  //   copyPayload.sort(() => Math.random() - 0.5);
+
+  //   currentPayload.current = {
+  //     songsOrStreams: copyPayload,
+  //     type: currentPayload.current?.type,
+  //     id: currentPayload.current?.id,
+  //   };
+  // };
   useEffect(() => {
     if (currentPayload.current?.type === "streams") return;
     if (seek >= duration) {
-      handleNextTrack();
+      repeatCurrentTrack ? handleRepeatCurrentSong() : handleNextTrack();
     }
-  }, [duration, handleNextTrack, seek, currentPayload]);
+  }, [
+    duration,
+    handleNextTrack,
+    seek,
+    currentPayload,
+    repeatCurrentTrack,
+    handleRepeatCurrentSong,
+  ]);
 
   useEffect(() => {
     if ((isMobile && soundMobileOpen) || !isMobile) {
@@ -269,6 +308,9 @@ export function Player() {
                 playOrPause()
               )}
               <NextTrack onClick={handleNextTrack} />
+              <div onClick={handleRepeatSingleSong}>
+                {repeatCurrentTrack ? <RepeatOne /> : <RepeatAll />}
+              </div>
             </div>
 
             {currentPayload.current?.type !== "streams" ? (
