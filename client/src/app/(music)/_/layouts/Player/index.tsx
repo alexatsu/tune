@@ -67,20 +67,21 @@ export function Player() {
     seek,
     setSeek,
     isStartingPlaying,
+    setIsStartingPlaying,
   } = useStreamStore();
   const [soundMobileOpen, setSoundMobileOpen] = useState(false);
   const trackSeekRef = useRef<HTMLInputElement>(null);
   const savedVolumeRef = useRef<number>(volume.value);
   const [repeatCurrentTrack, setRepeatCurrentTrack] = useState(false);
 
-  const loadSource = useCallback(
+  const loadSourceAndPlay = useCallback(
     (songOrStream: Song | Stream) => {
       const { urlId } = songOrStream;
 
       if (playerRef.current) {
         playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
         currentSongRef.current = songOrStream;
-
+        setIsStartingPlaying(true);
         setTimeout(() => {
           playerRef.current?.contentWindow?.postMessage(
             `{"event":"command","func":"setVolume","args":["${volume.value * 100}"]}`,
@@ -90,10 +91,12 @@ export function Player() {
             '{"event":"command","func":"playVideo","args":""}',
             "*",
           );
+
+          setIsStartingPlaying(false);
         }, 1000);
       }
     },
-    [currentSongRef, playerRef, volume],
+    [currentSongRef, playerRef, volume, setIsStartingPlaying],
   );
 
   const handleNextTrack = useCallback(() => {
@@ -111,32 +114,21 @@ export function Player() {
       if (trackIndex === songsOrStreams.length - 1) {
         currentSongRef.current = songsOrStreams[0];
 
-        loadSource(songsOrStreams[0]);
+        loadSourceAndPlay(songsOrStreams[0]);
         setCurrentId(songsOrStreams[0].urlId);
       }
 
       if (trackIndex < songsOrStreams.length - 1) {
         currentSongRef.current = songsOrStreams[trackIndex + 1];
 
-        loadSource(songsOrStreams[trackIndex + 1]);
+        loadSourceAndPlay(songsOrStreams[trackIndex + 1]);
         setCurrentId(songsOrStreams[trackIndex + 1].urlId);
       }
 
-      handlePlay(playerRef, volume.value * 100);
       setSeek(0);
       updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
     }
-  }, [
-    currentSongRef,
-    handlePlay,
-    playerRef,
-    setCurrentId,
-    volume.value,
-    loadSource,
-    duration,
-    currentPayload,
-    setSeek,
-  ]);
+  }, [currentSongRef, setCurrentId, loadSourceAndPlay, duration, currentPayload, setSeek]);
 
   const handlePreviousTrack = () => {
     const { songsOrStreams } = currentPayload.current || {};
@@ -155,17 +147,16 @@ export function Player() {
         currentSongRef.current = songsOrStreams[songsOrStreams.length - 1];
 
         setCurrentId(songsOrStreams[songsOrStreams.length - 1].urlId);
-        loadSource(songsOrStreams[songsOrStreams.length - 1]);
+        loadSourceAndPlay(songsOrStreams[songsOrStreams.length - 1]);
       }
 
       if (trackIndex > 0) {
         currentSongRef.current = songsOrStreams[trackIndex - 1];
 
         setCurrentId(songsOrStreams[trackIndex - 1].urlId);
-        loadSource(songsOrStreams[trackIndex - 1]);
+        loadSourceAndPlay(songsOrStreams[trackIndex - 1]);
       }
 
-      handlePlay(playerRef, volume.value * 100);
       setSeek(0);
       updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
     }
@@ -179,10 +170,9 @@ export function Player() {
     if (!currentSongRef.current) {
       return;
     }
-    handlePlay(playerRef, volume.value * 100);
     setSeek(0);
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
-  }, [handlePlay, playerRef, duration, volume.value, trackSeekRef, currentSongRef, setSeek]);
+  }, [duration, trackSeekRef, currentSongRef, setSeek]);
 
   // const handleShufflePayload = () => {
   //   const copyPayload = Array.from(currentPayload.current?.songsOrStreams || []);
