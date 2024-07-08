@@ -12,6 +12,7 @@ export function useCreateAlbum(session: Session | null) {
   const description = useRef<HTMLInputElement>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const { albumsMutate } = useAlbums();
+  const [error, setError] = useState<string | null>(null);
 
   const createAlbum = async (event: FormEvent<HTMLButtonElement>) => {
     const [gradient1, gradient2] = generateRandomTwoColorGradient();
@@ -28,17 +29,26 @@ export function useCreateAlbum(session: Session | null) {
         gradient: `linear-gradient(215deg, ${gradient2} 30%, ${gradient1} 60%)`,
       } as Album;
 
-      const response = await handleFetch(
+      const response = (await handleFetch(
         "/api/albums/create",
         "POST",
         { ...newAlbum, session },
         { "Content-Type": "application/json" },
-      );
+      )) as { message: string };
 
-      setModalVisible(false);
-      albumsMutate();
+      if (response.message === "Album added successfully in database") {
+        setModalVisible(false);
+        albumsMutate();
+        title.current.value = "";
+        description.current.value = "";
+        setError(null);
+      }
+
+      if (response.message === "Album already exists in database") {
+        setError("Album already exists in database");
+      }
     }
   };
 
-  return { createAlbum, modalVisible, setModalVisible, title, description };
+  return { createAlbum, modalVisible, setModalVisible, title, description, error };
 }

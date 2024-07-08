@@ -7,7 +7,7 @@ import { useCreateAlbum } from "@/albums/_/hooks";
 
 export function CreateAlbumModal() {
   const { data: session } = useSession();
-  const { title, description, modalVisible, setModalVisible, createAlbum } =
+  const { title, description, modalVisible, setModalVisible, createAlbum, error } =
     useCreateAlbum(session);
 
   return (
@@ -17,6 +17,7 @@ export function CreateAlbumModal() {
       setModalVisible={setModalVisible}
       title={title}
       description={description}
+      error={error}
     />
   );
 }

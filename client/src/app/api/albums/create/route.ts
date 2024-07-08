@@ -28,14 +28,15 @@ export async function POST(req: NextRequest) {
   });
 
   if (!findUser) {
-    return NextResponse.json({ user: null, message: "User not found" }, { status: 404 });
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
 
-  const checkIfSongAlreadyExist = findUser.Albums.find((album) => album.title === title);
+  const checkIfAlbumExist = findUser.Albums.find((album) => album.title === title);
 
-  if (checkIfSongAlreadyExist) {
+  if (checkIfAlbumExist) {
     return NextResponse.json(
-      { user: null, message: "Album already exists in database" },
+      { message: "Album already exists in database" },
+      // for some reasong 409 is not working
       { status: 200 },
     );
   }

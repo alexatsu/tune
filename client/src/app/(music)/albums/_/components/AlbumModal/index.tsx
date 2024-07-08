@@ -9,12 +9,14 @@ export function AlbumModal<T extends (event: FormEvent<HTMLButtonElement>) => Pr
   setModalVisible,
   title,
   description,
+  error,
 }: {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   submit: T;
   title: RefObject<HTMLInputElement>;
   description: RefObject<HTMLInputElement>;
+  error: string | null;
 }) {
   const modalClasses: string[] = [styles.Modal];
 
@@ -38,6 +40,7 @@ export function AlbumModal<T extends (event: FormEvent<HTMLButtonElement>) => Pr
             required
             placeholder="Title"
           />
+          {error && <p style={{ color: "rgb(250, 160, 160)" }}>{error}</p>}
           <input
             type="text"
             id="description"
