@@ -170,9 +170,10 @@ export function Player() {
     if (!currentSongRef.current) {
       return;
     }
+    loadSourceAndPlay(currentSongRef.current);
     setSeek(0);
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
-  }, [duration, trackSeekRef, currentSongRef, setSeek]);
+  }, [duration, trackSeekRef, currentSongRef, setSeek, loadSourceAndPlay]);
 
   // const handleShufflePayload = () => {
   //   const copyPayload = Array.from(currentPayload.current?.songsOrStreams || []);
