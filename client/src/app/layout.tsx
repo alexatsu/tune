@@ -1,20 +1,12 @@
-import "@/shared/sass/main.scss";
+import "./_/sass/main.scss";
 
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { Quicksand, Qwitcher_Grypen } from "next/font/google";
 import { getServerSession, Session } from "next-auth";
 
 import { Header } from "@/app/_/layouts";
-import { SessionProvider } from "@/app/_/providers";
-import { authOptions } from "@/shared/utils/functions";
-
-import { PlayerProvider } from "./_/providers";
-
-// const PlayerProvider = dynamic(
-//   () => import("/providers").then((mod) => mod.PlayerProvider),
-//   { ssr: false },
-// );
+import { PlayerProvider, SessionProvider } from "@/app/_/providers";
+import { authOptions } from "@/app/_/utils/functions";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });
 const qwitcher = Qwitcher_Grypen({

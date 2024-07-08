@@ -4,8 +4,8 @@ import { useSession } from "next-auth/react";
 import { useRef, useState } from "react";
 
 import { MenuDropdown } from "@/app/_/components";
+import { handleFetch } from "@/app/_/utils/functions";
 import { useAlbums } from "@/app/(music)/_/hooks";
-import { handleFetch } from "@/shared/utils/functions";
 
 import { EditAlbumModal } from "./EditAlbumModal";
 import styles from "./styles.module.scss";

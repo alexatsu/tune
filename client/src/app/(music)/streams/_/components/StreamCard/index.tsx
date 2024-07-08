@@ -3,8 +3,8 @@
 import Image from "next/image";
 
 import { usePlayerContext } from "@/app/_/providers";
+import { useStreamStore } from "@/app/_/store";
 import { Stream, StreamResponse } from "@/music/_/types";
-import { useStreamStore } from "@/shared/store";
 
 import styles from "./styles.module.scss";
 

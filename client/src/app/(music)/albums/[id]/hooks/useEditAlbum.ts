@@ -1,7 +1,7 @@
 import { Session } from "next-auth";
 import { FormEvent, useRef } from "react";
 
-import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
+import { customRevalidatePath, handleFetch } from "@/app/_/utils/functions";
 
 export function useEditAlbum(session: Session | null, albumId: string) {
   const title = useRef<HTMLInputElement>(null);

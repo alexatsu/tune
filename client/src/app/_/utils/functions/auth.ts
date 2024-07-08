@@ -1,9 +1,8 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import NextAuth, { AuthOptions, Profile } from "next-auth";
+import { AuthOptions, Profile } from "next-auth";
 import type { Adapter } from "next-auth/adapters";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import { signOut } from "next-auth/react";
 
 import { db } from "@/api/_/services";
 

@@ -1,8 +1,8 @@
 "use client";
 import { Dispatch, memo, SetStateAction } from "react";
 
+import { randomRGBPastelColor } from "@/app/_/utils/functions";
 import { ChartsCategories } from "@/app/(music)/_/types";
-import { randomRGBPastelColor } from "@/shared/utils/functions";
 
 import styles from "./styles.module.scss";
 

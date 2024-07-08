@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { usePlayerContext } from "@/app/_/providers";
 import type { CurrentPayload } from "@/app/_/providers/PlayerProvider";
+import { useStreamStore } from "@/app/_/store";
 import { miscIcons } from "@/music/_/components/icons/misc";
 import { playerIcons } from "@/music/_/components/icons/player";
 import {
@@ -20,7 +21,6 @@ import {
 import { useMobile } from "@/music/_/hooks";
 import { Song, Stream } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
-import { useStreamStore } from "@/shared/store";
 
 import styles from "./styles.module.scss";
 

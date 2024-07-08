@@ -1,9 +1,9 @@
 import { Session } from "next-auth";
 import { FormEvent, useRef, useState } from "react";
 
+import { handleFetch } from "@/app/_/utils/functions";
 import { useAlbums } from "@/app/(music)/_/hooks";
 import { Album } from "@/music/_/types";
-import { handleFetch } from "@/shared/utils/functions";
 
 import { generateRandomTwoColorGradient } from "../utils";
 

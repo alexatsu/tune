@@ -4,18 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
-import { v4 as uuid } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
+import { useStreamStore } from "@/app/_/store";
+import { customRevalidatePath, handleFetch } from "@/app/_/utils/functions";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { useAlbums, useSongs } from "@/music/_/hooks";
-import { Album, AlbumSongs, ChartSongs, Song, Stream } from "@/music/_/types";
-import { useStreamStore } from "@/shared/store";
-import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
+import { Album, AlbumSongs, ChartSongs, Song } from "@/music/_/types";
 
 import { miscIcons } from "../icons/misc";
 import styles from "./styles.module.scss";

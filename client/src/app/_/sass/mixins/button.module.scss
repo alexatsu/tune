@@ -1,4 +1,4 @@
-@use "../abstracts/fonts.scss" as *;
+@use "@/sass/abstracts/fonts.scss" as *;
 
 @mixin button() {
   font-family: $quicksand;

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import { authOptions } from "@/shared/utils/functions";
+import { authOptions } from "@/app/_/utils/functions";
 
 import { MainChartsContainer } from "./_/layouts";
 

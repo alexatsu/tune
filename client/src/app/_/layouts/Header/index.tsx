@@ -5,7 +5,7 @@ import React from "react";
 
 import { Menu } from "@/app/_/components/icons";
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
-import { useHeaderDropdownStore } from "@/shared/store";
+import { useHeaderDropdownStore } from "@/app/_/store";
 
 import styles from "./styles.module.scss";
 

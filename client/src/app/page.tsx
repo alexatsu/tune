@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerSession, Session } from "next-auth";
 import { useEffect, useRef, useState } from "react";
 
-import { authOptions } from "@/shared/utils/functions";
+import { authOptions } from "@/app/_/utils/functions";
 
 import styles from "./page.module.scss";
 

@@ -2,11 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
+import { authOptions } from "@/app/_/utils/functions";
 import { db } from "@/app/api/_/services";
 import { MusicList } from "@/music/_/components";
 import { AlbumSongs } from "@/music/_/types";
 import { attachUUIDToSongs } from "@/music/_/utils/functions";
-import { authOptions } from "@/shared/utils/functions";
 
 import { AlbumMenuDropdown } from "./components";
 import styles from "./styles.module.scss";
