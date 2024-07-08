@@ -27,6 +27,7 @@ export function Header() {
         node: (
           <li
             className={className}
+            style={{ color: "#faa0a0" }}
             onClick={() => {
               signOut({ callbackUrl: "/" });
               setIsHeaderDropdownOpen(false);
@@ -49,9 +50,7 @@ export function Header() {
 
   return (
     <header className={styles.header}>
-      <Link href={"/"} className={styles.logo}>
-        <h1>Tune</h1>
-      </Link>
+      <h1 className={styles.logo}>Tune</h1>
 
       <MenuDropdown
         props={headerMenuProps}

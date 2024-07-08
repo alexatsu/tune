@@ -17,9 +17,8 @@
 .logo {
   font-family: $qwitcher;
   color: $text;
-  font-size: 1.5rem;
+  font-size: clamp(2.5rem, 2.5vw, 3.5rem);
   user-select: none;
-  cursor: pointer;
   text-decoration: none;
 }
 
@@ -30,8 +29,10 @@
   cursor: pointer;
   transition: 0.15s color linear;
   white-space: nowrap;
+  transition: background-color 0.15s linear;
+  border-radius: 10px;
 
   &:hover {
-    color: $accent;
+    background-color: $bg-alt-hover;
   }
 }

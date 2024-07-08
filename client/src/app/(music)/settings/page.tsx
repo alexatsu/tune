@@ -4,13 +4,13 @@ import styles from "./styles.module.scss";
 
 export default function Page() {
   return (
-    <main className={styles.settingsMain}>
+    <div className={styles.settingsMain}>
+      <h2 className={styles.title}>Settings</h2>
       <section className={styles.text}>
-        <h1>Settings</h1>
         <div>
           Coming soon, but for now check out <Link href={"/allmusic"}>Music</Link>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

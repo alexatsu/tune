@@ -1,9 +1,18 @@
 @use "@/sass/abstracts/colors.scss" as *;
 
 .settingsMain {
-  padding: 2rem 15%;
   color: $text;
+  height: 100%;
+  width: 100%;
+  background-color: $bg;
 
+  .title {
+    position: relative;
+    color: var(--text);
+    font-size: clamp(0.8rem, 6vw, 2rem);
+    user-select: none;
+    margin-bottom: 10px;
+  }
   .text {
     background-color: $widget-bg;
     padding: 2rem;
