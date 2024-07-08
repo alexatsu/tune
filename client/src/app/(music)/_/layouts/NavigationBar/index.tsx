@@ -11,7 +11,7 @@ import { useAlbums, useMobile } from "@/music/_/hooks";
 import { Album } from "../../types";
 import styles from "./styles.module.scss";
 
-const { Music, Search, Albums, Stream, Charts } = navigationIcons;
+const { Music, Search, Albums, Charts } = navigationIcons;
 
 const list = (pathname: string, currentAlbum: Album | null) => {
   const checkId = pathname.split("/");
@@ -65,7 +65,6 @@ function DesktopNavigationBar() {
   );
 
   const currentAlbumId = findCurrentAlbumId(pathname.split("/")[2]);
-  console.log(currentAlbumId, "currentAlbumId");
   if (!isMobile) {
     return (
       <aside>
@@ -90,15 +89,15 @@ function MobileNavigationbar() {
   const pathname = usePathname();
   const isMobile = useMobile(576);
   const { albums } = useAlbums();
+
   const findCurrentAlbumId = useCallback(
-    (id: string) => {
-      const album = albums?.albums.find((album) => album.id === id);
+    (title: string) => {
+      const album = albums?.albums.find((album) => album.title === title);
       if (!album) return null;
       return album;
     },
     [albums],
   );
-
   const currentAlbumId = findCurrentAlbumId(pathname.split("/")[2]);
 
   if (isMobile) {

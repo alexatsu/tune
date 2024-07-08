@@ -287,7 +287,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
       song,
     });
     albumsMutate();
-    customRevalidatePath(`/albums/${album.id}`);
+    // customRevalidatePath(`/albums/${album.id}`);
     setCurrentScrollableAlbumId(album.id);
   };
 
