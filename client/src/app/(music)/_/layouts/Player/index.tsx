@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { usePlayerContext } from "@/app/_/providers";
+import type { CurrentPayload } from "@/app/_/providers/PlayerProvider";
 import { miscIcons } from "@/music/_/components/icons/misc";
 import { playerIcons } from "@/music/_/components/icons/player";
 import {
@@ -17,11 +18,10 @@ import {
   TitleDesktop,
 } from "@/music/_/components/Player|Streamer";
 import { useMobile } from "@/music/_/hooks";
-import { Stream } from "@/music/_/types";
+import { Song, Stream } from "@/music/_/types";
 import { updateProgressBar } from "@/music/_/utils/functions";
 import { useStreamStore } from "@/shared/store";
 
-import { Song } from "../../types";
 import styles from "./styles.module.scss";
 
 const {
@@ -32,6 +32,8 @@ const {
   Unmuted: SoundIcon,
   RepeatAll,
   RepeatOne,
+  Shuffle,
+  UnShuffle,
 } = playerIcons;
 const { LoadingCircle } = miscIcons;
 
@@ -73,6 +75,9 @@ export function Player() {
   const trackSeekRef = useRef<HTMLInputElement>(null);
   const savedVolumeRef = useRef<number>(volume.value);
   const [repeatCurrentTrack, setRepeatCurrentTrack] = useState(false);
+
+  const [shufflePayload, setShufflePayload] = useState(false);
+  const tempPayloadRef = useRef(null as CurrentPayload | null);
 
   const loadSourceAndPlay = useCallback(
     (songOrStream: Song | Stream) => {
@@ -175,16 +180,27 @@ export function Player() {
     updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
   }, [duration, trackSeekRef, currentSongRef, setSeek, loadSourceAndPlay]);
 
-  // const handleShufflePayload = () => {
-  //   const copyPayload = Array.from(currentPayload.current?.songsOrStreams || []);
-  //   copyPayload.sort(() => Math.random() - 0.5);
+  const handleShufflePayload = () => {
+    if (!shufflePayload) {
+      setShufflePayload(true);
+      tempPayloadRef.current = currentPayload.current;
 
-  //   currentPayload.current = {
-  //     songsOrStreams: copyPayload,
-  //     type: currentPayload.current?.type,
-  //     id: currentPayload.current?.id,
-  //   };
-  // };
+      const copyPayload = Array.from(currentPayload.current?.songsOrStreams || []);
+
+      copyPayload.sort(() => Math.random() - 0.5);
+
+      currentPayload.current = {
+        songsOrStreams: copyPayload,
+        type: currentPayload.current?.type,
+        id: currentPayload.current?.id,
+      };
+    } else {
+      setShufflePayload(false);
+      currentPayload.current = tempPayloadRef.current;
+      tempPayloadRef.current = null;
+    }
+  };
+
   useEffect(() => {
     if (currentPayload.current?.type === "streams") return;
     if (seek >= duration) {
@@ -276,6 +292,7 @@ export function Player() {
       /> */}
     </>
   );
+
   const playOrPause = () => {
     return isStreaming ? (
       <Pause onClick={() => handlePause(playerRef)} />
@@ -283,6 +300,7 @@ export function Player() {
       <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />
     );
   };
+
   return (
     <>
       {!isMobile ? (
@@ -290,6 +308,9 @@ export function Player() {
           <ImageBlockDesktop currentPlayRef={currentSongRef} />
           <MainTrack className={styles.mainTrackDesktop}>
             <div className={styles.buttonsDesktop}>
+              <div onClick={handleShufflePayload} className={styles.shuffle}>
+                {shufflePayload ? <UnShuffle /> : <Shuffle />}
+              </div>
               <PreviousTrack onClick={handlePreviousTrack} style={{ cursor: "pointer" }} />
               {isStartingPlaying ? (
                 <div className={styles.playOrPauseLoader}>
@@ -343,6 +364,7 @@ export function Player() {
                     unoptimized
                   />
                 )}
+
                 {isStartingPlaying ? (
                   <div className={styles.playOrPauseLoaderMobile}>
                     <LoadingCircle />

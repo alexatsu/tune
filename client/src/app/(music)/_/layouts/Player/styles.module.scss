@@ -138,6 +138,14 @@
     display: flex;
     align-items: center;
   }
+
+  .shuffle {
+    width:23px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .mobilePlayerContainer {
@@ -248,6 +256,7 @@
         align-items: center;
         justify-content: center;
       }
+
     }
 
     .title {

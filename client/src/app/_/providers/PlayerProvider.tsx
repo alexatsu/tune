@@ -5,15 +5,17 @@ import { createContext, MutableRefObject, RefObject, useContext, useRef } from "
 import type { AlbumSongs, ChartSongs, Song } from "@/music/_/types";
 import { Stream } from "@/music/_/types";
 
+type CurrentPayload = {
+  songsOrStreams: (Song | Stream | AlbumSongs | ChartSongs)[];
+  type: string | undefined;
+  id?: string;
+} | null;
+
 type PlayerContext = {
   playerRef: RefObject<HTMLIFrameElement>;
   volumeRef: React.RefObject<HTMLInputElement>;
   currentSongOrStreamRef: MutableRefObject<Song | Stream | null>;
-  currentPayload: MutableRefObject<{
-    songsOrStreams: (Song | Stream | AlbumSongs | ChartSongs)[];
-    type: string | undefined;
-    id?: string;
-  } | null>;
+  currentPayload: MutableRefObject<CurrentPayload>;
 };
 
 const PlayerContext = createContext<PlayerContext | null>(null);
@@ -45,3 +47,4 @@ function PlayerProvider({ children }: { children: React.ReactNode }) {
 }
 
 export { PlayerProvider, usePlayerContext };
+export type { CurrentPayload };

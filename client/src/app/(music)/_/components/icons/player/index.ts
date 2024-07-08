@@ -6,9 +6,11 @@ import { Play } from "./Play";
 import { PreviousTrack } from "./PreviousTrack";
 import { RepeatAll } from "./RepeatAll";
 import { RepeatOne } from "./RepeatOne";
+import { Shuffle } from "./Shuffle";
 import { ThreeDots } from "./ThreeDots";
 import { TriggerSearch } from "./TriggerSearch";
 import { Unmuted } from "./Unmuted";
+import { UnShuffle } from "./UnShuffle";
 
 export const playerIcons = {
   Play,
@@ -22,4 +24,6 @@ export const playerIcons = {
   TriggerSearch,
   RepeatAll,
   RepeatOne,
+  Shuffle,
+  UnShuffle,
 };
