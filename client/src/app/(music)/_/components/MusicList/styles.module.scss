@@ -142,12 +142,9 @@
 
       & svg {
         cursor: pointer;
-      }
 
-      .threeDotsMenu {
-        & path {
-          transition: 0.15s color linear;
-          stroke: $text;
+        path {
+          transition: stroke 0.15s ease;
         }
 
         &:hover path {

@@ -49,12 +49,17 @@
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
-      background-color: #000;
+      background-color: $widget-bg;
       border-radius: 50%;
       border: 2px solid $accent;
       margin-top: -5px;
       height: 15px;
       width: 15px;
+      transition: background-color 0.15s linear;
+    }
+
+    &:hover::-webkit-slider-thumb {
+      background-color: $accent-darker;
     }
 
     &::-moz-range-thumb {
@@ -130,6 +135,28 @@
 
   & svg {
     cursor: pointer;
+
+    path {
+      transition: fill 0.15s ease-in-out;
+    }
+
+    &:hover path {
+      fill: $accent;
+    }
+  }
+
+  .playOrPause {
+    & svg {
+      cursor: pointer;
+
+      path {
+        transition: fill 0.15s ease-in-out;
+      }
+
+      &:hover path {
+        fill: $accent-darker;
+      }
+    }
   }
 
   .playOrPauseLoader {
@@ -140,7 +167,7 @@
   }
 
   .shuffle {
-    width:23px;
+    width: 23px;
     height: 23px;
     display: flex;
     align-items: center;
@@ -256,7 +283,6 @@
         align-items: center;
         justify-content: center;
       }
-
     }
 
     .title {

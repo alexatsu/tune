@@ -321,7 +321,7 @@ export function Player() {
                   <LoadingCircle />
                 </div>
               ) : (
-                playOrPause()
+                <div className={styles.playOrPause}>{playOrPause()}</div>
               )}
               <NextTrack onClick={handleNextTrack} />
               <div onClick={handleRepeatSingleSong}>
