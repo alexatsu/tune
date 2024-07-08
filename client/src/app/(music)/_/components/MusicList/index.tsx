@@ -13,7 +13,7 @@ import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { useAlbums, useSongs } from "@/music/_/hooks";
-import { Album, AlbumSongs, ChartSongs, Song } from "@/music/_/types";
+import { Album, AlbumSongs, ChartSongs, Song, Stream } from "@/music/_/types";
 import { useStreamStore } from "@/shared/store";
 import { customRevalidatePath, handleFetch } from "@/shared/utils/functions";
 
@@ -172,24 +172,22 @@ export function MusicList({ data, session, albumId }: MusicList) {
     }
   };
 
+  const addToCurrentPayload = (song: Song) => {
+    currentPayload.current?.songsOrStreams.push(song);
+  };
+
   const addSongToMyMusic = async (song: Song) => {
     const { url, urlId, title, duration, cover } = song;
     setIsAddingSong(true);
     currentAddedSongRef.current = urlId;
-
-    const addSongDataToDB = await handleFetch<{ message: string }>(`/api/songs/add`, "POST", {
-      url,
-      urlId,
-      title,
-      duration,
-      cover,
-      session,
-    });
+    const body = { url, urlId, title, duration, cover, session };
+    await handleFetch<{ message: string }>(`/api/songs/add`, "POST", body);
 
     currentAddedSongRef.current = "";
 
     setIsAddingSong(false);
     mutate(`/api/songs/get-all`);
+    addToCurrentPayload(song);
   };
 
   const renderAddButton = (song: Song & { isAdded?: boolean }) => {
@@ -212,6 +210,18 @@ export function MusicList({ data, session, albumId }: MusicList) {
     }
   };
 
+  const deleteFromCurrentPayload = (songId: Song["id"]) => {
+    const payload = currentPayload.current?.songsOrStreams as Song[];
+
+    const filterOutSong = payload.filter((song) => song.id !== songId);
+
+    currentPayload.current = {
+      songsOrStreams: filterOutSong,
+      type: currentPayload.current?.type,
+      id: currentPayload.current?.id || "",
+    };
+  };
+
   const deleteFromMyMusic = async (songId: Song["id"]) => {
     await handleFetch<{ message: string }>(`/api/songs/delete`, "POST", {
       songId,
@@ -220,6 +230,10 @@ export function MusicList({ data, session, albumId }: MusicList) {
 
     mutate(`/api/songs/get-all`);
     setOpenDropdownIndex(null);
+
+    if (currentPayload.current) {
+      deleteFromCurrentPayload(songId);
+    }
   };
 
   const handleMusicListDropdownToggle = useCallback(
