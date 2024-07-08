@@ -1,0 +1,42 @@
+@use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/abstracts/fonts.scss" as *;
+@use "@/sass/mixins/button.module.scss" as *;
+
+.notFoundContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 1rem;
+  color: $text;
+  padding: 0 15%;
+  background-color: $bg;
+
+  & h2 {
+    color: $text;
+  }
+
+  & p {
+    color: $text;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .buttonsCluster {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .button {
+    @include button;
+    padding: 0.5rem 1.5rem;
+    background-color: $accent;
+    color: $dark-text;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $accent-darker;
+    }
+  }
+}
