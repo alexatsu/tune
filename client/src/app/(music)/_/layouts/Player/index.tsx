@@ -86,22 +86,26 @@ export function Player() {
       if (playerRef.current) {
         playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
         currentSongRef.current = songOrStream;
-        setIsStartingPlaying(true);
-        setTimeout(() => {
-          playerRef.current?.contentWindow?.postMessage(
-            `{"event":"command","func":"setVolume","args":["${volume.value * 100}"]}`,
-            "*",
-          );
-          playerRef.current?.contentWindow?.postMessage(
-            '{"event":"command","func":"playVideo","args":""}',
-            "*",
-          );
 
-          setIsStartingPlaying(false);
-        }, 1000);
+        if (isStreaming) {
+          setIsStartingPlaying(true);
+
+          setTimeout(() => {
+            playerRef.current?.contentWindow?.postMessage(
+              `{"event":"command","func":"setVolume","args":["${volume.value * 100}"]}`,
+              "*",
+            );
+            playerRef.current?.contentWindow?.postMessage(
+              '{"event":"command","func":"playVideo","args":""}',
+              "*",
+            );
+
+            setIsStartingPlaying(false);
+          }, 1000);
+        }
       }
     },
-    [currentSongRef, playerRef, volume, setIsStartingPlaying],
+    [currentSongRef, playerRef, volume, setIsStartingPlaying, isStreaming],
   );
 
   const handleNextTrack = useCallback(() => {
