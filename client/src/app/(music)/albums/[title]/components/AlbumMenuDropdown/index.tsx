@@ -10,7 +10,7 @@ import { useAlbums } from "@/app/(music)/_/hooks";
 import { EditAlbumModal } from "./EditAlbumModal";
 import styles from "./styles.module.scss";
 
-export function AlbumMenuDropdown({ albumId }: { albumId: string }) {
+export function AlbumMenuDropdown({ albumId }: { albumId: string | undefined }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

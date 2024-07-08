@@ -56,8 +56,8 @@ function DesktopNavigationBar() {
   const { albums } = useAlbums();
 
   const findCurrentAlbumId = useCallback(
-    (id: string) => {
-      const album = albums?.albums.find((album) => album.id === id);
+    (title: string) => {
+      const album = albums?.albums.find((album) => album.title === title);
       if (!album) return null;
       return album;
     },
@@ -65,7 +65,7 @@ function DesktopNavigationBar() {
   );
 
   const currentAlbumId = findCurrentAlbumId(pathname.split("/")[2]);
-
+  console.log(currentAlbumId, "currentAlbumId");
   if (!isMobile) {
     return (
       <aside>
