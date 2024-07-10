@@ -3,7 +3,7 @@ import { FormEvent, useRef } from "react";
 
 import { customRevalidatePath, handleFetch } from "@/app/_/utils/functions";
 
-export function useEditAlbum(session: Session | null, albumId: string) {
+export function useEditAlbum(session: Session | null, albumId: string | undefined) {
   const title = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLInputElement>(null);
 

@@ -6,7 +6,7 @@ import { useEditAlbum } from "../../../hooks";
 import styles from "./styles.module.scss";
 
 type EditAlbumModalProps = {
-  albumId: string;
+  albumId: string | undefined;
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
