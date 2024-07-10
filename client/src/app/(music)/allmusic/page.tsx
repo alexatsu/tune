@@ -8,6 +8,7 @@ import { PageTitle, Skeleton } from "@/music/_/components";
 import { useSongs } from "@/music/_/hooks";
 import { attachUUIDToSongs } from "@/music/_/utils/functions";
 
+import PageContainer from "../_/layouts/PageContainer";
 import styles from "./styles.module.scss";
 
 const MusicList = dynamic(() => import("@/music/_/components").then((mod) => mod.MusicList));
@@ -34,9 +35,9 @@ export default function Page() {
       <p>No songs were added, look for them in</p> <Link href={"/search"}>Search</Link>
     </div>
   ) : (
-    <div className={styles.pageContainer}>
+    <PageContainer>
       <PageTitle title={"Music"} />
       {musicList}
-    </div>
+    </PageContainer>
   );
 }

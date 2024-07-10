@@ -1,34 +1,21 @@
 @use "@/sass/abstracts/colors.scss" as *;
 
-.settingsMain {
+.text {
   color: $text;
-  height: 100%;
-  width: 100%;
-  background-color: $bg;
+  background-color: $widget-bg;
+  padding: 2rem;
+  border-radius: 1rem;
 
-  .title {
-    position: relative;
-    color: var(--text);
-    font-size: clamp(0.8rem, 6vw, 2rem);
-    user-select: none;
-    margin-bottom: 10px;
+  h1 {
+    margin-bottom: 2rem;
   }
-  .text {
-    background-color: $widget-bg;
-    padding: 2rem;
-    border-radius: 1rem;
 
-    h1 {
-      margin-bottom: 2rem;
-    }
-
-    a {
-      font-weight: 600;
-      text-decoration: none;
+  a {
+    font-weight: 600;
+    text-decoration: none;
+    color: $accent;
+    &:visited {
       color: $accent;
-      &:visited {
-        color: $accent;
-      }
     }
   }
 }

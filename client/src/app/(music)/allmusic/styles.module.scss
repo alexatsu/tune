@@ -1,13 +1,6 @@
 @use "@/sass/abstracts/colors.scss" as *;
 @use "@/sass/mixins/skeletonAnimation.module.scss" as *;
 
-
-.pageContainer {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
 .errorMessageContainer {
   margin: 0 auto;
   background-color: $widget-bg;

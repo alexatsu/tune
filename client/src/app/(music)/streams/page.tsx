@@ -1,13 +1,13 @@
 import { PageTitle } from "@/music/_/components/PageTitle";
 
+import PageContainer from "../_/layouts/PageContainer";
 import { StreamList } from "./_/components";
-import styles from "./styles.module.scss";
 
 export default function page() {
   return (
-    <div className={styles.streamsPageContainer}>
+    <PageContainer>
       <PageTitle title={"Streams"} />
       <StreamList />
-    </div>
+    </PageContainer>
   );
 }

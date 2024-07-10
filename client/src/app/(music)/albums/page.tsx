@@ -1,13 +1,13 @@
 import { PageTitle } from "@/music/_/components";
 
+import PageContainer from "../_/layouts/PageContainer";
 import { AlbumList } from "./_/components";
-import styles from "./styles.module.scss";
 
 export default function Page() {
   return (
-    <div className={styles.pageContainer}>
+    <PageContainer>
       <PageTitle title={"Albums"} />
       <AlbumList />
-    </div>
+    </PageContainer>
   );
 }

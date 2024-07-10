@@ -78,8 +78,7 @@ export function Player() {
 
   const [shufflePayload, setShufflePayload] = useState(false);
   const tempPayloadRef = useRef(null as CurrentPayload | null);
-  console.log(currentSongRef.current, "aga");
-  console.log(currentPayload.current, " yo");
+
   const loadSourceAndPlay = useCallback(
     (songOrStream: Song | Stream) => {
       const { urlId } = songOrStream;
