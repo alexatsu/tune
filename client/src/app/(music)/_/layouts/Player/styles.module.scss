@@ -113,6 +113,7 @@
   padding: 0 15%;
   flex: 0 0 10%;
   background: linear-gradient(180deg, var(--bg), rgb(26 30 31) 100%);
+  z-index: 1;
 
   @media screen and (width <= 1024px) {
     padding: 0 1rem;
@@ -181,6 +182,7 @@
   color: $text;
   height: 50px;
   background-color: $bg;
+  z-index: 1;
 
   .inputsMobile {
     width: 100%;

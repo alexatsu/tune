@@ -3,10 +3,10 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useState } from "react";
 
-import { SongsResponse } from "@/app/(music)/_/types";
-import { attachUUIDToSongs } from "@/app/(music)/_/utils/functions";
 import { MusicList, Skeleton } from "@/music/_/components";
 import { playerIcons } from "@/music/_/components/icons/player";
+import { SongsResponse } from "@/music/_/types";
+import { attachUUIDToSongs } from "@/music/_/utils/functions";
 
 import styles from "./styles.module.scss";
 
@@ -82,7 +82,7 @@ function SearchSongs() {
       <form className={styles.form} onSubmit={handleFormSubmit}>
         <input
           type="text"
-          placeholder="search songs"
+          placeholder="look for songs/artists or paste the url"
           className={styles.input}
           value={input}
           onChange={handleInputChange}

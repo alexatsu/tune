@@ -78,7 +78,8 @@ export function Player() {
 
   const [shufflePayload, setShufflePayload] = useState(false);
   const tempPayloadRef = useRef(null as CurrentPayload | null);
-
+  console.log(currentSongRef.current, "aga");
+  console.log(currentPayload.current, " yo");
   const loadSourceAndPlay = useCallback(
     (songOrStream: Song | Stream) => {
       const { urlId } = songOrStream;
@@ -347,7 +348,9 @@ export function Player() {
         </PlayerContainer>
       ) : (
         <PlayerContainer className={styles.mobilePlayerContainer}>
-          {pathname !== "/streams" && <div className={styles.inputsMobile}>{inputs}</div>}
+          {currentPayload.current?.type !== "streams" && (
+            <div className={styles.inputsMobile}>{inputs}</div>
+          )}
 
           {soundMobileOpen ? (
             <SoundMobile

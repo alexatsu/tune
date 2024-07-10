@@ -1,4 +1,5 @@
 @use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/constants/dimensions.scss" as *;
 
 %inputContainer {
   -webkit-appearance: none;
@@ -22,20 +23,21 @@
   border-radius: 50%;
 }
 
-.musicListContainer {
-  overflow: auto;
-  width: 100%;
-  height: 100%;
+// .musicListContainer {
+//   overflow: auto;
+//   width: 100%;
+//   height: 100%;
 
-  @media screen and (width <= 425px) {
-    height: calc(100dvh - 140px);
-  }
-}
+//   @media screen and (width <= 425px) {
+//     height: calc(100dvh - 140px);
+//   }
+// }
 
 .musicList {
   list-style: none;
   color: $text;
   height: 100%;
+  // height: calc(100% - $page-title-height);
   overflow-y: auto;
 
   &::-webkit-scrollbar-track {

@@ -392,43 +392,43 @@ export function MusicList({ data, session, albumId }: MusicList) {
   const sortedSongs = sortByDateDescending(data?.songs || []);
 
   return (
-    <div className={styles.musicListContainer}>
-      <ul className={styles.musicList}>
-        {sortedSongs.map((song, index) => (
-          <li
-            className={styles.musicListItem}
-            key={song.uuid}
-            style={{ backgroundColor: currentId === song.urlId ? "var(--widget-bg-playing)" : "" }}
-          >
-            <div className={styles.leftSection}>
-              <div className={styles.imageBlock}>
-                {renderPlayButton(song)}
-                <Image
-                  src={song.cover || ""}
-                  alt={song.title}
-                  width={40}
-                  height={40}
-                  style={{ objectFit: "cover" }}
-                  unoptimized
-                />
-              </div>
-              <span className={styles.title}>{song.title}</span>
-            </div>
-
-            <div className={styles.rightSection}>
-              {formatedDuration(song.duration)}
-              {pathname === "/search" && renderAddButton(song)}
-              {pathname === "/charts" && renderAddButton(song)}
-              <MenuDropdown
-                props={dropdownMenuProps(song, pathname)}
-                Icon={<ThreeDots className={styles.threeDotsMenu} />}
-                isOpen={openDropdownIndex === index}
-                setIsOpen={() => handleMusicListDropdownToggle(index)}
+    // <div className={styles.musicListContainer}>
+    <ul className={styles.musicList}>
+      {sortedSongs.map((song, index) => (
+        <li
+          className={styles.musicListItem}
+          key={song.uuid}
+          style={{ backgroundColor: currentId === song.urlId ? "var(--widget-bg-playing)" : "" }}
+        >
+          <div className={styles.leftSection}>
+            <div className={styles.imageBlock}>
+              {renderPlayButton(song)}
+              <Image
+                src={song.cover || ""}
+                alt={song.title}
+                width={40}
+                height={40}
+                style={{ objectFit: "cover" }}
+                unoptimized
               />
             </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+            <span className={styles.title}>{song.title}</span>
+          </div>
+
+          <div className={styles.rightSection}>
+            {formatedDuration(song.duration)}
+            {pathname === "/search" && renderAddButton(song)}
+            {pathname === "/charts" && renderAddButton(song)}
+            <MenuDropdown
+              props={dropdownMenuProps(song, pathname)}
+              Icon={<ThreeDots className={styles.threeDotsMenu} />}
+              isOpen={openDropdownIndex === index}
+              setIsOpen={() => handleMusicListDropdownToggle(index)}
+            />
+          </div>
+        </li>
+      ))}
+    </ul>
+    // </div>
   );
 }

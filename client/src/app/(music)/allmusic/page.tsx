@@ -1,17 +1,16 @@
 "use client";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
+import { PageTitle, Skeleton } from "@/music/_/components";
 import { useSongs } from "@/music/_/hooks";
+import { attachUUIDToSongs } from "@/music/_/utils/functions";
+
+import styles from "./styles.module.scss";
 
 const MusicList = dynamic(() => import("@/music/_/components").then((mod) => mod.MusicList));
-
-import Link from "next/link";
-
-import { Skeleton } from "../_/components/Skeleton";
-import { attachUUIDToSongs } from "../_/utils/functions";
-import styles from "./styles.module.scss";
 
 export default function Page() {
   const { data: session } = useSession();
@@ -27,9 +26,7 @@ export default function Page() {
       <Skeleton className={styles.musicListSkeleton} />
     </div>
   ) : (
-    <div className={styles.allMusicListContainer}>
-      <MusicList data={payload} session={session} />
-    </div>
+    <MusicList data={payload} session={session} />
   );
 
   return songs && songs.length < 1 ? (
@@ -37,6 +34,9 @@ export default function Page() {
       <p>No songs were added, look for them in</p> <Link href={"/search"}>Search</Link>
     </div>
   ) : (
-    musicList
+    <div className={styles.pageContainer}>
+      <PageTitle title={"Music"} />
+      {musicList}
+    </div>
   );
 }

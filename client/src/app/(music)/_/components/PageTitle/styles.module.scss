@@ -1,0 +1,8 @@
+@use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/constants/dimensions.scss" as *;
+
+.pageTitle {
+  color: $text;
+  margin-bottom: 10px;
+  height: $page-title-height;
+}
