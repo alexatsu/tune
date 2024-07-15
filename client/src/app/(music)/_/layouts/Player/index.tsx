@@ -93,6 +93,8 @@ export function Player() {
 
     const trackIndex = songsOrStreams?.indexOf(currentSongRef.current);
     if (trackIndex === -1 || trackIndex === undefined) {
+      console.log(currentSongRef.current, currentPayload.current);
+      console.log("error");
       return;
     }
 
@@ -128,6 +130,7 @@ export function Player() {
     const trackIndex = songsOrStreams?.indexOf(currentSongRef.current);
 
     if (trackIndex === -1 || trackIndex === undefined) {
+      console.log("error");
       return;
     }
 
@@ -256,6 +259,8 @@ export function Player() {
     return isStreaming ? <Pause onClick={handlePause} /> : <Play onClick={handlePlay} />;
   };
 
+  // console.log(currentPayload.current, "here is the current payload");
+
   return (
     <>
       {!isMobile ? (
@@ -349,7 +354,7 @@ export function Player() {
         volume={volume.value}
         playing={isStreaming}
         loop={repeatCurrentTrack}
-        onReady={() => setIsStartingPlaying(false)}
+        onBufferEnd={() => setIsStartingPlaying(false)}
         onEnded={handleNextTrack}
       />
     </>

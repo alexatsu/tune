@@ -14,8 +14,9 @@ import { useStreamStore } from "@/app/_/store";
 import { handleFetch } from "@/app/_/utils/functions";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { useAlbums, useSongs } from "@/music/_/hooks";
-import { Album, AlbumSongs, ChartSongs, Song } from "@/music/_/types";
+import { Album, AlbumSongs, ChartSongs, Song, SongsResponse } from "@/music/_/types";
 
+import { attachUUIDToSongs } from "../../utils/functions";
 import { miscIcons } from "../icons/misc";
 import styles from "./styles.module.scss";
 
@@ -49,7 +50,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
   const { currentSongOrStreamRef, playerRef, currentPayload, playerUrl } = usePlayerContext();
-  const { data: userSongs } = useSongs(session);
+  const { data: userSongs, songsMutate } = useSongs(session);
 
   const [isAddingSong, setIsAddingSong] = useState(false);
   const currentAddedSongRef = useRef("");
@@ -65,7 +66,6 @@ export function MusicList({ data, session, albumId }: MusicList) {
     isStreaming: isPlaying,
     setIsStreaming,
     handlePause,
-    volume,
     setSeek,
     isStartingPlaying,
     setIsStartingPlaying,
@@ -88,6 +88,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
       currentPayload.current = {
         songsOrStreams: data.songs,
         type: data.type,
+        id: "",
       };
     }
 
@@ -99,6 +100,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
         currentPayload.current = {
           songsOrStreams: data.songs,
           type: data.type,
+          id: data.id,
         };
       }
     }
@@ -107,11 +109,26 @@ export function MusicList({ data, session, albumId }: MusicList) {
       currentPayload.current = {
         songsOrStreams: data.songs,
         type: data.type,
+        id: "",
       };
     }
   };
 
-  const handlePlayById = (song: Song | AlbumSongs, volume: number) => {
+  const updateCurrentSongOrStream = (urlId: string) => {
+    const findSonginThePayload = currentPayload.current?.songsOrStreams.find(
+      (song) => song.urlId === urlId,
+    );
+    currentSongOrStreamRef.current = findSonginThePayload as Song | AlbumSongs;
+  };
+
+  const sortPayloadByDateDescending = (payload: Song[] | AlbumSongs[]) => {
+    return payload.sort((a, b) => {
+      const aDate = a.addedAt ? new Date(a.addedAt) : new Date(0);
+      const bDate = b.addedAt ? new Date(b.addedAt) : new Date(0);
+      return bDate.getTime() - aDate.getTime();
+    });
+  };
+  const handlePlayById = (song: Song | AlbumSongs) => {
     const { urlId, url } = song;
     setIsStreaming(true);
     setCurrentId(urlId);
@@ -128,13 +145,15 @@ export function MusicList({ data, session, albumId }: MusicList) {
       playerUrl.current = url;
       currentSongOrStreamRef.current = song;
     }
+
+    updateCurrentSongOrStream(urlId);
   };
 
   const renderPlayButton = (song: Song) => {
     const iscurrentTrackRef = song.urlId === currentId;
 
     const playButton = (
-      <div className={styles.notPlaying} onClick={() => handlePlayById(song, volume.value * 100)}>
+      <div className={styles.notPlaying} onClick={() => handlePlayById(song)}>
         <Play />
       </div>
     );
@@ -155,10 +174,6 @@ export function MusicList({ data, session, albumId }: MusicList) {
     }
   };
 
-  const addToCurrentPayload = (song: Song) => {
-    currentPayload.current?.songsOrStreams.push(song);
-  };
-
   const addSongToMyMusic = async (song: Song) => {
     const { url, urlId, title, duration, cover } = song;
     setIsAddingSong(true);
@@ -168,9 +183,30 @@ export function MusicList({ data, session, albumId }: MusicList) {
 
     currentAddedSongRef.current = "";
 
+    songsMutate();
     setIsAddingSong(false);
-    mutate(`/api/songs/get-all`);
-    addToCurrentPayload(song);
+  };
+
+  const updateCurrentPayloadAfterAddingSong = async () => {
+    const getAllSongs = await handleFetch<SongsResponse>(
+      "/api/songs/get-all",
+      "POST",
+      { session },
+      { "Content-Type": "application/json" },
+    );
+    const songsWithUUID = attachUUIDToSongs(getAllSongs.songs);
+    const sortedPayload = sortPayloadByDateDescending(songsWithUUID);
+    if (currentPayload.current?.type === "allmusic") {
+      currentPayload.current = {
+        songsOrStreams: sortedPayload,
+        type: "allmusic",
+        id: "",
+      };
+    }
+    const currentSong = currentSongOrStreamRef.current;
+    if (currentSong) {
+      updateCurrentSongOrStream(currentSong.urlId);
+    }
   };
 
   const renderAddButton = (song: Song & { isAdded?: boolean }) => {
@@ -187,6 +223,9 @@ export function MusicList({ data, session, albumId }: MusicList) {
           key={song.id}
           onClick={async () => {
             await addSongToMyMusic(song);
+
+            await updateCurrentPayloadAfterAddingSong();
+            console.log(currentPayload.current, "here is the updated current payload");
           }}
         />
       );
@@ -213,7 +252,6 @@ export function MusicList({ data, session, albumId }: MusicList) {
 
     mutate(`/api/songs/get-all`);
     setOpenDropdownIndex(null);
-
     if (currentPayload.current) {
       deleteFromCurrentPayload(songId);
     }
@@ -271,7 +309,6 @@ export function MusicList({ data, session, albumId }: MusicList) {
       song,
     });
     albumsMutate();
-    // customRevalidatePath(`/albums/${album.id}`);
     setCurrentScrollableAlbumId(album.id);
   };
 
@@ -365,18 +402,9 @@ export function MusicList({ data, session, albumId }: MusicList) {
     return result;
   };
 
-  const sortByDateDescending = (payload: Song[] | AlbumSongs[]) => {
-    return payload.sort((a, b) => {
-      const aDate = a.addedAt ? new Date(a.addedAt) : new Date(0);
-      const bDate = b.addedAt ? new Date(b.addedAt) : new Date(0);
-      return bDate.getTime() - aDate.getTime();
-    });
-  };
-
-  const sortedSongs = sortByDateDescending(data?.songs || []);
+  const sortedSongs = sortPayloadByDateDescending(data?.songs || []);
 
   return (
-    // <div className={styles.musicListContainer}>
     <ul className={styles.musicList}>
       {sortedSongs.map((song, index) => (
         <li
@@ -413,6 +441,5 @@ export function MusicList({ data, session, albumId }: MusicList) {
         </li>
       ))}
     </ul>
-    // </div>
   );
 }

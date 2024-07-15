@@ -45,7 +45,6 @@ export async function POST(req: NextRequest) {
       userId: findUser.id,
     },
   });
-
   await db.$disconnect();
 
   return NextResponse.json({ message: "Song added successfully in database" }, { status: 201 });

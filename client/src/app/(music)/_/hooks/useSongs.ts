@@ -26,7 +26,7 @@ function useSongs(session: Session | null) {
     error,
     isLoading,
     songs,
-    mutate,
+    songsMutate: mutate,
     data,
   };
 }
