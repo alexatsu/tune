@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, MutableRefObject, RefObject, useContext, useRef } from "react";
+import ReactPlayer from "react-player";
 
 import type { AlbumSongs, ChartSongs, Song } from "@/music/_/types";
 import { Stream } from "@/music/_/types";
@@ -12,7 +13,8 @@ type CurrentPayload = {
 } | null;
 
 type PlayerContext = {
-  playerRef: RefObject<HTMLIFrameElement>;
+  playerRef: RefObject<ReactPlayer>;
+  playerUrl: MutableRefObject<string | null>;
   volumeRef: React.RefObject<HTMLInputElement>;
   currentSongOrStreamRef: MutableRefObject<Song | Stream | null>;
   currentPayload: MutableRefObject<CurrentPayload>;
@@ -31,13 +33,15 @@ function usePlayerContext() {
 }
 
 function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const playerRef = useRef<HTMLIFrameElement | null>(null);
+  const playerRef = useRef<ReactPlayer | null>(null);
+  const playerUrl = useRef<string>(null);
   const currentSongOrStreamRef = useRef<Song | Stream | null>(null);
   const volumeRef = useRef<HTMLInputElement>(null);
   const currentPayload = useRef(null);
 
   const values: PlayerContext = {
     playerRef,
+    playerUrl,
     currentSongOrStreamRef,
     volumeRef,
     currentPayload,

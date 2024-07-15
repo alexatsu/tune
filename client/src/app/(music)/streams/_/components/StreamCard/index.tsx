@@ -9,9 +9,16 @@ import { Stream, StreamResponse } from "@/music/_/types";
 import styles from "./styles.module.scss";
 
 export function StreamCard({ stream, data }: { stream: Stream; data: StreamResponse }) {
-  const { currentId, setCurrentId, isStreaming, setIsStreaming, handlePause, volume } =
-    useStreamStore();
-  const { currentSongOrStreamRef, playerRef, currentPayload } = usePlayerContext();
+  const {
+    currentId,
+    setCurrentId,
+    isStreaming,
+    setIsStreaming,
+    handlePause,
+    volume,
+    setIsStartingPlaying,
+  } = useStreamStore();
+  const { currentSongOrStreamRef, playerRef, currentPayload, playerUrl } = usePlayerContext();
 
   const handleStreamById = (stream: Stream, volume: number) => {
     if (!currentPayload.current || currentPayload.current.type !== data.type) {
@@ -21,21 +28,11 @@ export function StreamCard({ stream, data }: { stream: Stream; data: StreamRespo
       };
     }
 
-    const { urlId } = stream;
+    const { urlId, url } = stream;
     if (playerRef.current) {
-      playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
+      setIsStartingPlaying(true);
+      playerUrl.current = url;
       currentSongOrStreamRef.current = stream;
-
-      setTimeout(() => {
-        playerRef.current?.contentWindow?.postMessage(
-          `{"event":"command","func":"setVolume","args":["${volume}"]}`,
-          "*",
-        );
-        playerRef.current?.contentWindow?.postMessage(
-          '{"event":"command","func":"playVideo","args":""}',
-          "*",
-        );
-      }, 1000);
     }
     setCurrentId(urlId);
     setIsStreaming(true);
@@ -43,7 +40,7 @@ export function StreamCard({ stream, data }: { stream: Stream; data: StreamRespo
 
   const togglePlay = () => {
     if (isStreaming && currentId === stream.urlId) {
-      handlePause(playerRef);
+      handlePause();
     } else {
       handleStreamById(stream, volume.value * 100);
     }

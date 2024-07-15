@@ -11,7 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { usePlayerContext } from "@/app/_/providers";
 import { useStreamStore } from "@/app/_/store";
-import { customRevalidatePath, handleFetch } from "@/app/_/utils/functions";
+import { handleFetch } from "@/app/_/utils/functions";
 import { playerIcons } from "@/music/_/components/icons/player";
 import { useAlbums, useSongs } from "@/music/_/hooks";
 import { Album, AlbumSongs, ChartSongs, Song } from "@/music/_/types";
@@ -48,7 +48,7 @@ type MusicList = {
 export function MusicList({ data, session, albumId }: MusicList) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
-  const { currentSongOrStreamRef, playerRef, currentPayload } = usePlayerContext();
+  const { currentSongOrStreamRef, playerRef, currentPayload, playerUrl } = usePlayerContext();
   const { data: userSongs } = useSongs(session);
 
   const [isAddingSong, setIsAddingSong] = useState(false);
@@ -112,37 +112,21 @@ export function MusicList({ data, session, albumId }: MusicList) {
   };
 
   const handlePlayById = (song: Song | AlbumSongs, volume: number) => {
-    const { urlId } = song;
+    const { urlId, url } = song;
     setIsStreaming(true);
     setCurrentId(urlId);
 
     updateCurrentPayload();
 
     if (currentId === urlId) {
-      playerRef.current?.contentWindow?.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "*",
-      );
       return;
     }
 
     if (playerRef.current) {
-      setSeek(0);
-      playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
-      currentSongOrStreamRef.current = song;
       setIsStartingPlaying(true);
-      setTimeout(() => {
-        playerRef.current?.contentWindow?.postMessage(
-          `{"event":"command","func":"setVolume","args":["${volume}"]}`,
-          "*",
-        );
-        playerRef.current?.contentWindow?.postMessage(
-          '{"event":"command","func":"playVideo","args":""}',
-          "*",
-        );
-
-        setIsStartingPlaying(false);
-      }, 1000);
+      setSeek(0);
+      playerUrl.current = url;
+      currentSongOrStreamRef.current = song;
     }
   };
 
@@ -155,7 +139,7 @@ export function MusicList({ data, session, albumId }: MusicList) {
       </div>
     );
     const pauseButton = (
-      <div className={styles.playing} onClick={() => handlePause(playerRef)}>
+      <div className={styles.playing} onClick={() => handlePause()}>
         <Pause />
       </div>
     );

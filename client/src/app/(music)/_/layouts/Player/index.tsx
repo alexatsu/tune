@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { redirect, usePathname } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import ReactPlayer from "react-player";
 
 import { usePlayerContext } from "@/app/_/providers";
 import type { CurrentPayload } from "@/app/_/providers/PlayerProvider";
@@ -37,24 +38,16 @@ const {
 } = playerIcons;
 const { LoadingCircle } = miscIcons;
 
-const convertStringDurationToNumber = (duration: string | undefined) => {
-  if (!duration) return 0;
-
-  const [hours, minutes, seconds] = duration.split(":");
-  return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
-};
-
 export function Player() {
   const { data: session } = useSession();
   const {
     playerRef,
+    playerUrl,
     currentSongOrStreamRef: currentSongRef,
     volumeRef,
     currentPayload,
   } = usePlayerContext();
-  const pathname = usePathname();
   const isMobile = useMobile(576);
-  const duration = convertStringDurationToNumber(currentSongRef.current?.duration);
 
   const {
     setCurrentId,
@@ -64,7 +57,6 @@ export function Player() {
     volume,
     setVolume,
     setUnmute,
-    handleVolume,
     toggleMute,
     seek,
     setSeek,
@@ -79,33 +71,18 @@ export function Player() {
   const [shufflePayload, setShufflePayload] = useState(false);
   const tempPayloadRef = useRef(null as CurrentPayload | null);
 
-  const loadSourceAndPlay = useCallback(
+  const loadSource = useCallback(
     (songOrStream: Song | Stream) => {
-      const { urlId } = songOrStream;
+      const { url } = songOrStream;
 
       if (playerRef.current) {
-        playerRef.current.src = `https://www.youtube.com/embed/${urlId}?enablejsapi=1&html5=1`;
+        playerUrl.current = url;
         currentSongRef.current = songOrStream;
 
-        if (isStreaming) {
-          setIsStartingPlaying(true);
-
-          setTimeout(() => {
-            playerRef.current?.contentWindow?.postMessage(
-              `{"event":"command","func":"setVolume","args":["${volume.value * 100}"]}`,
-              "*",
-            );
-            playerRef.current?.contentWindow?.postMessage(
-              '{"event":"command","func":"playVideo","args":""}',
-              "*",
-            );
-
-            setIsStartingPlaying(false);
-          }, 1000);
-        }
+        setIsStartingPlaying(true);
       }
     },
-    [currentSongRef, playerRef, volume, setIsStartingPlaying, isStreaming],
+    [currentSongRef, playerRef, playerUrl, setIsStartingPlaying],
   );
 
   const handleNextTrack = useCallback(() => {
@@ -123,21 +100,24 @@ export function Player() {
       if (trackIndex === songsOrStreams.length - 1) {
         currentSongRef.current = songsOrStreams[0];
 
-        loadSourceAndPlay(songsOrStreams[0]);
+        loadSource(songsOrStreams[0]);
         setCurrentId(songsOrStreams[0].urlId);
       }
 
       if (trackIndex < songsOrStreams.length - 1) {
         currentSongRef.current = songsOrStreams[trackIndex + 1];
 
-        loadSourceAndPlay(songsOrStreams[trackIndex + 1]);
+        loadSource(songsOrStreams[trackIndex + 1]);
         setCurrentId(songsOrStreams[trackIndex + 1].urlId);
       }
 
       setSeek(0);
-      updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+      const player = playerRef.current;
+      if (player) {
+        updateProgressBar(trackSeekRef, `${(0 / player.getDuration()) * 100}`);
+      }
     }
-  }, [currentSongRef, setCurrentId, loadSourceAndPlay, duration, currentPayload, setSeek]);
+  }, [currentSongRef, setCurrentId, loadSource, currentPayload, setSeek, playerRef]);
 
   const handlePreviousTrack = () => {
     const { songsOrStreams } = currentPayload.current || {};
@@ -156,33 +136,25 @@ export function Player() {
         currentSongRef.current = songsOrStreams[songsOrStreams.length - 1];
 
         setCurrentId(songsOrStreams[songsOrStreams.length - 1].urlId);
-        loadSourceAndPlay(songsOrStreams[songsOrStreams.length - 1]);
+        loadSource(songsOrStreams[songsOrStreams.length - 1]);
       }
 
       if (trackIndex > 0) {
         currentSongRef.current = songsOrStreams[trackIndex - 1];
 
         setCurrentId(songsOrStreams[trackIndex - 1].urlId);
-        loadSourceAndPlay(songsOrStreams[trackIndex - 1]);
+        loadSource(songsOrStreams[trackIndex - 1]);
       }
 
       setSeek(0);
-      updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
+      const player = playerRef.current;
+      if (player) {
+        updateProgressBar(trackSeekRef, `${(0 / player.getDuration()) * 100}`);
+      }
     }
   };
 
-  const handleRepeatSingleSong = () => {
-    setRepeatCurrentTrack(!repeatCurrentTrack);
-  };
-
-  const handleRepeatCurrentSong = useCallback(() => {
-    if (!currentSongRef.current) {
-      return;
-    }
-    loadSourceAndPlay(currentSongRef.current);
-    setSeek(0);
-    updateProgressBar(trackSeekRef, `${(0 / duration) * 100}`);
-  }, [duration, trackSeekRef, currentSongRef, setSeek, loadSourceAndPlay]);
+  const handleRepeatSingleSong = () => setRepeatCurrentTrack(!repeatCurrentTrack);
 
   const handleShufflePayload = () => {
     if (!shufflePayload) {
@@ -206,41 +178,33 @@ export function Player() {
   };
 
   useEffect(() => {
-    if (currentPayload.current?.type === "streams") return;
-    if (seek >= duration) {
-      repeatCurrentTrack ? handleRepeatCurrentSong() : handleNextTrack();
-    }
-  }, [
-    duration,
-    handleNextTrack,
-    seek,
-    currentPayload,
-    repeatCurrentTrack,
-    handleRepeatCurrentSong,
-  ]);
-
-  useEffect(() => {
     if ((isMobile && soundMobileOpen) || !isMobile) {
       updateProgressBar(volumeRef, `${volume.value * 100}`);
-      updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
+      const player = playerRef.current;
+      if (player) {
+        updateProgressBar(trackSeekRef, `${(seek / player.getDuration()) * 100}`);
+      }
     }
-  }, [playerRef, isMobile, volumeRef, volume.value, seek, duration, trackSeekRef, soundMobileOpen]);
+  }, [playerRef, isMobile, volumeRef, volume.value, seek, trackSeekRef, soundMobileOpen]);
 
   const handleSeekTrack = (event: React.ChangeEvent<HTMLInputElement>) => {
     const seekTime = Number(event.target.value);
     const player = playerRef.current;
+    const duration = player?.getDuration();
 
-    if (seekTime >= duration) {
+    if (!player) return;
+
+    if (duration && seekTime >= duration) {
       event.preventDefault();
       return;
     }
 
+    player?.seekTo(seekTime);
     setSeek(seekTime);
-    player?.contentWindow?.postMessage(
-      `{"event":"command","func":"seekTo","args":[${seekTime}]}`,
-      "*",
-    );
-    updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`);
+
+    if (duration) {
+      updateProgressBar(trackSeekRef, `${(seekTime / duration) * 100}`);
+    }
   };
 
   useEffect(() => {
@@ -251,13 +215,14 @@ export function Player() {
       if (!isStreaming) return;
 
       if (player) {
-        setSeek(seek + 1);
-        updateProgressBar(trackSeekRef, `${(seek / duration) * 100}`);
+        const currentTime = player.getCurrentTime();
+        setSeek(currentTime);
+        updateProgressBar(trackSeekRef, `${(seek / player.getDuration()) * 100}`);
       }
     }, 1000);
 
     return () => clearInterval(updateCurrentTime);
-  }, [playerRef, isStreaming, duration, seek, currentPayload, setSeek]);
+  }, [playerRef, isStreaming, seek, currentPayload, setSeek]);
 
   if (!session) redirect("/signin");
 
@@ -265,44 +230,30 @@ export function Player() {
     const { value } = event.target;
 
     if (playerRef.current) {
-      handleVolume(playerRef, +value);
       setVolume(volumeRef, +value / 100);
     }
 
     if (volume.muted) {
-      setUnmute(playerRef);
+      setVolume(volumeRef, +value / 100);
+      setUnmute();
     }
     updateProgressBar(volumeRef, `${value}`);
   };
 
   const inputs = (
-    <>
-      <input
-        className={styles.trackSeek}
-        ref={trackSeekRef}
-        type="range"
-        min={0}
-        value={seek}
-        onChange={handleSeekTrack}
-        max={duration}
-      />
-      {/* <input
-        className={styles.buffer}
-        ref={bufferRef}
-        type="range"
-        min={0}
-        defaultValue={bufferedTime}
-        max={duration}
-      /> */}
-    </>
+    <input
+      className={styles.trackSeek}
+      ref={trackSeekRef}
+      type="range"
+      min={0}
+      value={seek || 0}
+      onChange={handleSeekTrack}
+      max={playerRef.current?.getDuration() || 0}
+    />
   );
 
   const playOrPause = () => {
-    return isStreaming ? (
-      <Pause onClick={() => handlePause(playerRef)} />
-    ) : (
-      <Play onClick={() => handlePlay(playerRef, volume.value * 100)} />
-    );
+    return isStreaming ? <Pause onClick={handlePause} /> : <Play onClick={handlePlay} />;
   };
 
   return (
@@ -340,7 +291,7 @@ export function Player() {
 
           <SoundDesktop
             volume={volume}
-            handleMute={() => toggleMute(playerRef, volumeRef, savedVolumeRef)}
+            handleMute={() => toggleMute(volumeRef, savedVolumeRef)}
             handleVolumeChange={handleVolumeChange}
             volumeRef={volumeRef}
           />
@@ -388,13 +339,18 @@ export function Player() {
           )}
         </PlayerContainer>
       )}
-
-      <iframe
+      <ReactPlayer
         ref={playerRef}
-        allow="autoplay; encrypted-media; fullscreen;"
-        title="video"
-        allowFullScreen
+        key={currentSongRef.current?.url}
+        url={playerUrl.current || ""}
         style={{ display: "none" }}
+        controls={true}
+        muted={volume.muted}
+        volume={volume.value}
+        playing={isStreaming}
+        loop={repeatCurrentTrack}
+        onReady={() => setIsStartingPlaying(false)}
+        onEnded={handleNextTrack}
       />
     </>
   );
