@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 
 import { extractStreamInfo, filePath } from "./extract";
 
+export const dynamic = "force-dynamic";
+
 const readFromJson = async () => {
   try {
     const data = fs.readFileSync(filePath, "utf8");
