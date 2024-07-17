@@ -361,11 +361,9 @@ export function MusicList({ data, session, albumId }: MusicList) {
       },
       {
         node: (
-          <li className={className}>
-            <Link href={song.url} target="_blank">
-              source video
-            </Link>
-          </li>
+          <Link href={song.url} target="_blank">
+            <li className={className}>source video</li>
+          </Link>
         ),
       },
       {
