@@ -5,8 +5,19 @@ import { StreamResponse } from "@/music/_/types";
 
 export const filePath = "./src/app/api/streams/all/stream-info.json";
 
+const removePreviousData = () => {
+  const isFileExist = fs.existsSync(filePath);
+  if (isFileExist) {
+    fs.unlinkSync(filePath);
+    console.log("File deleted successfully.");
+  }
+  console.log("File does not exist.");
+};
+
 export async function extractStreamInfo() {
-  const response = await fetch(`${process.env.MUSIC_SERVICE_CONTAINER}/chill/extract`, {
+  removePreviousData();
+  const url = `${process.env.MUSIC_SERVICE_CONTAINER}/chill/extract`;
+  const response = await fetch(url, {
     headers: { "Content-Type": "application/json" },
   });
 

@@ -13,13 +13,14 @@ const readFromJson = async () => {
 };
 
 export async function GET() {
+  const streams = await readFromJson();
+  const payload = { message: "success", streams, type: "streams" };
+  const status = { status: 307 };
+
   if (!fs.existsSync(filePath)) {
     await extractStreamInfo();
-    const streams = await readFromJson();
-    return NextResponse.json({ message: "success", streams }, { status: 307 });
+    return NextResponse.json(payload, status);
   }
 
-  const streams = await readFromJson();
-
-  return NextResponse.json({ message: "success", streams, type: "streams" }, { status: 307 });
+  return NextResponse.json(payload, status);
 }
