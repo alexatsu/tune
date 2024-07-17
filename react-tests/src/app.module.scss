@@ -1,0 +1,30 @@
+%picker {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+.groupPickerContainer {
+  background: black;
+  width: 600px;
+  height: 300px;
+  position: relative;
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.backgroundPickerGroup,
+.widgetPickerGroup,
+.textPickerGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  .picker {
+    @extend %picker;
+  }
+}
