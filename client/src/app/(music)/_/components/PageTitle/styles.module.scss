@@ -5,4 +5,9 @@
   color: $text;
   margin-bottom: 10px;
   height: $page-title-height;
+  background-color: $widget-bg;
+  display: inline-block;
+  width: fit-content;
+  padding: 0rem 1rem;
+  border-radius: 0.5rem;
 }

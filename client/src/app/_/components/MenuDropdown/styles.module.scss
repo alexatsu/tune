@@ -12,7 +12,7 @@
     right: 0;
     user-select: none;
     max-width: 200px;
-    background-color: $bg-alt;
+    background-color: $widget-bg;
     padding: 0.5rem 1rem;
     border-radius: 10px;
     z-index: 1;
@@ -21,16 +21,18 @@
     transition: all 0.15s ease;
     transform: translateY(-10px);
     // display: none;
+    border: 1px solid rgba(7, 7, 7, 0.349);
   }
 
   .ulOpen {
+  
     position: absolute;
     color: $text;
     list-style: none;
     right: 0;
     user-select: none;
     max-width: 200px;
-    background-color: $bg-alt;
+    background-color: $widget-bg;
     padding: 0.5rem 1rem;
     border-radius: 10px;
     z-index: 1;
@@ -38,6 +40,7 @@
     visibility: visible;
     transition: all 0.15s ease;
     transform: translateY(0);
+    border: 1px solid rgba(7, 7, 7, 0.349);
   }
 
   & a {

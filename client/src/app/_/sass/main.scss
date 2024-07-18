@@ -8,14 +8,13 @@
 
   --widget-bg: hsl(192, 9%, 11%);
   --widget-bg-hover: color-mix(in srgb, var(--widget-bg), white 5%);
-  --widget-bg-alt: #222729;
-  --widget-bg-playing: #363f41;
+  --widget-bg-playing: color-mix(in srgb, var(--widget-bg), white 10%);
   
   --text: #ececec;
   --dark-text: #111;
 
-  --accent: #76efff;
-  --accent-darker: #63d8e8;
+  --accent: rgb(118, 239, 255);
+  --accent-darker: color-mix(in srgb, var(--accent), black 5%);
   --accent-fade: #76efff3d;
 
   --grey: rgb(78 78 78);

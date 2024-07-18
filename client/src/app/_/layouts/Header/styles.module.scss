@@ -32,7 +32,8 @@
   transition: background-color 0.15s linear;
   border-radius: 10px;
 
+
   &:hover {
-    background-color: $bg-alt-hover;
+    background-color: $widget-bg-hover;
   }
 }

@@ -112,7 +112,7 @@
   justify-content: space-between;
   padding: 0 15%;
   flex: 0 0 10%;
-  background: linear-gradient(180deg, var(--bg), rgb(26 30 31) 100%);
+  background: linear-gradient(180deg, var(--bg), $widget-bg 100%);
   z-index: 1;
 
   @media screen and (width <= 1024px) {
@@ -267,7 +267,6 @@
         -o-object-fit: cover;
         object-fit: cover;
         border-radius: 0.5rem;
-        box-shadow: 0 6px 20px 5px black;
         position: absolute;
         top: 50%;
         left: 50%;

@@ -5,7 +5,7 @@
     position: relative;
     display: inline-block;
     background: $widget-bg;
-    max-width: 213px;
+    max-width: 234px;
     width: 20vw;
     min-width: 200px;
     max-height: 234px;
@@ -30,7 +30,7 @@
     }
 
     &:hover {
-      background: $widget-bg-alt;
+      background: $widget-bg-hover;
     }
 
     &:before {
@@ -86,7 +86,7 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
-      background: $bg;
+      background: $widget-bg;
       min-width: 350px;
       min-height: 200px;
       border-radius: 20px;

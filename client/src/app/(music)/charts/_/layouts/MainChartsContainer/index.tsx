@@ -6,7 +6,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { attachUUIDToSongs } from "@/app/(music)/_/utils/functions";
 import { Categories } from "@/charts/_/components";
 import { useCharts } from "@/charts/_/hooks";
-import { MusicList, Skeleton } from "@/music/_/components";
+import { MusicList, PageTitle, Skeleton } from "@/music/_/components";
 import { ChartSongs } from "@/music/_/types";
 
 import styles from "./styles.module.scss";
@@ -55,7 +55,7 @@ export function MainChartsContainer() {
   return (
     <div className={styles.chartsMainContainer}>
       <div className={styles.text}>
-        <h2>Top Charts</h2>
+        <PageTitle title={"Top Charts"} />
         <div onClick={toggleDropdown} className={styles.dropdown}>
           <IoIosArrowDown
             onClick={toggleDropdown}

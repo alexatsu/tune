@@ -22,7 +22,7 @@
 
     transition: all 0.15s linear;
     &:focus {
-      background-color: $widget-bg-alt;
+      background-color: $widget-bg-hover;
       outline: none;
     }
   }

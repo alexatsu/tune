@@ -12,21 +12,16 @@
   overflow-y: auto;
   padding: 0 10px 0 0;
 
-  &::-webkit-scrollbar {
-    width: 2em;
-  }
-
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-
   &::-webkit-scrollbar-thumb {
     background-color: $accent;
-    border-radius: 10px;
+    border-left: 3px $bg solid;
   }
-
+  
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 7px;
   }
 }
 

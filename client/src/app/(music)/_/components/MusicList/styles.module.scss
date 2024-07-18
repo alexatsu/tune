@@ -40,11 +40,11 @@
   }
   &::-webkit-scrollbar-thumb {
     background-color: $accent;
-    border-radius: 10px;
+    border-left: 4px $bg solid;
   }
-
+  
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 8px;
   }
 
   .musicListItem {
@@ -157,7 +157,7 @@
         fill: $accent;
 
         path {
-          stroke: $widget-bg;
+          stroke: $text;
         }
       }
     }
@@ -175,7 +175,7 @@
   transition: background-color 0.15s linear;
 
   &:hover {
-    background-color: $bg-alt-hover;
+    background-color: $widget-bg-hover;
   }
 }
 
