@@ -259,8 +259,6 @@ export function Player() {
     return isStreaming ? <Pause onClick={handlePause} /> : <Play onClick={handlePlay} />;
   };
 
-  // console.log(currentPayload.current, "here is the current payload");
-
   return (
     <>
       {!isMobile ? (

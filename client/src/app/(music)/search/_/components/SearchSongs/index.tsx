@@ -80,16 +80,18 @@ function SearchSongs() {
   return (
     <>
       <form className={styles.form} onSubmit={handleFormSubmit}>
-        <input
-          type="text"
-          placeholder="look for songs/artists or paste the url"
-          className={styles.input}
-          value={input}
-          onChange={handleInputChange}
-        />
-        <button disabled={isLoading} className={styles.buttonSearch} type="submit">
-          <TriggerSearch />
-        </button>
+        <div className={styles.inputContainer}>
+          <input
+            type="text"
+            placeholder="look for songs/artists or paste the url"
+            className={styles.input}
+            value={input}
+            onChange={handleInputChange}
+          />
+          <button disabled={isLoading} className={styles.buttonSearch} type="submit">
+            <TriggerSearch />
+          </button>
+        </div>
       </form>
 
       {error && !isLoading && (

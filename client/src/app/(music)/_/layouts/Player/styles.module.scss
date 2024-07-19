@@ -190,6 +190,7 @@
     height: 5px;
     display: flex;
     justify-content: center;
+    border-top: 1px solid $widget-bg;
 
     .trackSeek {
       @extend %inputContainer;
@@ -254,6 +255,9 @@
     align-items: center;
     height: 100%;
     flex: 1 1 0;
+    background-color: $widget-bg;
+    border-bottom: 1px solid rgb(81 82 83);
+
 
     .imageBlockMobile {
       position: relative;

@@ -1,4 +1,6 @@
 @use "@/sass/components/VolumeTrack.module.scss" as *;
+@use "@/sass/abstracts/colors.scss" as *;
+
 
 .soundMobileContainer {
   width: 100%;
@@ -9,7 +11,8 @@
   gap: 1rem;
   padding: 0 1rem;
   font-size: 0.8rem;
-
+  background-color: $widget-bg;
+  
   .volumeMobileTrack {
     @include VolumeTrack();
   }

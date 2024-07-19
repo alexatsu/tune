@@ -6,25 +6,14 @@
   gap: 10px;
   align-items: center;
   margin-bottom: 10px;
+}
 
-  .input {
-    padding: 1.35rem;
-    background-color: $widget-bg;
-    border: none;
-    border-radius: 1rem;
-    transition: 0.15s outline ease-out;
-    color: $text;
-    width: 50%;
+.inputContainer {
+  position: relative;
+  width: 60%;
 
-    @media screen and (width <= 576px) {
-      width: 100%;
-    }
-
-    transition: all 0.15s linear;
-    &:focus {
-      background-color: $widget-bg-hover;
-      outline: none;
-    }
+  @media screen and (width <= 576px) {
+    width: 100%;
   }
 
   .buttonSearch {
@@ -34,16 +23,42 @@
     background: transparent;
     border-radius: 10px;
     cursor: pointer;
-
+    position: absolute;
+    right: 10px;
+    top: 35%;
+  
     svg path {
       transition: 0.15s stroke linear;
+  
+      stroke: $text;
     }
-
+  
     &:hover svg path {
       stroke: $accent;
     }
   }
 }
+
+.input {
+  background-color: $widget-bg;
+  padding: 1.35rem;
+  border: none;
+  border-radius: 1rem;
+  transition: 0.15s outline ease-out;
+  color: $text;
+  width: 100%;
+
+  @media screen and (width <= 576px) {
+    width: 100%;
+  }
+
+  transition: all 0.15s linear;
+  &:focus {
+    background-color: $widget-bg-hover;
+    outline: none;
+  }
+}
+
 
 .musicListSkeletonContainer {
   width: 100%;
