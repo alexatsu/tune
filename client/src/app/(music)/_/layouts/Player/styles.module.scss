@@ -258,7 +258,6 @@
     background-color: $widget-bg;
     border-bottom: 1px solid rgb(81 82 83);
 
-
     .imageBlockMobile {
       position: relative;
       width: 15%;
@@ -308,6 +307,12 @@
       display: flex;
       justify-content: center;
       color: $text;
+
+      .soundClosed {
+        & path {
+          fill: $accent;
+        }
+      }
     }
   }
 }

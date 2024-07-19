@@ -9,7 +9,7 @@
   --widget-bg: hsl(192, 9%, 11%);
   --widget-bg-hover: color-mix(in srgb, var(--widget-bg), white 5%);
   --widget-bg-playing: color-mix(in srgb, var(--widget-bg), white 10%);
-  
+
   --text: #ececec;
   --dark-text: #111;
 
@@ -56,3 +56,6 @@ body[data-property="background"] {
   /* Remove blur effect */
   filter: none;
 }
+
+// --bg: #dfdfdf;
+// --accent: rgb(255 193 230);

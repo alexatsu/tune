@@ -70,9 +70,10 @@ function UserImage() {
     <Image
       src={userImage as string}
       alt="user-image"
-      height={40}
-      width={40}
       className={styles.userImage}
+      width={0}
+      height={0}
+      unoptimized
     />
   ) : (
     <div className={styles.userFiller} />

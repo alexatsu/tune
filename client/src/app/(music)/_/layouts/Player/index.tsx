@@ -336,7 +336,10 @@ export function Player() {
 
               <div className={styles.title}>{currentSongRef.current?.title || ""}</div>
               <div className={styles.soundMobile}>
-                <SoundIcon onClick={() => setSoundMobileOpen(true)} />
+                <SoundIcon
+                  onClick={() => setSoundMobileOpen(true)}
+                  className={styles.soundClosed}
+                />
               </div>
             </MainTrack>
           )}

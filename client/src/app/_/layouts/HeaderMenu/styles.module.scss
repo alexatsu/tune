@@ -41,6 +41,13 @@
   border-radius: 0.5rem;
   cursor: pointer;
   box-shadow: 0px 1px 1px 0px $accent;
+  width: 46px;
+  height: 46px;
+
+  @media screen and (width <= 576px) {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 .userFiller {
