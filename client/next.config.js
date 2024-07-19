@@ -15,6 +15,11 @@ const nextConfig = {
         hostname: "i.ytimg.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+      },
     ],
   },
 };

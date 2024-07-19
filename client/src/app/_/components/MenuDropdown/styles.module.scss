@@ -11,7 +11,7 @@
     list-style: none;
     right: 0;
     user-select: none;
-    max-width: 200px;
+    min-width: fit-content;
     background-color: $widget-bg;
     padding: 0.5rem 1rem;
     border-radius: 10px;
@@ -31,7 +31,7 @@
     list-style: none;
     right: 0;
     user-select: none;
-    max-width: 200px;
+    min-width: fit-content;
     background-color: $widget-bg;
     padding: 0.5rem 1rem;
     border-radius: 10px;

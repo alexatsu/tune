@@ -32,8 +32,20 @@
   transition: background-color 0.15s linear;
   border-radius: 10px;
 
-
   &:hover {
     background-color: $widget-bg-hover;
   }
+}
+
+.userImage {
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0px 1px 1px 0px $accent;
+}
+
+.userFiller {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #515253;
 }

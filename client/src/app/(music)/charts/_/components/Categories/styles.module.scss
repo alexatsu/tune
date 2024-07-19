@@ -3,8 +3,8 @@
 .categoriesList {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-evenly;
+  gap: 0.5rem;
+  justify-content: center;
   list-style: none;
   color: $text;
   font-weight: 600;
@@ -13,8 +13,8 @@
 
 .categriesListItem {
   background-color: $widget-bg;
-  padding: 1rem 1rem;
-  border-radius: 1rem;
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.5rem;
   min-width: 15%;
   text-align: center;
   font-size: clamp(0.8rem, 1rem, 1.2rem);

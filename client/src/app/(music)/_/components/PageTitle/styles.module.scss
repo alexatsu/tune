@@ -1,13 +1,39 @@
 @use "@/sass/abstracts/colors.scss" as *;
 @use "@/sass/constants/dimensions.scss" as *;
 
+.desktopTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobileTitleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 10px;
+
+  .mobileCategoryBlock {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
 .pageTitle {
   color: $text;
   margin-bottom: 10px;
-  height: $page-title-height;
   background-color: $widget-bg;
   display: inline-block;
   width: fit-content;
-  padding: 0rem 1rem;
+  padding: 0.2rem 0.8rem;
   border-radius: 0.5rem;
+
+  @media screen and (width <= 576px) {
+    font-size: 1.2rem;
+    height: inherit;
+    margin-bottom: 0px;
+    padding: 0.3rem 0.5rem;
+  }
 }

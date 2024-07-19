@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Quicksand, Qwitcher_Grypen } from "next/font/google";
 import { getServerSession, Session } from "next-auth";
 
-import { Header } from "@/app/_/layouts";
 import { PlayerProvider, SessionProvider } from "@/app/_/providers";
 import { authOptions } from "@/app/_/utils/functions";
 
@@ -26,7 +25,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body className={`${quicksand.className} ${qwitcher.variable}`}>
         <SessionProvider session={session}>
-          <Header />
           <PlayerProvider>{children}</PlayerProvider>
         </SessionProvider>
       </body>

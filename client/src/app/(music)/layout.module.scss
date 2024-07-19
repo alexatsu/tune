@@ -8,13 +8,14 @@
   height: 80%;
   width: 100%;
   background-color: $bg;
+  padding-top: 1rem;
 
   @media screen and (width <= 1024px) {
-    padding: 0 1rem;
+    padding: 1rem 1rem 0rem 1rem;
   }
 
   @media screen and (width <= 576px) {
-    padding: 0 0.5rem;
+    padding: 1rem 0.5rem 0rem 0.5rem;
     gap: 0;
     height: 75%;
   }

@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import React from "react";
 
+import { useMobile } from "@/app/(music)/_/hooks";
+
 import styles from "./styles.module.scss";
 
 type Props = {
@@ -10,11 +12,13 @@ type Props = {
   Icon: React.ReactNode;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  isHeader?: boolean;
 };
 
-export function MenuDropdown({ props, Icon, isOpen, setIsOpen }: Props) {
+export function MenuDropdown({ props, Icon, isOpen, setIsOpen, isHeader }: Props) {
   const dropdownRef = useRef<HTMLUListElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMobile(576);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -38,10 +42,15 @@ export function MenuDropdown({ props, Icon, isOpen, setIsOpen }: Props) {
     const { top } = menuRef.current?.getBoundingClientRect() as DOMRect;
     const viewHeight = window.innerHeight;
 
-    if (viewHeight / 2 > top) {
-      dropdownRef.current?.style.setProperty("top", "35px");
+    if (isHeader) {
+      dropdownRef.current?.style.setProperty("top", "calc(100% + 5px)");
+      dropdownRef.current?.style.setProperty(isMobile ? "right" : "left", "0px");
     } else {
-      dropdownRef.current?.style.setProperty("bottom", "calc(100% + 10px)");
+      if (viewHeight / 2 > top) {
+        dropdownRef.current?.style.setProperty("top", "35px");
+      } else {
+        dropdownRef.current?.style.setProperty("bottom", "calc(100% + 10px)");
+      }
     }
   };
 

@@ -1,6 +1,8 @@
 "use client";
+
+import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import React from "react";
 
 import { Menu } from "@/app/_/components/icons";
@@ -9,7 +11,7 @@ import { useHeaderDropdownStore } from "@/app/_/store";
 
 import styles from "./styles.module.scss";
 
-export function Header() {
+export function HeaderMenu() {
   const { isHeaderDropdownOpen, setIsHeaderDropdownOpen } = useHeaderDropdownStore();
 
   const headerList = (className: string) => {
@@ -50,14 +52,29 @@ export function Header() {
 
   return (
     <header className={styles.header}>
-      <h1 className={styles.logo}>Tune</h1>
-
       <MenuDropdown
         props={headerMenuProps}
-        Icon={<Menu />}
+        Icon={<UserImage />}
         isOpen={isHeaderDropdownOpen}
         setIsOpen={setIsHeaderDropdownOpen}
+        isHeader={true}
       />
     </header>
+  );
+}
+
+function UserImage() {
+  const { data: session } = useSession();
+  const userImage = session?.user?.image;
+  return userImage ? (
+    <Image
+      src={userImage as string}
+      alt="user-image"
+      height={40}
+      width={40}
+      className={styles.userImage}
+    />
+  ) : (
+    <div className={styles.userFiller} />
   );
 }

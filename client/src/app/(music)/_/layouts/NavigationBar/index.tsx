@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback } from "react";
 import { SiClyp } from "react-icons/si";
 
+import { HeaderMenu } from "@/app/_/layouts";
 import { navigationIcons } from "@/music/_/components/icons/navigation";
 import { useAlbums, useMobile } from "@/music/_/hooks";
 
@@ -67,7 +68,8 @@ function DesktopNavigationBar() {
   const currentAlbumId = findCurrentAlbumId(pathname.split("/")[2]);
   if (!isMobile) {
     return (
-      <aside>
+      <aside className={styles.desktopSidebarContainer}>
+        <HeaderMenu />
         <ul className={styles.listDesktop}>
           {list(pathname, currentAlbumId).map(({ path, icon }) => {
             const isActive: boolean = path === pathname;

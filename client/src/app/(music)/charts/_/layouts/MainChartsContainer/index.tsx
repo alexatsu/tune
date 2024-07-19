@@ -52,17 +52,20 @@ export function MainChartsContainer() {
     <MusicList data={payload} session={session!} />
   );
 
+  const categoryButton = (
+    <div onClick={toggleDropdown} className={styles.dropdown}>
+      <IoIosArrowDown
+        onClick={toggleDropdown}
+        className={showDropdown ? styles.dropdownIconOpen : styles.dropdownIcon}
+      />
+      <p>{selectedCategory.split("-chart")[0]}</p>
+    </div>
+  );
+
   return (
     <div className={styles.chartsMainContainer}>
       <div className={styles.text}>
-        <PageTitle title={"Top Charts"} />
-        <div onClick={toggleDropdown} className={styles.dropdown}>
-          <IoIosArrowDown
-            onClick={toggleDropdown}
-            className={showDropdown ? styles.dropdownIconOpen : styles.dropdownIcon}
-          />
-          <p>{selectedCategory}</p>
-        </div>
+        <PageTitle title={"Top Charts"}>{categoryButton}</PageTitle>
       </div>
 
       <div
