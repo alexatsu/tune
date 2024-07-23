@@ -1,0 +1,1 @@
+export { ThemesBadge } from "./ThemesBadge";

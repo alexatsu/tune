@@ -4,6 +4,7 @@ import { HexColorPicker } from "react-colorful";
 import styles from "./app.module.scss";
 
 //implement new white theme
+//implement themes context for quick access themes
 //add toggle for themes in headers menu (this is quick access)
 //let user pick colors to make custom theme
 //let user save themes to quick access

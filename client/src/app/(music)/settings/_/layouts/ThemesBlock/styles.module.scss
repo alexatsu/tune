@@ -1,0 +1,23 @@
+@use "@/sass/abstracts/colors.scss" as *;
+
+.themesContainer {
+  color: $text;
+  background-color: $widget-bg;
+  width: 100%;
+  padding: 2rem;
+  margin-bottom: 20px;
+  border-radius: 1rem;
+
+  .typesBlock {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+
+    .defaultContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+
+    }
+  }
+}

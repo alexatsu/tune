@@ -5,7 +5,6 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 
-import { Menu } from "@/app/_/components/icons";
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { useHeaderDropdownStore } from "@/app/_/store";
 

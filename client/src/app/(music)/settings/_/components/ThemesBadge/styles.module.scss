@@ -1,0 +1,9 @@
+.themesBadgeContainer {
+  display: flex;
+  border: 1px solid white;
+
+  & div {
+    width: 25px;
+    height: 25px;
+  }
+}
