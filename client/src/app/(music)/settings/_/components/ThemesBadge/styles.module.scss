@@ -1,9 +1,20 @@
 .themesBadgeContainer {
   display: flex;
-  border: 1px solid white;
-
+  cursor: pointer;
+  
   & div {
     width: 25px;
     height: 25px;
+    border: 1px solid rgb(240, 240, 240);
+
+    &:first-child {
+      border-top-left-radius: 0.5rem;
+      border-bottom-left-radius: 0.5rem;
+    }
+
+    &:last-child {
+      border-top-right-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
   }
 }
