@@ -8,16 +8,34 @@
   margin-bottom: 20px;
   border-radius: 1rem;
 
+  & h2 {
+    margin-bottom: 20px;
+  }
+
+  @media screen and (width <= 576px) {
+    padding: 1rem;
+  }
+  .themesDecsription {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
   .typesBlock {
     display: flex;
     flex-direction: column;
-    padding: 1rem;
 
     .defaultContainer {
       display: flex;
       flex-direction: row;
       gap: 0.5rem;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
 
+    .currentContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
     }
   }
 }

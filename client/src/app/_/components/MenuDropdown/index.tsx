@@ -22,10 +22,12 @@ export function MenuDropdown({ props, Icon, isOpen, setIsOpen, isHeader }: Props
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
       if (
         isOpen &&
-        !dropdownRef.current?.contains(event.target as Node) &&
-        !menuRef.current?.contains(event.target as Node)
+        !dropdownRef.current?.contains(target) &&
+        !menuRef.current?.contains(target) &&
+        !target.closest("[data-theme-badge]")
       ) {
         setIsOpen(false);
       }

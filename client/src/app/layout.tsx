@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Quicksand, Qwitcher_Grypen } from "next/font/google";
 import { getServerSession, Session } from "next-auth";
 
-import { PlayerProvider, SessionProvider } from "@/app/_/providers";
+import { PlayerProvider, SessionProvider, ThemesProvider } from "@/app/_/providers";
 import { authOptions } from "@/app/_/utils/functions";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });
@@ -25,7 +25,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body className={`${quicksand.className} ${qwitcher.variable}`}>
         <SessionProvider session={session}>
-          <PlayerProvider>{children}</PlayerProvider>
+          <ThemesProvider>
+            <PlayerProvider>{children}</PlayerProvider>
+          </ThemesProvider>
         </SessionProvider>
       </body>
     </html>

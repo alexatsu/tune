@@ -15,9 +15,10 @@ export function ThemesBadge({
   accentColor,
   textColor,
   applyTheme,
+  ...props
 }: ThemesBadgeProps) {
   return (
-    <div className={styles.themesBadgeContainer} onClick={applyTheme}>
+    <div {...props} className={styles.themesBadgeContainer} onClick={applyTheme}>
       <div style={{ background: bgColor }}></div>
       <div style={{ background: widgetColor }}></div>
       <div style={{ background: accentColor }}></div>

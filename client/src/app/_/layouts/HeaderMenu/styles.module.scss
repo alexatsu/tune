@@ -23,7 +23,9 @@
 }
 
 .menuPropsList {
-  padding: 0.8rem;
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
   text-decoration: none;
   color: $text;
   cursor: pointer;
@@ -31,6 +33,7 @@
   white-space: nowrap;
   transition: background-color 0.15s linear;
   border-radius: 10px;
+  margin-bottom: 10px;
 
   &:hover {
     background-color: $widget-bg-hover;
@@ -55,4 +58,12 @@
   height: 40px;
   border-radius: 50%;
   background-color: #515253;
+}
+
+.themeBadgeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 10px;
 }

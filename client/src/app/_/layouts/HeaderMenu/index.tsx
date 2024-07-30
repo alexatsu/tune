@@ -7,21 +7,58 @@ import React from "react";
 
 import { MenuDropdown } from "@/app/_/components/MenuDropdown";
 import { useHeaderDropdownStore } from "@/app/_/store";
+import { ThemesBadge } from "@/app/(music)/settings/_/components";
 
+import { useThemesContext } from "../../providers";
 import styles from "./styles.module.scss";
 
 export function HeaderMenu() {
   const { isHeaderDropdownOpen, setIsHeaderDropdownOpen } = useHeaderDropdownStore();
+  const { themes, handleTheme } = useThemesContext();
+
+  const renderThemeBadges = () => {
+    return Object.entries(themes).map(([key, theme]) => {
+      const { background, widgets, accent, text } = theme;
+      return (
+        <ThemesBadge
+          key={key}
+          bgColor={background.value}
+          widgetColor={widgets.value}
+          accentColor={accent.value}
+          textColor={text.value}
+          applyTheme={() => handleTheme(theme)}
+          data-theme-badge
+        />
+      );
+    });
+  };
 
   const headerList = (className: string) => {
     return [
       {
         node: (
-          <li className={className}>
-            <Link href={"/settings"} onClick={() => setIsHeaderDropdownOpen(false)}>
-              Settings
-            </Link>
-          </li>
+          <Link
+            className={className}
+            href={"/settings"}
+            onClick={() => setIsHeaderDropdownOpen(false)}
+          >
+            Settings
+          </Link>
+        ),
+      },
+      {
+        node: <div className={styles.themeBadgeContainer}>{renderThemeBadges()}</div>,
+      },
+      {
+        node: (
+          <Link
+            className={className}
+            href={"https://github.com/AlexanderKudr/tune"}
+            onClick={() => setIsHeaderDropdownOpen(false)}
+            target="_blank"
+          >
+            Know more...
+          </Link>
         ),
       },
       {
