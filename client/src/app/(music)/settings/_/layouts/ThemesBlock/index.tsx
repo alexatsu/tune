@@ -39,10 +39,10 @@ export function ThemesBlock() {
         <div className={styles.currentContainer}>
           <span>Current:</span>
           <ThemesBadge
-            bgColor={currentTheme.background}
-            widgetColor={currentTheme.widgets}
-            accentColor={currentTheme.accent}
-            textColor={currentTheme.text}
+            bgColor={currentTheme?.background}
+            widgetColor={currentTheme?.widgets}
+            accentColor={currentTheme?.accent}
+            textColor={currentTheme?.text}
           />
         </div>
       </div>
