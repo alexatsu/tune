@@ -22,10 +22,10 @@ export function HeaderMenu() {
       return (
         <ThemesBadge
           key={key}
-          bgColor={background.value}
-          widgetColor={widgets.value}
-          accentColor={accent.value}
-          textColor={text.value}
+          bgColor={background}
+          widgetColor={widgets}
+          accentColor={accent}
+          textColor={text}
           applyTheme={() => handleTheme(theme)}
           data-theme-badge
         />

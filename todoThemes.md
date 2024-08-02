@@ -2,13 +2,13 @@
 //implement new white theme
 //implement themes context for quick access themes
 //add toggle for themes in headers menu (this is quick access)
-
-//TODO
+//add fetcher to get current/quick/all themes from db before showing client
 //update schema for user with personal preferences
 //add themes to preferences
 //then save it to db
-//add fetcher to get current/quick/all themes from db before showing client
 //if they do not exist, show default theme
+
+//TODO
 
 //let user pick colors to make custom theme
 //let user save themes to quick access
