@@ -35,6 +35,8 @@ const {
   RepeatOne,
   Shuffle,
   UnShuffle,
+  ThreeDots,
+  Back,
 } = playerIcons;
 const { LoadingCircle } = miscIcons;
 
@@ -63,6 +65,7 @@ export function Player() {
     isStartingPlaying,
     setIsStartingPlaying,
   } = useStreamStore();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [soundMobileOpen, setSoundMobileOpen] = useState(false);
   const trackSeekRef = useRef<HTMLInputElement>(null);
   const savedVolumeRef = useRef<number>(volume.value);
@@ -305,14 +308,29 @@ export function Player() {
             <div className={styles.inputsMobile}>{inputs}</div>
           )}
 
-          {soundMobileOpen ? (
+          {mobileMenuOpen && !soundMobileOpen && (
+            <div className={styles.mobileMenu}>
+              <div onClick={handleShufflePayload} className={styles.shuffle}>
+                {shufflePayload ? <UnShuffle /> : <Shuffle />}
+              </div>
+              <div onClick={handleRepeatSingleSong}>
+                {repeatCurrentTrack ? <RepeatOne /> : <RepeatAll />}
+              </div>
+              <SoundIcon onClick={() => setSoundMobileOpen(true)} className={styles.soundClosed} />
+              <Back onClick={() => setMobileMenuOpen(false)} />
+            </div>
+          )}
+
+          {soundMobileOpen && (
             <SoundMobile
               volume={volume}
               handleVolumeChange={handleVolumeChange}
               volumeRef={volumeRef}
               setSoundMobileOpen={setSoundMobileOpen}
             />
-          ) : (
+          )}
+
+          {!soundMobileOpen && !mobileMenuOpen && (
             <MainTrack className={styles.mainTrackMobile}>
               <div className={styles.imageBlockMobile}>
                 {currentSongRef.current && (
@@ -336,10 +354,7 @@ export function Player() {
 
               <div className={styles.title}>{currentSongRef.current?.title || ""}</div>
               <div className={styles.soundMobile}>
-                <SoundIcon
-                  onClick={() => setSoundMobileOpen(true)}
-                  className={styles.soundClosed}
-                />
+                <ThreeDots onClick={() => setMobileMenuOpen(true)} />
               </div>
             </MainTrack>
           )}

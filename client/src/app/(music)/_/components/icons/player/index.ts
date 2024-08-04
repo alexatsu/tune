@@ -1,4 +1,5 @@
 import { Add } from "./Add";
+import { Back } from "./Back";
 import { Muted } from "./Muted";
 import { NextTrack } from "./NextTrack";
 import { Pause } from "./Pause";
@@ -26,4 +27,5 @@ export const playerIcons = {
   RepeatOne,
   Shuffle,
   UnShuffle,
+  Back,
 };
