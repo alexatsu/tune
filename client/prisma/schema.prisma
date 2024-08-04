@@ -55,6 +55,9 @@ model User {
   sessions      Session[]
   Songs         Song[]    @relation("userSongs")
   Albums        Album[]   @relation("userAlbums")
+
+  settings   Settings? @relation("userSettings", fields: [settingsId], references: [id])
+  settingsId String?   @unique
 }
 
 model Song {
@@ -66,8 +69,9 @@ model Song {
   urlId    String
   addedAt  DateTime
   cover    String?
-  userId   String
-  User     User     @relation("userSongs", fields: [userId], references: [id])
+
+  userId String
+  User   User   @relation("userSongs", fields: [userId], references: [id])
 }
 
 model Album {
@@ -91,4 +95,59 @@ model AlbumSong {
   url      String
   urlId    String
   Album    Album   @relation("albumSong", fields: [albumId], references: [id])
+}
+
+model Settings {
+  id String @id @default(cuid())
+
+  themesSettingsId String         @unique
+  themesSettings   ThemesSettings @relation("themesSettings", fields: [themesSettingsId], references: [id])
+
+  user   User?   @relation("userSettings")
+  userId String?
+}
+
+model ThemesSettings {
+  id String @id @default(cuid())
+
+  currentThemeId String       @unique
+  currentTheme   CurrentTheme @relation("currentTheme", fields: [currentThemeId], references: [id])
+
+  quickAccessThemes QuickAccessThemes[] @relation("quickAccessThemes")
+
+  customThemes CustomThemes[] @relation("customThemes")
+
+  settings Settings? @relation("themesSettings")
+}
+
+model CurrentTheme {
+  id         String @id @default(cuid())
+  background String
+  widgets    String
+  accent     String
+  text       String
+
+  themesSettings ThemesSettings? @relation("currentTheme")
+}
+
+model QuickAccessThemes {
+  id         String @id @default(cuid())
+  background String
+  widgets    String
+  accent     String
+  text       String
+
+  themesSettingsId String?
+  themesSettings   ThemesSettings? @relation("quickAccessThemes", fields: [themesSettingsId], references: [id])
+}
+
+model CustomThemes {
+  id         String @id @default(cuid())
+  background String
+  widgets    String
+  accent     String
+  text       String
+
+  themesSettingsId String?
+  themesSettings   ThemesSettings? @relation("customThemes", fields: [themesSettingsId], references: [id])
 }

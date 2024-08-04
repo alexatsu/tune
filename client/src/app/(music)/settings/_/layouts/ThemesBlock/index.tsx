@@ -13,10 +13,10 @@ export function ThemesBlock() {
       return (
         <ThemesBadge
           key={key}
-          bgColor={background.value}
-          widgetColor={widgets.value}
-          accentColor={accent.value}
-          textColor={text.value}
+          bgColor={background}
+          widgetColor={widgets}
+          accentColor={accent}
+          textColor={text}
           applyTheme={() => handleTheme(theme)}
         />
       );
@@ -38,10 +38,10 @@ export function ThemesBlock() {
         <div className={styles.currentContainer}>
           <span>Current:</span>
           <ThemesBadge
-            bgColor={currentTheme.background.value}
-            widgetColor={currentTheme.widgets.value}
-            accentColor={currentTheme.accent.value}
-            textColor={currentTheme.text.value}
+            bgColor={currentTheme?.background}
+            widgetColor={currentTheme?.widgets}
+            accentColor={currentTheme?.accent}
+            textColor={currentTheme?.text}
           />
         </div>
       </div>

@@ -10,11 +10,6 @@ export default function Page() {
     <PageContainer>
       <PageTitle title={"Settings"} />
       <ThemesBlock />
-      <section className={styles.text}>
-        <p>
-          Coming soon, but for now check out <Link href={"/allmusic"}>Music</Link>
-        </p>
-      </section>
     </PageContainer>
   );
 }
