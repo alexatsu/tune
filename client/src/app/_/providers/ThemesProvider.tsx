@@ -76,10 +76,10 @@ function ThemesProvider({
   currentThemeFromCookies,
 }: {
   children: React.ReactNode;
-  themesFromDB: ThemesResponse;
+  themesFromDB: ThemesResponse | null;
   currentThemeFromCookies?: Theme | null;
 }) {
-  const isThemes = themesFromDB.themes;
+  const isThemes = themesFromDB?.themes;
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
   const { data: session } = useSession();
   const updaterThemeForDBRef = useRef<Theme | null>(null);
@@ -95,7 +95,7 @@ function ThemesProvider({
   }, [isThemes, currentThemeFromCookies]);
 
   const updateCurrentThemeInDB = async () => {
-    const url = "/api/settings/themes/update-current-theme";
+    const url = "api/settings/themes/update-current-theme";
     const response = await handleFetch(url, "PUT", {
       session,
       currentTheme: updaterThemeForDBRef.current,

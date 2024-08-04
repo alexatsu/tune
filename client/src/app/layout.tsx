@@ -4,11 +4,10 @@ import type { Metadata } from "next";
 import { Quicksand, Qwitcher_Grypen } from "next/font/google";
 import { getServerSession, Session } from "next-auth";
 
-import { PlayerProvider, SessionProvider, ThemesProvider } from "@/app/_/providers";
-import { authOptions, handleFetch } from "@/app/_/utils/functions";
+import { LoadProvider, PlayerProvider, SessionProvider, ThemesProvider } from "@/app/_/providers";
+import { authOptions } from "@/app/_/utils/functions";
 
-import { LoadProvider } from "./_/providers/LoadProvider";
-import { ThemesResponse } from "./_/providers/ThemesProvider";
+import { db } from "./api/_/services";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-quicksand" });
 const qwitcher = Qwitcher_Grypen({
@@ -22,14 +21,48 @@ export const metadata: Metadata = {
   description: "Music service",
 };
 
+export type Theme = {
+  background: string;
+  widgets: string;
+  accent: string;
+  text: string;
+};
+
+export type ThemesResponse = {
+  themes: {
+    currentTheme: Theme;
+    customThemes: Theme[];
+    quickAccessThemes: Theme[];
+  };
+  message: string;
+};
+
 const getThemesSettings = async (session: Session) => {
-  const response = await handleFetch<ThemesResponse>(
-    process.env.NEXTAUTH_URL + "/api/settings/themes/get-all",
-    "POST",
-    { session },
-  );
-  console.log(response, "response");
-  return response;
+  const userEmail = session.user?.email || "";
+
+  const userThemes = await db.user.findUnique({
+    where: { email: userEmail },
+    select: {
+      settings: {
+        select: {
+          themesSettings: {
+            select: {
+              currentTheme: true,
+              customThemes: true,
+              quickAccessThemes: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  await db.$disconnect();
+
+  return {
+    themes: userThemes?.settings?.themesSettings,
+    message: "success fetching themes",
+  };
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -41,7 +74,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={`${quicksand.className} ${qwitcher.variable}`}>
         <SessionProvider session={session}>
           <LoadProvider>
-            <ThemesProvider themesFromDB={themes}>
+            <ThemesProvider themesFromDB={themes as ThemesResponse}>
               <PlayerProvider>{children}</PlayerProvider>
             </ThemesProvider>
           </LoadProvider>
