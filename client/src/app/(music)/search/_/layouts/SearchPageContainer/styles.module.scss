@@ -1,0 +1,31 @@
+@use "@/sass/abstracts/colors.scss" as *;
+@use "@/sass/mixins/skeletonAnimation.module.scss" as *;
+
+.musicListSkeletonContainer {
+  width: 100%;
+
+  .musicListSkeleton {
+    background-color: $widget-bg;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 1rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+
+    @include skeletonAnimation();
+  }
+}
+
+.buttonRetry {
+  color: white;
+  background-color: var(--widget-bg);
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}

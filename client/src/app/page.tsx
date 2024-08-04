@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession, Session } from "next-auth";
-import { useEffect, useRef, useState } from "react";
 
 import { authOptions } from "@/app/_/utils/functions";
 
@@ -9,17 +8,9 @@ import styles from "./page.module.scss";
 
 export default async function Page() {
   const session = (await getServerSession(authOptions)) as Session;
-  // if (session) {
-  //   redirect("/music");
-  // }
-
-  //themes example
-  // const variableRef = useRef<string>();
-  // useEffect(() => {
-  //   variableRef.current = window
-  //     .getComputedStyle(document.documentElement)
-  //     .getPropertyValue("--bg");
-  // }, []);
+  if (session) {
+    redirect("/allmusic");
+  }
 
   return (
     <main className={styles.main}>
@@ -56,32 +47,6 @@ export default async function Page() {
           </Link>
         )}
       </section>
-
-      {/* <section style={{ backgroundColor: "white", height: "100px" }}>
-        <input
-          onChange={() => {
-            document.documentElement.style.setProperty("--bg", "white");
-            setTheme("light");
-          }}
-          type="radio"
-          id="light"
-          name="theme"
-          value="light"
-          checked={theme === "light"}
-        />
-        <input
-          onChange={() => {
-            document.documentElement.style.setProperty("--bg", "black");
-            setTheme("dark");
-          }}
-          type="radio"
-          id="dark"
-          name="theme"
-          value="dark"
-          checked={theme === "dark"}
-        />
-      </section> */}
-      {/* <video controls width={320} height={240} id="video"></video> */}
     </main>
   );
 }

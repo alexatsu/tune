@@ -1,0 +1,1 @@
+export { SearchPageContainer } from "./SearchPageContainer";

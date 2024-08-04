@@ -5,7 +5,7 @@ import { authOptions } from "@/app/_/utils/functions";
 import { PageTitle } from "@/music/_/components";
 
 import PageContainer from "../_/layouts/PageContainer";
-import { SearchSongs } from "./_/components/SearchSongs";
+import { SearchPageContainer } from "./_/layouts/SearchPageContainer";
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -14,7 +14,7 @@ export default async function Page() {
   return (
     <PageContainer>
       <PageTitle title={"Search"} />
-      <SearchSongs />
+      <SearchPageContainer />
     </PageContainer>
   );
 }
