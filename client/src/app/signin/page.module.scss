@@ -1,3 +1,4 @@
+@use "@/sass/abstracts/colors.scss" as *;
 .main {
   display: flex;
   justify-content: center;
@@ -12,4 +13,10 @@
   flex-direction: column;
   gap: 0.5rem;
   height: 20%;
+}
+
+.or {
+  color: $text;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
