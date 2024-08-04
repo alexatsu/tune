@@ -38,8 +38,13 @@ export type ThemesResponse = {
 };
 
 const getThemesSettings = async (session: Session) => {
+  if (!session) {
+    return {
+      themes: null,
+      message: "Session is required",
+    };
+  }
   const userEmail = session.user?.email || "";
-
   const userThemes = await db.user.findUnique({
     where: { email: userEmail },
     select: {
