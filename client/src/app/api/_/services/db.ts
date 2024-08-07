@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../../../node_modules/@prisma/client"; //for some reason, absolute path is tripping
 
 const prismaClientSingleton = () => {
   return new PrismaClient();

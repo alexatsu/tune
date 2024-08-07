@@ -232,19 +232,34 @@ export function Player() {
 
   if (!session) redirect("/signin");
 
+  const updateVolumePayloadLC = (value: number) => {
+    localStorage.setItem("volume", value.toString());
+    updateProgressBar(volumeRef, `${value * 100}`);
+  };
+
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
 
     if (playerRef.current) {
       setVolume(volumeRef, +value / 100);
+      updateVolumePayloadLC(+value / 100);
     }
 
     if (volume.muted) {
       setVolume(volumeRef, +value / 100);
       setUnmute();
+      updateVolumePayloadLC(+value / 100);
     }
     updateProgressBar(volumeRef, `${value}`);
   };
+
+  useEffect(() => {
+    const getVolumePayload = localStorage.getItem("volume") || null;
+    if (getVolumePayload) {
+      setVolume(volumeRef, +getVolumePayload);
+      updateProgressBar(volumeRef, `${+getVolumePayload * 100}`);
+    }
+  }, [setVolume, volumeRef]);
 
   const inputs = (
     <input
