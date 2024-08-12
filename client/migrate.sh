@@ -1,6 +1,6 @@
-#!/bin/sh
-echo "running migration"
+#!/bin/bash
+
+# Apply migrations
 npx prisma migrate dev
-echo "finished migration"
-echo "starting container"
-npm run dev
+
+exec "$@"

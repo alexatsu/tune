@@ -6,7 +6,7 @@ services:
       dockerfile: ./Dockerfile # dockerfile path
     volumes:
       - ./client:/app #mount path
-      - /app/node_modules #needed folder to persist/update data
+      - ./client/node_modules:/app/node_modules #needed folder to persist/update data
       # remove old container+image if new packages are added
     ports:
       # hostport:containerport
@@ -17,6 +17,8 @@ services:
       - WATCHPACK_POLLING=true # for nextjs hot reload
     # depends_on:
     #   - db
+    networks:
+      - giga
     restart: always
 
   # containers can communicate with each other via container name and inner port
@@ -38,6 +40,8 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     image: postgres:16-alpine
+    networks:
+      - giga
     restart: always
 
   music-service:
@@ -49,6 +53,8 @@ services:
       - 8000:8000
     volumes:
       - ./music-service:/app
+    networks:
+      - giga
     restart: always
 
   charts-service:
@@ -60,6 +66,8 @@ services:
       - 8010:8010
     volumes:
       - ./charts-service:/app
+    networks:
+      - giga
     restart: always
 
   parser-service:
@@ -72,6 +80,8 @@ services:
 
     volumes:
       - ./parser-service:/app
+    networks:
+      - giga
     restart: always
 
   # backup-service:
@@ -92,3 +102,6 @@ services:
 
 volumes:
   db:
+
+networks:
+  giga:

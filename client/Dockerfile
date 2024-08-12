@@ -14,4 +14,5 @@ COPY ./migrate.sh ./migrate.sh
 
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["sh","migrate.sh"]
+CMD ["npm", "run", "dev"]
+# CMD ["sh","migrate.sh"] for manual migrations
